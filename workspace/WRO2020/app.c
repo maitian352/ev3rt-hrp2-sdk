@@ -25,8 +25,7 @@ int PURPLE = PURPLE;
 void main_task(intptr_t unused) {
     init();
 
-    readCode();
-    // TODO run2020
+    display_values();
 }
 
 void init() {
