@@ -20,7 +20,7 @@ const int color_sensor1 = EV3_PORT_2, color_sensor2 = EV3_PORT_2, color_sensor3 
 // define variables
 rgb_raw_t rgb1;
 rgb_raw_t rgb4;
-int carbay[] = {0, 0, 0, 0}
+int carbay[] = {0, 0, 0, 0};
 
 
 void main_task(intptr_t unused) {
@@ -73,16 +73,16 @@ void open_carbay(int door) {
     switch (door)
     {
     case 1:
-        ev3_motor_rotate(a_motor, -140, 50, true);
+        ev3_motor_rotate(a_motor, -190, 50, true);
         break;
     case 2:
-        ev3_motor_rotate(d_motor, -140, 50, true);
+        ev3_motor_rotate(d_motor, -190, 50, true);
         break;
     case 3:
-        ev3_motor_rotate(a_motor, 120, 50, true);
+        ev3_motor_rotate(a_motor, 140, 50, true);
         break;
     case 4:
-        ev3_motor_rotate(d_motor, 120, 50, true);
+        ev3_motor_rotate(d_motor, 140, 50, true);
         break;
     default:
         exit(1);
@@ -93,16 +93,16 @@ void close_carbay(int door) {
         switch (door)
     {
     case 1:
-        ev3_motor_rotate(a_motor, -220, 50, true);
+        ev3_motor_rotate(a_motor, -100, 50, true);
         break;
     case 2:
-        ev3_motor_rotate(d_motor, -220, 50, true);
+        ev3_motor_rotate(d_motor, -100, 50, true);
         break;
     case 3:
-        ev3_motor_rotate(a_motor, 240, 50, true);
+        ev3_motor_rotate(a_motor, 140, 50, true);
         break;
     case 4:
-        ev3_motor_rotate(d_motor, 240, 50, true);
+        ev3_motor_rotate(d_motor, 140, 50, true);
         break;
     default:
         exit(1);
