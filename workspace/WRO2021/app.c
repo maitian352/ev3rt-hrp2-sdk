@@ -17,8 +17,11 @@
 // define motors and sensors
 const int color_sensor1 = EV3_PORT_2, color_sensor2 = EV3_PORT_2, color_sensor3 = EV3_PORT_3, color_sensor4 = EV3_PORT_4, left_motor = EV3_PORT_B, right_motor = EV3_PORT_C, a_motor = EV3_PORT_A, d_motor = EV3_PORT_D;
 
+// define variables
 rgb_raw_t rgb1;
 rgb_raw_t rgb4;
+int carbay[] = {0, 0, 0, 0}
+
 
 void main_task(intptr_t unused) {
     init();
@@ -64,6 +67,47 @@ void init() {
         }
     }
     ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
+}
+
+void open_carbay(int door) {
+    switch (door)
+    {
+    case 1:
+        ev3_motor_rotate(a_motor, -140, 50, true);
+        break;
+    case 2:
+        ev3_motor_rotate(d_motor, -140, 50, true);
+        break;
+    case 3:
+        ev3_motor_rotate(a_motor, 120, 50, true);
+        break;
+    case 4:
+        ev3_motor_rotate(d_motor, 120, 50, true);
+        break;
+    default:
+        exit(1);
+        break;
+    }
+}
+void close_carbay(int door) {
+        switch (door)
+    {
+    case 1:
+        ev3_motor_rotate(a_motor, -220, 50, true);
+        break;
+    case 2:
+        ev3_motor_rotate(d_motor, -220, 50, true);
+        break;
+    case 3:
+        ev3_motor_rotate(a_motor, 240, 50, true);
+        break;
+    case 4:
+        ev3_motor_rotate(d_motor, 240, 50, true);
+        break;
+    default:
+        exit(1);
+        break;
+    }
 }
 
 void display_values() {
@@ -119,19 +163,7 @@ void display_values() {
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
 }
 
-void open_carbay(int door) {
-    switch (door)
-    {
-    case 1:
-        ev3_motor_reset_counts(a_motor);
-        //ev3_motor_rotate(a_motor, )
-        break;
-    
-    default:
-        exit(1);
-        break;
-    }
-}
+
 
 void linePID(int distance) {
     ev3_motor_reset_counts(left_motor);
