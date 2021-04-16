@@ -20,7 +20,6 @@ const int color_sensor1 = EV3_PORT_2, color_sensor2 = EV3_PORT_2, color_sensor3 
 rgb_raw_t rgb1;
 rgb_raw_t rgb4;
 
-int PURPLE = PURPLE;
 
 void main_task(intptr_t unused) {
     init();
