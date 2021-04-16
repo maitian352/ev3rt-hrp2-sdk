@@ -31,7 +31,7 @@ int carpositions[3][4] = {
     {
         0,0,0,0
     },
-}
+};
 int mappositions[3][4] = {
     {
         0,0,0,0
