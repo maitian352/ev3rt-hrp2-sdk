@@ -20,7 +20,6 @@ const int color_sensor1 = EV3_PORT_2, color_sensor2 = EV3_PORT_2, color_sensor3 
 rgb_raw_t rgb1;
 rgb_raw_t rgb4;
 
-
 void main_task(intptr_t unused) {
     init();
 
@@ -45,23 +44,13 @@ void init() {
     // Set up sensors
     ev3_color_sensor_get_reflect(color_sensor2);
     ev3_color_sensor_get_reflect(color_sensor3);
-    //bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
-    //assert(val1);
+    bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
+    assert(val1);
     bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
     assert(val4);
 
     // Configure brick
     ev3_lcd_set_font(EV3_FONT_MEDIUM);
-
-    // reset snow/car collector
-    ev3_motor_set_power(a_motor, -100);
-    tslp_tsk(1500);
-    ev3_motor_rotate(a_motor, 500, 50, true);
-
-    // reset abrasive material dispenser
-    ev3_motor_set_power(d_motor, 100);
-    tslp_tsk(1500);
-    ev3_motor_stop(d_motor, true);
 
     // wait for button press
     ev3_lcd_draw_string("Press OK to run", 14, 45);
@@ -130,26 +119,29 @@ void display_values() {
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
 }
 
-void linePID(int distance){
+void open_carbay(int door) {
+    switch (door)
+    {
+    case 1:
+        ev3_motor_reset_counts(a_motor);
+        //ev3_motor_rotate(a_motor, )
+        break;
+    
+    default:
+        exit(1);
+        break;
+    }
+}
+
+void linePID(int distance) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     ev3_motor_reset_counts(a_motor);
     ev3_motor_reset_counts(d_motor);
-    int snowIndex = 0;
-    int isTurning = 0;
-    float wheelDistance = ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
+    float wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
     float lasterror = 0, integral = 0;
     while (wheelDistance < distance) {
-        if(ev3_motor_get_counts(a_motor) > 490){
-            ev3_motor_reset_counts(a_motor);
-            ev3_motor_rotate(a_motor,-500,13,false);
-            
-        }
-        if(ev3_motor_get_counts(a_motor) < -490){
-            ev3_motor_reset_counts(a_motor);
-            ev3_motor_rotate(a_motor,500,13,false);
-        }
-        wheelDistance = ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
+        wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
         float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
         integral = error + integral * 0.5;
         float steer = 0.04 * error + 0.5 * integral + 0.25 * (error - lasterror);
