@@ -44,20 +44,22 @@ int mappositions[3][4] = {
     },
 };
 
+// do has discord?
+bool howtocollision = collision;
 
 void main_task(intptr_t unused) {
     init();
     while (true) {
-        open_carbay(1);
+        //open_carbay(1);
         open_carbay(2);
-        open_carbay(3);
+        //open_carbay(3);
         open_carbay(4);
-        tslp_tsk(5000);
-        close_carbay(1);
+        //tslp_tsk(5000);
+        //close_carbay(1);
         close_carbay(2);
-        close_carbay(3);
+        //close_carbay(3);
         close_carbay(4);
-        tslp_tsk(5000);
+        //tslp_tsk(5000);
     }
     display_values();
 }
@@ -126,16 +128,16 @@ void close_carbay(int door) {
         switch (door)
     {
     case 1:
-        ev3_motor_rotate(a_motor, -150, 10, true);
+        ev3_motor_rotate(a_motor, -155, 10, true);
         break;
     case 2:
-        ev3_motor_rotate(d_motor, -150, 10, true);
+        ev3_motor_rotate(d_motor, -155, 10, true);
         break;
     case 3:
-        ev3_motor_rotate(a_motor, 170, 10, true);
+        ev3_motor_rotate(a_motor, 175, 10, true);
         break;
     case 4:
-        ev3_motor_rotate(d_motor, 170, 10, true);
+        ev3_motor_rotate(d_motor, 175, 10, true);
         break;
     default:
         exit(1);
