@@ -45,7 +45,7 @@ int mappositions[3][4] = {
 };
 
 // do has discord?
-int howtocollision = COLLISION;
+// how to collision?
 
 void main_task(intptr_t unused) {
     init();
@@ -232,7 +232,7 @@ void drive(int distance) {
     return;
 }
 
-static void button_clicked_handler(intptr_t button) {
+void button_clicked_handler(intptr_t button) {
     switch(button) {
     case BACK_BUTTON:
             ev3_motor_stop(left_motor, false);
