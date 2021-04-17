@@ -50,14 +50,14 @@ bool howtocollision = collision;
 void main_task(intptr_t unused) {
     init();
     while (true) {
-        //open_carbay(1);
+        open_carbay(1);
         open_carbay(2);
-        //open_carbay(3);
+        open_carbay(3);
         open_carbay(4);
         //tslp_tsk(5000);
-        //close_carbay(1);
+        close_carbay(1);
         close_carbay(2);
-        //close_carbay(3);
+        close_carbay(3);
         close_carbay(4);
         //tslp_tsk(5000);
     }
