@@ -47,7 +47,18 @@ int mappositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-
+    while (true) {
+        open_carbay(1);
+        open_carbay(2);
+        open_carbay(3);
+        open_carbay(4);
+        tslp_tsk(5000);
+        close_carbay(1);
+        close_carbay(2);
+        close_carbay(3);
+        close_carbay(4);
+        tslp_tsk(5000);
+    }
     display_values();
 }
 
@@ -95,16 +106,16 @@ void open_carbay(int door) {
     switch (door)
     {
     case 1:
-        ev3_motor_rotate(a_motor, -190, 50, true);
+        ev3_motor_rotate(a_motor, -160, 10, true);
         break;
     case 2:
-        ev3_motor_rotate(d_motor, -190, 50, true);
+        ev3_motor_rotate(d_motor, -160, 10, true);
         break;
     case 3:
-        ev3_motor_rotate(a_motor, 140, 50, true);
+        ev3_motor_rotate(a_motor, 140, 10, true);
         break;
     case 4:
-        ev3_motor_rotate(d_motor, 140, 50, true);
+        ev3_motor_rotate(d_motor, 140, 10, true);
         break;
     default:
         exit(1);
@@ -115,16 +126,16 @@ void close_carbay(int door) {
         switch (door)
     {
     case 1:
-        ev3_motor_rotate(a_motor, -100, 50, true);
+        ev3_motor_rotate(a_motor, -150, 10, true);
         break;
     case 2:
-        ev3_motor_rotate(d_motor, -100, 50, true);
+        ev3_motor_rotate(d_motor, -150, 10, true);
         break;
     case 3:
-        ev3_motor_rotate(a_motor, 140, 50, true);
+        ev3_motor_rotate(a_motor, 170, 10, true);
         break;
     case 4:
-        ev3_motor_rotate(d_motor, 140, 50, true);
+        ev3_motor_rotate(d_motor, 170, 10, true);
         break;
     default:
         exit(1);
@@ -149,18 +160,16 @@ void display_values() {
     ev3_lcd_draw_string(msg, 10*8, 15*0);
 
     // read sensor rgb1
-    /*
     bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     assert(val1);
     sprintf(msg, "RGB1:");
     ev3_lcd_draw_string(msg, 10*0, 15*1.5);
     sprintf(msg, "R: %d", rgb1.r);
-    ev3_lcd_draw_string(msg, 10*0, /15*2.5);
+    ev3_lcd_draw_string(msg, 10*0, 15*2.5);
     sprintf(msg, "G: %d", rgb1.g);
     ev3_lcd_draw_string(msg, 10*7, 15*2.5);
     sprintf(msg, "B: %d", rgb1.b);
     ev3_lcd_draw_string(msg, 10*14, 15*2.5);
-    */
 
     // read sensor rgb4
     bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
@@ -184,8 +193,6 @@ void display_values() {
     sprintf(msg, "L: %d  ", value);
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
 }
-
-
 
 void linePID(int distance) {
     ev3_motor_reset_counts(left_motor);
