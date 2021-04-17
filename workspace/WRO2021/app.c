@@ -45,7 +45,7 @@ int mappositions[3][4] = {
 };
 
 // do has discord?
-bool howtocollision = collision;
+int howtocollision = COLLISION;
 
 void main_task(intptr_t unused) {
     init();
