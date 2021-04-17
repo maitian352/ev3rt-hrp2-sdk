@@ -207,6 +207,22 @@ void linePID(int distance) {
     return;
 }
 
+void drive(int distance) {
+    ev3_motor_reset_counts(left_motor);
+    ev3_motor_reset_counts(right_motor);
+    ev3_motor_reset_counts(a_motor);
+    ev3_motor_reset_counts(d_motor);
+    float wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
+    while (wheelDistance < distance) {
+        wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
+        ev3_motor_set_power(left_motor,50);
+        ev3_motor_set_power(right_motor,-50);
+        tslp_tsk(1);
+    }
+    ev3_motor_steer(left_motor, right_motor, 0, 0);
+    return;
+}
+
 static void button_clicked_handler(intptr_t button) {
     switch(button) {
     case BACK_BUTTON:
