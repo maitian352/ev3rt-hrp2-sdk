@@ -148,6 +148,35 @@ void close_carbay(int door) {
         break;
     }
 }
+void read_car(int sansar) {
+    int yeet;
+    switch (sansar)
+    {
+    case 1:
+        ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
+        if(rgb1.r > 20 && rgb1.g > 20){
+        yeet = WALL;
+    }
+    else if(rgb1.r > 9 && rgb1.g > 5 && rgb1.b > 5){
+        yeet = RED;
+    }
+    else if(rgb1.r > 5 && rgb1.g > 5 && rgb1.b > 10){
+        yeet = BLUE;
+    }
+    else if(rgb1.r < 5 && rgb1.g < 5 && rgb1.b < 5){
+        yeet = NONE;
+    }
+    else{
+        yeet = GREEN
+    }
+        break;
+    case 2:
+        ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+    default:
+        break;
+    }
+    return yeet;
+}
 
 void display_values() {
     // declare variables
@@ -205,7 +234,7 @@ void display_values() {
     ev3_lcd_draw_string(msg, 10*7, 15*5);
     sprintf(msg, "B: %d  ", rgb4.b);
     ev3_lcd_draw_string(msg, 10*14, 15*5);
-/*
+
     // read linefollow sensors
     sprintf(msg, "Light2 & Light3:");
     ev3_lcd_draw_string(msg, 10*0, 15*6.5);
@@ -215,7 +244,6 @@ void display_values() {
     value = ev3_color_sensor_get_reflect(color_sensor3);
     sprintf(msg, "L: %d  ", value);
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
-    */
 }
 
 void linePID(int distance) {
