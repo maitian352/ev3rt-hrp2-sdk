@@ -79,6 +79,7 @@ void init() {
     ev3_motor_config(d_motor, MEDIUM_MOTOR);
     
     // Configure sensors
+    ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
     ev3_sensor_config(color_sensor2, COLOR_SENSOR);
     ev3_sensor_config(color_sensor3, COLOR_SENSOR);
     ev3_sensor_config(color_sensor4, HT_NXT_COLOR_SENSOR);
@@ -198,7 +199,24 @@ void display_values() {
     bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     assert(val1);
     sprintf(msg, "RGB1:");
-    ev3_lcd_draw_string(msg, 10*0, 15*1.5);
+
+    if(rgb1.r > 20 && rgb1.g > 20){
+        sprintf(msg, "WALL   ");
+    }
+    else if(rgb1.r > 9 && rgb1.g > 5 && rgb1.b > 5){
+        sprintf(msg, "RED    ");
+    }
+    else if(rgb1.r > 5 && rgb1.g > 5 && rgb1.b > 10){
+        sprintf(msg, "BLUE   ");
+    }
+    else if(rgb1.r < 5 && rgb1.g < 5 && rgb1.b < 5){
+        sprintf(msg, "NOTHING");
+    }
+    else{
+        sprintf(msg, "GREEN  ");
+    }
+    ev3_lcd_draw_string(msg, 10*0, 15*7.5);
+
     sprintf(msg, "R: %d", rgb1.r);
     ev3_lcd_draw_string(msg, 10*0, 15*2.5);
     sprintf(msg, "G: %d", rgb1.g);
@@ -211,23 +229,6 @@ void display_values() {
     assert(val4);
     sprintf(msg, "RGB4:");
     ev3_lcd_draw_string(msg, 10*0, 15*4);
-    if(rgb4.r > 20 && rgb4.g > 20){
-        sprintf(msg, "WALL   ");
-    }
-    else if(rgb4.r > 9 && rgb4.g > 5 && rgb4.b > 5){
-        sprintf(msg, "RED    ");
-    }
-    else if(rgb4.r > 5 && rgb4.g > 5 && rgb4.b > 10){
-        sprintf(msg, "BLUE   ");
-    }
-    else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
-        sprintf(msg, "NOTHING");
-    }
-    else{
-        sprintf(msg, "GREEN  ");
-    }
-    ev3_lcd_draw_string(msg, 10*0, 15*7.5);
-    
     sprintf(msg, "R: %d  ", rgb4.r);
     ev3_lcd_draw_string(msg, 10*0, 15*5);
     sprintf(msg, "G: %d  ", rgb4.g);
@@ -235,6 +236,7 @@ void display_values() {
     sprintf(msg, "B: %d  ", rgb4.b);
     ev3_lcd_draw_string(msg, 10*14, 15*5);
 
+    /*
     // read linefollow sensors
     sprintf(msg, "Light2 & Light3:");
     ev3_lcd_draw_string(msg, 10*0, 15*6.5);
@@ -244,6 +246,7 @@ void display_values() {
     value = ev3_color_sensor_get_reflect(color_sensor3);
     sprintf(msg, "L: %d  ", value);
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
+    */
 }
 
 void linePID(int distance) {
