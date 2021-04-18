@@ -199,7 +199,7 @@ void display_values() {
     bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     assert(val1);
     sprintf(msg, "RGB1:");
-
+    
     if(rgb1.r > 20 && rgb1.g > 20){
         sprintf(msg, "WALL   ");
     }
@@ -220,9 +220,9 @@ void display_values() {
     sprintf(msg, "R: %d", rgb1.r);
     ev3_lcd_draw_string(msg, 10*0, 15*2.5);
     sprintf(msg, "G: %d", rgb1.g);
-    ev3_lcd_draw_string(msg, 10*7, 15*2.5);
+    ev3_lcd_draw_string(msg, 10*6, 15*2.5);
     sprintf(msg, "B: %d", rgb1.b);
-    ev3_lcd_draw_string(msg, 10*14, 15*2.5);
+    ev3_lcd_draw_string(msg, 10*12, 15*2.5);
 
     // read sensor rgb4
     bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
@@ -232,9 +232,9 @@ void display_values() {
     sprintf(msg, "R: %d  ", rgb4.r);
     ev3_lcd_draw_string(msg, 10*0, 15*5);
     sprintf(msg, "G: %d  ", rgb4.g);
-    ev3_lcd_draw_string(msg, 10*7, 15*5);
+    ev3_lcd_draw_string(msg, 10*6, 15*5);
     sprintf(msg, "B: %d  ", rgb4.b);
-    ev3_lcd_draw_string(msg, 10*14, 15*5);
+    ev3_lcd_draw_string(msg, 10*12, 15*5);
 
     /*
     // read linefollow sensors
