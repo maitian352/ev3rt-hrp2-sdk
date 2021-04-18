@@ -266,7 +266,7 @@ void linePID(int distance) {
     return;
 }
 
-void drive(int distance) {
+void drive(int distance, int curve) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     ev3_motor_reset_counts(a_motor);
