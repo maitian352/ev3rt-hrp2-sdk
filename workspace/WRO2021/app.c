@@ -177,7 +177,7 @@ void display_values() {
     assert(val4);
     sprintf(msg, "RGB4:");
     ev3_lcd_draw_string(msg, 10*0, 15*4);
-    if(rgb4.r > 25 && rgb4.g > 25){
+    if(rgb4.r > 20 && rgb4.g > 20){
         sprintf(msg, "WALL   ");
     }
     else if(rgb4.r > 7 && rgb4.g > 5 && rgb4.b > 5){
