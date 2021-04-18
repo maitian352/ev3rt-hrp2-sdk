@@ -185,7 +185,7 @@ void display_values() {
     if(rgb4.r > 20 && rgb4.g > 20){
         sprintf(msg, "WALL   ");
     }
-    else if(rgb4.r > 7 && rgb4.g > 5 && rgb4.b > 5){
+    else if(rgb4.r > 9 && rgb4.g > 5 && rgb4.b > 5){
         sprintf(msg, "RED    ");
     }
     else if(rgb4.r > 5 && rgb4.g > 5 && rgb4.b > 10){
