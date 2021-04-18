@@ -50,7 +50,10 @@ int mappositions[3][4] = {
 void main_task(intptr_t unused) {
     init();
     while (true) {
-        display_values();
+        char msg[100];
+        sprintf(msg, "a: %d", read_car(LEFT));
+        
+
     }
     /*
     while (true) {
@@ -173,6 +176,21 @@ void read_car(int sansar) {
         break;
     case 2:
         ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+        if(rgb4.r > 25 && rgb4.g > 20 && rgb4.b > 20){
+        yeet = WALL;
+    }
+    else if(rgb4.r > 5 && rgb4.g > 5){
+        yeet = RED;
+    }
+    else if(rgb4.g > 5 && rgb4.b > 10){
+        yeet = BLUE;
+    }
+    else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
+        yeet = NONE;
+    }
+    else{
+        yeet = GREEN;
+    }
     default:
         break;
     }
@@ -199,14 +217,14 @@ void display_values() {
     bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     assert(val1);
     sprintf(msg, "RGB1:");
-    
-    if(rgb1.r > 20 && rgb1.g > 20){
+
+    if(rgb1.r > 25 && rgb1.g > 20 && rgb1.b > 20){
         sprintf(msg, "WALL   ");
     }
-    else if(rgb1.r > 9 && rgb1.g > 5 && rgb1.b > 5){
+    else if(rgb1.r > 5 && rgb1.g > 5){
         sprintf(msg, "RED    ");
     }
-    else if(rgb1.r > 5 && rgb1.g > 5 && rgb1.b > 10){
+    else if(rgb1.g > 5 && rgb1.b > 10){
         sprintf(msg, "BLUE   ");
     }
     else if(rgb1.r < 5 && rgb1.g < 5 && rgb1.b < 5){
