@@ -49,26 +49,27 @@ int mappositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
+    /*
     while (true) {
         char msg[100];
         sprintf(msg, "a: %d", read_car(LEFT));
-        
-
+        ev3_lcd_draw_string(msg, 0, 0);
     }
-    /*
+    */
+    ///*
     while (true) {
         open_carbay(1);
         open_carbay(2);
         open_carbay(3);
         open_carbay(4);
-        //tslp_tsk(5000);
+        tslp_tsk(5000);
         close_carbay(1);
         close_carbay(2);
         close_carbay(3);
         close_carbay(4);
-        //tslp_tsk(5000);
+        tslp_tsk(5000);
     }
-    */
+    //*/
 }
 
 void init() {
@@ -217,24 +218,6 @@ void display_values() {
     bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     assert(val1);
     sprintf(msg, "RGB1:");
-
-    if(rgb1.r > 25 && rgb1.g > 20 && rgb1.b > 20){
-        sprintf(msg, "WALL   ");
-    }
-    else if(rgb1.r > 5 && rgb1.g > 5){
-        sprintf(msg, "RED    ");
-    }
-    else if(rgb1.g > 5 && rgb1.b > 10){
-        sprintf(msg, "BLUE   ");
-    }
-    else if(rgb1.r < 5 && rgb1.g < 5 && rgb1.b < 5){
-        sprintf(msg, "NOTHING");
-    }
-    else{
-        sprintf(msg, "GREEN  ");
-    }
-    ev3_lcd_draw_string(msg, 10*0, 15*7.5);
-
     sprintf(msg, "R: %d", rgb1.r);
     ev3_lcd_draw_string(msg, 10*0, 15*2.5);
     sprintf(msg, "G: %d", rgb1.g);
@@ -254,7 +237,6 @@ void display_values() {
     sprintf(msg, "B: %d  ", rgb4.b);
     ev3_lcd_draw_string(msg, 10*12, 15*5);
 
-    /*
     // read linefollow sensors
     sprintf(msg, "Light2 & Light3:");
     ev3_lcd_draw_string(msg, 10*0, 15*6.5);
@@ -264,27 +246,6 @@ void display_values() {
     value = ev3_color_sensor_get_reflect(color_sensor3);
     sprintf(msg, "L: %d  ", value);
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
-    */
-}
-
-void linePID(int distance) {
-    ev3_motor_reset_counts(left_motor);
-    ev3_motor_reset_counts(right_motor);
-    ev3_motor_reset_counts(a_motor);
-    ev3_motor_reset_counts(d_motor);
-    float wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
-    float lasterror = 0, integral = 0;
-    while (wheelDistance < distance) {
-        wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
-        float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-        integral = error + integral * 0.5;
-        float steer = 0.04 * error + 0.5 * integral + 0.25 * (error - lasterror);
-        ev3_motor_steer(left_motor, right_motor, 30, steer);
-        lasterror = error;  
-        tslp_tsk(1);
-    }
-    ev3_motor_steer(left_motor, right_motor, 0, 0);
-    return;
 }
 
 void motorSteer(int power, int curve) {
