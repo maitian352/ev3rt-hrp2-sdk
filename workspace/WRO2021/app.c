@@ -167,7 +167,7 @@ void read_car(int sansar) {
         yeet = NONE;
     }
     else{
-        yeet = GREEN
+        yeet = GREEN;
     }
         break;
     case 2:
