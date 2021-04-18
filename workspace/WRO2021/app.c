@@ -50,6 +50,10 @@ int mappositions[3][4] = {
 void main_task(intptr_t unused) {
     init();
     while (true) {
+        display_values();
+    }
+    /*
+    while (true) {
         open_carbay(1);
         open_carbay(2);
         open_carbay(3);
@@ -61,6 +65,7 @@ void main_task(intptr_t unused) {
         close_carbay(4);
         //tslp_tsk(5000);
     }
+    */
 }
 
 void init() {
