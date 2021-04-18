@@ -44,24 +44,12 @@ int mappositions[3][4] = {
     },
 };
 
-// do has discord?
-bool howtocollision = collision;
 
 void main_task(intptr_t unused) {
     init();
-    while (true) {
-        //open_carbay(1);
-        open_carbay(2);
-        //open_carbay(3);
-        open_carbay(4);
-        //tslp_tsk(5000);
-        //close_carbay(1);
-        close_carbay(2);
-        //close_carbay(3);
-        close_carbay(4);
-        //tslp_tsk(5000);
+    while(true){
+        display_values();
     }
-    display_values();
 }
 
 void init() {
@@ -178,13 +166,30 @@ void display_values() {
     assert(val4);
     sprintf(msg, "RGB4:");
     ev3_lcd_draw_string(msg, 10*0, 15*4);
+    if(rgb4.r > 25 && rgb4.g > 25){
+        sprintf(msg, "WALL   ");
+    }
+    else if(rgb4.r > 7 && rgb4.g > 5 && rgb4.b > 5){
+        sprintf(msg, "RED    ");
+    }
+    else if(rgb4.r > 5 && rgb4.g > 5 && rgb4.b > 10){
+        sprintf(msg, "BLUE   ");
+    }
+    else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
+        sprintf(msg, "NOTHING");
+    }
+    else{
+        sprintf(msg, "GREEN  ");
+    }
+    ev3_lcd_draw_string(msg, 10*0, 15*7.5);
+    
     sprintf(msg, "R: %d  ", rgb4.r);
     ev3_lcd_draw_string(msg, 10*0, 15*5);
     sprintf(msg, "G: %d  ", rgb4.g);
     ev3_lcd_draw_string(msg, 10*7, 15*5);
     sprintf(msg, "B: %d  ", rgb4.b);
     ev3_lcd_draw_string(msg, 10*14, 15*5);
-
+/*
     // read linefollow sensors
     sprintf(msg, "Light2 & Light3:");
     ev3_lcd_draw_string(msg, 10*0, 15*6.5);
@@ -194,6 +199,7 @@ void display_values() {
     value = ev3_color_sensor_get_reflect(color_sensor3);
     sprintf(msg, "L: %d  ", value);
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
+    */
 }
 
 void linePID(int distance) {
