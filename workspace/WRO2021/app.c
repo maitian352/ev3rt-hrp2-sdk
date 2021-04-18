@@ -287,26 +287,45 @@ void linePID(int distance) {
     return;
 }
 
+void motorSteer(int power, int curve) {
+    if(curve == 0){
+        ev3_motor_set_power(left_motor,-power);
+        ev3_motor_set_power(right_motor,power);
+    }
+    else if(curve < 0){
+        ev3_motor_set_power(left_motor,-power + curve * power / 50);
+        ev3_motor_set_power(right_motor,power);
+    }
+    else{
+        ev3_motor_set_power(left_motor,-power);
+        ev3_motor_set_power(right_motor,power - curve * power / 50);
+    }
+    return;
+}
 void drive(int distance, int power, int curve) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
-    ev3_motor_reset_counts(a_motor);
-    ev3_motor_reset_counts(d_motor);
     float wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
     while (wheelDistance < distance) {
         wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
-        if(curve == 0){
-            ev3_motor_set_power(left_motor,-power);
-            ev3_motor_set_power(right_motor,power);
-        }
-        else if(curve < 0){
-            ev3_motor_set_power(left_motor,-power + curve * power / 50);
-            ev3_motor_set_power(right_motor,power);
-        }
-        else{
-            ev3_motor_set_power(left_motor,-power);
-            ev3_motor_set_power(right_motor,power - curve * power / 50);
-        }
+        motorSteer(power,curve);
+        tslp_tsk(1);
+    }
+    ev3_motor_steer(left_motor, right_motor, 0, 0);
+    return;
+}
+void drivePID(int distance, int power) {
+    ev3_motor_reset_counts(left_motor);
+    ev3_motor_reset_counts(right_motor);
+    float wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
+    float lasterror = 0, integral = 0;
+    while (wheelDistance < distance) {
+        wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
+        wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
+        float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+        integral = error + integral * 0.5;
+        float curve = 0.04 * error + 0.5 * integral + 0.25 * (error - lasterror);
+        motorSteer(power,curve);
         tslp_tsk(1);
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);
