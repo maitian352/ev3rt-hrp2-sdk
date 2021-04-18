@@ -287,7 +287,7 @@ void linePID(int distance) {
     return;
 }
 
-void drive(int distance, int curve) {
+void drive(int distance, int power, int curve) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     ev3_motor_reset_counts(a_motor);
@@ -295,8 +295,18 @@ void drive(int distance, int curve) {
     float wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
     while (wheelDistance < distance) {
         wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
-        ev3_motor_set_power(left_motor,50);
-        ev3_motor_set_power(right_motor,-50);
+        if(curve == 0){
+            ev3_motor_set_power(left_motor,-power);
+            ev3_motor_set_power(right_motor,power);
+        }
+        else if(curve < 0){
+            ev3_motor_set_power(left_motor,-power + curve * power / 50);
+            ev3_motor_set_power(right_motor,power);
+        }
+        else{
+            ev3_motor_set_power(left_motor,-power);
+            ev3_motor_set_power(right_motor,power - curve * power / 50);
+        }
         tslp_tsk(1);
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);

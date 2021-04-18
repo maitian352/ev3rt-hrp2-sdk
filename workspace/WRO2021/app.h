@@ -17,7 +17,7 @@ void close_carbay(int door);
 void readcar(int sansar);
 void display_values();
 void linePID(int distance);
-void drive(int distance, int curve);
+void drive(int distance, int power, int curve);
 void button_clicked_handler(intptr_t button);
 
 extern void	main_task(intptr_t exinf);
