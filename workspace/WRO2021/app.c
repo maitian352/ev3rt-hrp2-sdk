@@ -58,16 +58,16 @@ void main_task(intptr_t unused) {
     */
     ///*
     while (true) {
-        open_carbay(1);
-        open_carbay(2);
-        open_carbay(3);
-        open_carbay(4);
-        tslp_tsk(5000);
-        close_carbay(1);
-        close_carbay(2);
-        close_carbay(3);
-        close_carbay(4);
-        tslp_tsk(5000);
+        open_carbay(1, false);
+        open_carbay(2, true);
+        open_carbay(3, false);
+        open_carbay(4, true);
+        tslp_tsk(10000);
+        close_carbay(1, false);
+        close_carbay(2, true);
+        close_carbay(3, false);
+        close_carbay(4, true);
+        tslp_tsk(10000);
     }
     //*/
 }
@@ -113,46 +113,47 @@ void init() {
     ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
 }
 
-void open_carbay(int door) {
+void open_carbay(int door, int blocking) {
     switch (door)
     {
     case 1:
-        ev3_motor_rotate(a_motor, -160, 10, true);
+        ev3_motor_rotate(a_motor, -160, 10, blocking);
         break;
     case 2:
-        ev3_motor_rotate(d_motor, -160, 10, true);
+        ev3_motor_rotate(d_motor, -160, 10, blocking);
         break;
     case 3:
-        ev3_motor_rotate(a_motor, 140, 10, true);
+        ev3_motor_rotate(a_motor, 140, 10, blocking);
         break;
     case 4:
-        ev3_motor_rotate(d_motor, 140, 10, true);
+        ev3_motor_rotate(d_motor, 140, 10, blocking);
         break;
     default:
         exit(1);
         break;
     }
 }
-void close_carbay(int door) {
+void close_carbay(int door, int blocking) {
         switch (door)
     {
     case 1:
-        ev3_motor_rotate(a_motor, -155, 10, true);
+        ev3_motor_rotate(a_motor, -150, 10, blocking);
         break;
     case 2:
-        ev3_motor_rotate(d_motor, -155, 10, true);
+        ev3_motor_rotate(d_motor, -150, 10, blocking);
         break;
     case 3:
-        ev3_motor_rotate(a_motor, 175, 10, true);
+        ev3_motor_rotate(a_motor, 170, 10, blocking);
         break;
     case 4:
-        ev3_motor_rotate(d_motor, 175, 10, true);
+        ev3_motor_rotate(d_motor, 170, 10, blocking);
         break;
     default:
         exit(1);
         break;
     }
 }
+
 void read_car(int sansar) {
     int yeet;
     switch (sansar)
