@@ -20,8 +20,10 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
 // define variables
 rgb_raw_t rgb1;
 rgb_raw_t rgb4;
-int carbay[4] = {0, 0, 0, 0};
-int carpositions[3][4] = {
+int bayPositions[3] = {
+    NONE, NONE, NONE, NONE
+}
+int carPositions[3][4] = {
     {
         0,0,0,0
     },
@@ -32,15 +34,15 @@ int carpositions[3][4] = {
         0,0,0,0
     },
 };
-int mappositions[3][4] = {
+int mapPositions[3][4] = {
     {
-        0,0,0,0
+        BLUE,BLUE,RED,GREEN
     },
     {
-        0,0,0,0
+        GREEN,RED,GREEN,BLUE
     },
     {
-        0,0,0,0
+        RED,RED,GREEN,BLUE
     },
 };
 
