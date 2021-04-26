@@ -23,16 +23,19 @@ rgb_raw_t rgb4;
 int bayPositions[3] = {
     NONE, NONE, NONE, NONE
 }
-int carPositions[3][4] = {
+int roadcarPositions[6] = {
+    NONE, NONE, NONE, NONE, NONE, NONE
+}
+int mapcarPositions[3][4] = {
     {
-        0,0,0,0
+        NONE,NONE,NONE,NONE
     },
     {
-        0,0,0,0
+        NONE,NONE,NONE,NONE
     },
     {
-        0,0,0,0
-    },
+        NONE,NONE,NONE,NONE
+    }
 };
 int mapPositions[3][4] = {
     {
