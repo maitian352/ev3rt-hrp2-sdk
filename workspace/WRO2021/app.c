@@ -25,7 +25,7 @@ int bayPositions[3] = {
 }
 int roadcarPositions[6] = {
     NONE, NONE, NONE, NONE, NONE, NONE
-}
+};
 int mapcarPositions[3][4] = {
     {
         NONE,NONE,NONE,NONE
