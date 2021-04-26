@@ -22,7 +22,7 @@ rgb_raw_t rgb1;
 rgb_raw_t rgb4;
 int bayPositions[3] = {
     NONE, NONE, NONE, NONE
-}
+};
 int roadcarPositions[6] = {
     NONE, NONE, NONE, NONE, NONE, NONE
 };
