@@ -213,16 +213,11 @@ void motorSteer(int power, int curve) {
     return;
 }
 void drive(int distance, int power, int curve) {
-    char msg[100];
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     float wheelDistance = (-ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
-        sprintf(msg, "%lf", wheelDistance);
-        ev3_lcd_draw_string(msg, 10*3, 15*0);
     while (wheelDistance < distance) {
         wheelDistance = (-ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
-        sprintf(msg, "%lf", wheelDistance);
-        ev3_lcd_draw_string(msg, 10*3, 15*0);
         motorSteer(power,curve);
         tslp_tsk(1);
     }
@@ -273,11 +268,15 @@ void deliver(int car, int position) {
     ev3_motor_rotate(a_motor, ((rackPositions[1]-position)*360), 50, false);
 }
 void test() {
-    drive(10,10,0);
-    ev3_motor_rotate(a_motor,-420,20,true);
-    drive(10,10,0);
-    ev3_motor_rotate(a_motor,-420,20,true);
-    drive(10,10,0);
+    drive(11,10,0);
+    ev3_motor_rotate(a_motor,-440,20,true);
+    //ev3_motor_rotate(a_motor,-420,20,true);
+    drive(11,10,0);
+    tslp_tsk(1000);
+    ev3_motor_rotate(a_motor,-440,20,true);
+    drive(11,10,0);
+    tslp_tsk(1000);
+    ev3_motor_rotate(a_motor,810,20,true);
 }
 
 void button_clicked_handler(intptr_t button) {
