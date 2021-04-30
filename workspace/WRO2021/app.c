@@ -53,7 +53,6 @@ int mapPositions[3][4] = {
 };
 
 // do has discord?
-// how to collision?
 
 void main_task(intptr_t unused) {
     init();
