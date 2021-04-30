@@ -22,7 +22,7 @@ void display_values();
 void motor_steer(int power, int curve);
 void drive(int distance, int power, int curve);
 void drivePID(int distance, int power);
-void deliver();
+void deliver(int car, int position);
 void test();
 void button_clicked_handler(intptr_t button);
 

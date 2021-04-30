@@ -20,6 +20,9 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
 // define variables
 rgb_raw_t rgb1;
 rgb_raw_t rgb4;
+int rackPositions[2] = {
+    CENTER, CENTER
+};
 int bayPositions[3] = {
     NONE, NONE, NONE, NONE
 };
@@ -273,8 +276,9 @@ void turnPID(int angle, int power, int turn) {
     return;
 }
 
-void deliver() {
-    ev3_motor_rotate(a_motor,360,50,true);
+void deliver(int car, int position) {
+    ev3_motor_rotate(a_motor, ((rackPositions[0]-car-position)*360), 50, false);
+    ev3_motor_rotate(a_motor, ((rackPositions[1]-position)*360), 50, false);
 }
 void test() {
     drive(10,10,0);
