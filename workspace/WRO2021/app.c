@@ -280,9 +280,11 @@ void deliver(int car, int position) {
     ev3_motor_rotate(a_motor, ((rackPositions[1]-position)*360), 50, false);
 }
 void test() {
-    ev3_motor_rotate(a_motor,360,50,true);
-    drive(30,50,0);
-    ev3_motor_rotate(a_motor,-360,50,true);
+    drive(10,10,0);
+    ev3_motor_rotate(a_motor,-420,20,true);
+    drive(10,10,0);
+    ev3_motor_rotate(a_motor,-420,20,true);
+    drive(10,10,0);
 }
 
 void button_clicked_handler(intptr_t button) {
