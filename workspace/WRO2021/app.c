@@ -20,27 +20,32 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
 // define variables
 rgb_raw_t rgb1;
 rgb_raw_t rgb4;
-int carbay[4] = {0, 0, 0, 0};
-int carpositions[3][4] = {
-    {
-        0,0,0,0
-    },
-    {
-        0,0,0,0
-    },
-    {
-        0,0,0,0
-    },
+int bayPositions[3] = {
+    NONE, NONE, NONE, NONE
 };
-int mappositions[3][4] = {
+int roadcarPositions[6] = {
+    NONE, NONE, NONE, NONE, NONE, NONE
+};
+int mapcarPositions[3][4] = {
     {
-        0,0,0,0
+        NONE,NONE,NONE,NONE
     },
     {
-        0,0,0,0
+        NONE,NONE,NONE,NONE
     },
     {
-        0,0,0,0
+        NONE,NONE,NONE,NONE
+    }
+};
+int mapPositions[3][4] = {
+    {
+        BLUE,BLUE,RED,GREEN
+    },
+    {
+        GREEN,RED,GREEN,BLUE
+    },
+    {
+        RED,RED,GREEN,BLUE
     },
 };
 
@@ -55,23 +60,6 @@ void main_task(intptr_t unused) {
         sprintf(msg, "a: %d", read_car(LEFT));
         ev3_lcd_draw_string(msg, 0, 0);
     }
-    */
-    /*
-    while (true) {
-        open_carbay(1, false);
-        open_carbay(2, true);
-        open_carbay(3, false);
-        open_carbay(4, true);
-        tslp_tsk(10000);
-        close_carbay(1, false);
-        close_carbay(2, true);
-        close_carbay(3, false);
-        close_carbay(4, true);
-        tslp_tsk(10000);
-    }
-    */
-    /*
-    drive(100000,50,0);
     */
     ///*
     test();
@@ -117,47 +105,6 @@ void init() {
         }
     }
     ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
-}
-
-void open_carbay(int door, int blocking) {
-    switch (door)
-    {
-    case 1:
-        ev3_motor_rotate(a_motor, -160, 10, blocking);
-        break;
-    case 2:
-        ev3_motor_rotate(d_motor, -160, 10, blocking);
-        break;
-    case 3:
-        ev3_motor_rotate(a_motor, 140, 10, blocking);
-        break;
-    case 4:
-        ev3_motor_rotate(d_motor, 140, 10, blocking);
-        break;
-    default:
-        exit(1);
-        break;
-    }
-}
-void close_carbay(int door, int blocking) {
-        switch (door)
-    {
-    case 1:
-        ev3_motor_rotate(a_motor, -150, 10, blocking);
-        break;
-    case 2:
-        ev3_motor_rotate(d_motor, -150, 10, blocking);
-        break;
-    case 3:
-        ev3_motor_rotate(a_motor, 170, 10, blocking);
-        break;
-    case 4:
-        ev3_motor_rotate(d_motor, 170, 10, blocking);
-        break;
-    default:
-        exit(1);
-        break;
-    }
 }
 
 void read_car(int sansar) {

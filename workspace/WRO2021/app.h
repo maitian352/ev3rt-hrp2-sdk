@@ -8,8 +8,9 @@
 #define GREEN 2
 #define BLUE 3
 #define WALL 4
-#define LEFT 1
-#define RIGHT 4
+#define LEFT 0
+#define CENTER 1
+#define RIGHT 2
 
 #define PURPLE 100
 
