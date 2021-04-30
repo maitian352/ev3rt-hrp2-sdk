@@ -56,13 +56,6 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    /*
-    while (true) {
-        char msg[100];
-        sprintf(msg, "a: %d", read_car(LEFT));
-        ev3_lcd_draw_string(msg, 0, 0);
-    }
-    */
     ///*
     test();
     //*/
