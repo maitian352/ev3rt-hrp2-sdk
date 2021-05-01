@@ -314,7 +314,7 @@ void test() {
     ev3_motor_rotate(a_motor,-420,20,true);
     drive(10,10,0);
     */
-   /*
+    /*
     while (true) {
         openDoor(LEFT);
         tslp_tsk(PURPLE);
