@@ -302,6 +302,7 @@ void closeDoor() {
 }
 
 void test() {
+    /*
     drive(11,10,0);
     ev3_motor_rotate(a_motor,-440,20,true);
     //ev3_motor_rotate(a_motor,-420,20,true);
@@ -311,6 +312,7 @@ void test() {
     drive(11,10,0);
     tslp_tsk(1000);
     ev3_motor_rotate(a_motor,810,20,true);
+    */
     /*(
     drive(10,10,0);
     ev3_motor_rotate(a_motor,-420,20,true);
@@ -318,7 +320,7 @@ void test() {
     ev3_motor_rotate(a_motor,-420,20,true);
     drive(10,10,0);
     */
-    /*
+    ///*
     while (true) {
         openDoor(LEFT);
         tslp_tsk(PURPLE);
@@ -330,7 +332,7 @@ void test() {
         tslp_tsk(PURPLE);
         closeDoor();
     }
-    */
+    //*/
 }
 
 void button_clicked_handler(intptr_t button) {
