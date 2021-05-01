@@ -91,10 +91,14 @@ void init() {
     // reset bays
     ev3_motor_set_power(a_motor, 50);
     ev3_motor_set_power(d_motor, -50);
-    tslp_tsk(PURPLE);
+    tslp_tsk(1000);
+    ev3_motor_stop(a_motor);
+    ev3_motor_stop(d_motor);
     ev3_motor_set_power(a_motor, 10);
     ev3_motor_set_power(d_motor, -10);
     tslp_tsk(500);
+    ev3_motor_stop(a_motor);
+    ev3_motor_stop(d_motor);
     ev3_motor_rotate(a_motor, -480, 20, true);
     ev3_motor_rotate(d_motor, 440, 20, true);
     ev3_motor_reset_counts(a_motor);
@@ -320,7 +324,7 @@ void test() {
     ev3_motor_rotate(a_motor,-420,20,true);
     drive(10,10,0);
     */
-    ///*
+    /*
     while (true) {
         openDoor(LEFT);
         tslp_tsk(PURPLE);
@@ -332,7 +336,8 @@ void test() {
         tslp_tsk(PURPLE);
         closeDoor();
     }
-    //*/
+    */
+   drivePID(100,20);
 }
 
 void button_clicked_handler(intptr_t button) {
