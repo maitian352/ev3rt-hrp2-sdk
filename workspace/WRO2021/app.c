@@ -73,13 +73,13 @@ void init() {
     
     // Configure sensors
     //ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
-    //ev3_sensor_config(color_sensor2, COLOR_SENSOR);
-    //ev3_sensor_config(color_sensor3, COLOR_SENSOR);
+    ev3_sensor_config(color_sensor2, COLOR_SENSOR);
+    ev3_sensor_config(color_sensor3, COLOR_SENSOR);
     //ev3_sensor_config(color_sensor4, HT_NXT_COLOR_SENSOR);
     
     // Set up sensors
-    //ev3_color_sensor_get_reflect(color_sensor2);
-    //ev3_color_sensor_get_reflect(color_sensor3);
+    ev3_color_sensor_get_reflect(color_sensor2);
+    ev3_color_sensor_get_reflect(color_sensor3);
     //bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     //assert(val1);
     // val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
@@ -87,6 +87,18 @@ void init() {
 
     // Configure brick
     ev3_lcd_set_font(EV3_FONT_MEDIUM);
+
+    // reset bays
+    ev3_motor_set_power(a_motor, 50);
+    ev3_motor_set_power(d_motor, -50);
+    tslp_tsk(PURPLE);
+    ev3_motor_set_power(a_motor, 10);
+    ev3_motor_set_power(d_motor, -10);
+    tslp_tsk(500);
+    ev3_motor_rotate(a_motor, -480, 20, true);
+    ev3_motor_rotate(d_motor, 440, 20, true);
+    ev3_motor_reset_counts(a_motor);
+    ev3_motor_reset_counts(d_motor);
 
     // wait for button press
     ev3_lcd_draw_string("Press OK to run", 14, 45);
@@ -268,16 +280,53 @@ void turnPID(int angle, int power, int turn) {
     return;
 }
 
-void deliver(int car, int position) {
-    ev3_motor_rotate(a_motor, ((rackPositions[0]-car-position)*360), 50, false);
-    ev3_motor_rotate(a_motor, ((rackPositions[1]-position)*360), 50, false);
+void openDoor(int car) {
+    switch (car)
+    {
+        case LEFT:
+            ev3_motor_rotate(d_motor, (-100-ev3_motor_get_counts(d_motor)), 20, true);
+            rackPositions[1] = LEFT;
+            break;
+        case CENTER:
+            ev3_motor_rotate(d_motor, (-320-ev3_motor_get_counts(d_motor)), 20, true);
+            rackPositions[1] = CENTER;
+            break;
+        case RIGHT:
+            ev3_motor_rotate(d_motor, (130-ev3_motor_get_counts(d_motor)), 20, true);
+            rackPositions[1] = RIGHT;
+            break;
+        default:
+            ev3_motor_steer(left_motor, d_motor, 100, -99);
+            tslp_tsk(9999999999);
+            exit(127);
+            break;
+    }
 }
+void closeDoor() {
+    ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
+}
+
 void test() {
+    /*(
     drive(10,10,0);
     ev3_motor_rotate(a_motor,-420,20,true);
     drive(10,10,0);
     ev3_motor_rotate(a_motor,-420,20,true);
     drive(10,10,0);
+    */
+   /*
+    while (true) {
+        openDoor(LEFT);
+        tslp_tsk(PURPLE);
+        closeDoor();
+        openDoor(CENTER);
+        tslp_tsk(PURPLE);
+        closeDoor();
+        openDoor(RIGHT); 
+        tslp_tsk(PURPLE);
+        closeDoor();
+    }
+    */
 }
 
 void button_clicked_handler(intptr_t button) {
