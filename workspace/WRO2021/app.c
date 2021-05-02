@@ -212,12 +212,15 @@ void display_values() {
 }
 
 void motorSteer(int power, int curve) {
+    char msg[100];
+    sprintf(msg, "R: %d   ", curve);
+    ev3_lcd_draw_string(msg, 10*2, 15*0);
     if(curve == 0){
         ev3_motor_set_power(left_motor,-power);
         ev3_motor_set_power(right_motor,power);
     }
     else if(curve < 0){
-        ev3_motor_set_power(left_motor,-power + curve * power / 50);
+        ev3_motor_set_power(left_motor,-power - curve * power / 50);
         ev3_motor_set_power(right_motor,power);
     }
     else{
@@ -246,8 +249,8 @@ void drivePID(int distance, int power) {
     while (wheelDistance < distance) {
         wheelDistance = (ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
         float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-        integral = error + integral * 0.5;
-        float curve = 0.04 * error + 0.5 * integral + 0.25 * (error - lasterror);
+        integral = error + integral * 0;
+        float curve = 0.4 * error + 0 * integral + 0 * (error - lasterror);
         motorSteer(power,curve);
         tslp_tsk(1);
     }
