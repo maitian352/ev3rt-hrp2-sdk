@@ -53,6 +53,11 @@ int mapPositions[3][4] = {
 };
 
 // do has discord?
+// do has discord?
+// do has discord?
+// do has discord?
+// do has discord?
+// do has discord?
 
 void main_task(intptr_t unused) {
     init();
