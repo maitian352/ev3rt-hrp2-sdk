@@ -248,7 +248,7 @@ void drivePID(int distance, int power) {
         wheelDistance = (ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
         float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
         integral = error + integral * 0;
-        float curve = 0.4 * error + 0 * integral + 0 * (error - lasterror);
+        float curve = 0.3 * error + 0 * integral + 0 * (error - lasterror);
         motorSteer(power,curve);
         tslp_tsk(1);
     }
