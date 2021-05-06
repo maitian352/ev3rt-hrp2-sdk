@@ -244,7 +244,7 @@ void drive(int distance, int power, int curve) {
     ev3_motor_steer(left_motor, right_motor, 0, 0);
     return;
 }
-void drivePID(int distance, int power) {
+void drivePID(int distance, int power, int turn) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     float wheelDistance = ev3_motor_get_counts(left_motor) / 2 - ev3_motor_get_counts(right_motor) / 2;
@@ -256,6 +256,20 @@ void drivePID(int distance, int power) {
         float curve = 0.3 * error + 0 * integral + 0 * (error - lasterror);
         motorSteer(power,curve);
         tslp_tsk(1);
+    }
+    if (turn != CENTER) {
+        switch (turn)
+        {
+        case LEFT:
+            // turn
+            break;
+        case RIGHT:
+            // turn more
+            break;
+        default:
+            exit(127);
+            break;
+        }
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);
     return;
