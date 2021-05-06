@@ -52,12 +52,7 @@ int mapPositions[3][4] = {
     },
 };
 
-// do has discord?
-// do has discord?
-// do has discord?
-// do has discord?
-// do has discord?
-// do has discord?
+// do has cisdord?
 
 void main_task(intptr_t unused) {
     init();
@@ -252,10 +247,9 @@ void drivePID(int distance, int power, int turn) {
     while (wheelDistance < distance) {
         wheelDistance = (ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
         float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-        integral = error + integral * 0;
-        float curve = 0.3 * error + 0 * integral + 0 * (error - lasterror);
+        integral = error + integral * 0.5;
+        float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
         motorSteer(power,curve);
-        tslp_tsk(1);
     }
     if (turn != CENTER) {
         switch (turn)
@@ -355,7 +349,7 @@ void test() {
         closeDoor();
     }
     */
-   drivePID(100,20);
+   drivePID(100000,40);
 }
 
 void button_clicked_handler(intptr_t button) {
