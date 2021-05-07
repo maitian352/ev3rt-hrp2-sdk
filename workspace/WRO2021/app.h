@@ -15,7 +15,7 @@
 void init();
 void readcar(int sansar);
 void display_values();
-void motor_steer(int power, int curve);
+void motorSteer(int power, int curve);
 void drive(int distance, int power, int curve);
 void drivePID(int distance, int power, int turn);
 void openDoor(int car);

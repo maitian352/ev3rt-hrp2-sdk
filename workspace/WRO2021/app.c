@@ -242,10 +242,10 @@ void drive(int distance, int power, int curve) {
 void drivePID(int distance, int power, int turn) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
-    float wheelDistance = ev3_motor_get_counts(left_motor) / 2 - ev3_motor_get_counts(right_motor) / 2;
+    float wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
     float lasterror = 0, integral = 0;
     while (wheelDistance < distance) {
-        wheelDistance = (ev3_motor_get_counts(left_motor) / 2 - ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
+        wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
         float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
         integral = error + integral * 0.5;
         float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
@@ -269,20 +269,23 @@ void drivePID(int distance, int power, int turn) {
             float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
             motorSteer(10,curve);
         }
+        ev3_motor_steer(left_motor, right_motor, 0, 0);
+        waitforButton();
+        drive(6, 5, 0);
+        tslp_tsk(5);
+        waitforButton();
         switch (turn)
         {
             case LEFT:
-                drive(6, 20, 0);
-                tslp_tsk(5);
-                motorSteer(10, -100);
-                tslp_tsk(500);
+                motorSteer(15, -100);
+                tslp_tsk(1000);
+                motorSteer(5, -100);
+                while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
                 ev3_motor_steer(left_motor, right_motor, 0, 0);
                 break;
             case RIGHT:
-                drive(6, 20, 0);
-                tslp_tsk(5);
-                motorSteer(10, 100);
-                tslp_tsk(500);
+                motorSteer(15, 100);
+                tslp_tsk(1000);
                 ev3_motor_steer(left_motor, right_motor, 0, 0);
                 break;
             default:
