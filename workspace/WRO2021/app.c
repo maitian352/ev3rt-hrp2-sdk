@@ -288,6 +288,8 @@ void drivePID(int distance, int power, int turn, int turn_sensor) {
             case RIGHT:
                 motorSteer(15, 100);
                 tslp_tsk(1000);
+                motorSteer(5, 100);
+                while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
                 ev3_motor_steer(left_motor, right_motor, 0, 0);
                 break;
             default:
