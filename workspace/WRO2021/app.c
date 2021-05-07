@@ -251,44 +251,45 @@ void drivePID(int distance, int power, int turn) {
         float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
         motorSteer(power,curve);
     }
+    waitforButton();
     if (turn != CENTER) {
+        int sansar;
+        if (turn == LEFT) {
+            sansar = color_sensor2;
+        } else if (turn == RIGHT) {
+            sansar = color_sensor3;
+        } else {
+            exit(127);
+        }
+        while (ev3_color_sensor_get_reflect(sansar) > 20) {
+            wheelDistance = (ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
+            float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+            integral = error + integral * 0.5;
+            float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
+            motorSteer(power,curve);
+        }
         switch (turn)
         {
-        case LEFT:
-            // turn
-            break;
-        case RIGHT:
-            // turn more
-            break;
-        default:
-            exit(127);
-            break;
+            case LEFT:
+                drive(6, 20, 0);
+                tslp_tsk(5);
+                motorSteer(10, -100);
+                tslp_tsk(500);
+                ev3_motor_steer(left_motor, right_motor, 0, 0);
+                break;
+            case RIGHT:
+                drive(6, 20, 0);
+                tslp_tsk(5);
+                motorSteer(10, 100);
+                tslp_tsk(500);
+                ev3_motor_steer(left_motor, right_motor, 0, 0);
+                break;
+            default:
+                exit(127);
+                break;
         }
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);
-    return;
-}
-void turnPID(int angle, int power, int turn) {
-    ev3_motor_reset_counts(left_motor);
-    ev3_motor_reset_counts(right_motor);
-    float wheelDistance = -ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2;
-    float lasterror = 0, integral = 0;
-    while (wheelDistance < angle - 5) {
-        wheelDistance = (ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
-        float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-        integral = error + integral * 0.5;
-        float curve = 0.04 * error + 0.5 * integral + 0.25 * (error - lasterror);
-        motorSteer(power,turn * 100);
-        tslp_tsk(1);
-    }
-    while (ev3_color_sensor_get_reflect(color_sensor2)) {
-        wheelDistance = (ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
-        float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-        motorSteer(power,turn * 25);
-        tslp_tsk(1);
-    }
-    ev3_motor_steer(left_motor, right_motor, 0, 0);
-    return;
 }
 
 void openDoor(int car) {
@@ -349,7 +350,10 @@ void test() {
         closeDoor();
     }
     */
-   drivePID(100000,40);
+   /*
+   drivePID(100000,40, CENTER);
+   */
+    drivePID(20, 10, LEFT);
 }
 
 void button_clicked_handler(intptr_t button) {
@@ -362,4 +366,7 @@ void button_clicked_handler(intptr_t button) {
         exit(0);
         break;
     }
+}
+void waitforButton() {
+    while (!ev3_button_is_pressed(ENTER_BUTTON)) {}
 }

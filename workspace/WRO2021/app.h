@@ -17,11 +17,12 @@ void readcar(int sansar);
 void display_values();
 void motor_steer(int power, int curve);
 void drive(int distance, int power, int curve);
-void drivePID(int distance, int power);
+void drivePID(int distance, int power, int turn);
 void openDoor(int car);
 void closeDoor();
 void test();
 void button_clicked_handler(intptr_t button);
+void waitforButton();
 
 extern void	main_task(intptr_t exinf);
 #endif /* TOPPERS_MACRO_ONLY */
