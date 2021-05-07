@@ -239,7 +239,7 @@ void drive(int distance, int power, int curve) {
     ev3_motor_steer(left_motor, right_motor, 0, 0);
     return;
 }
-void drivePID(int distance, int power, int turn) {
+void drivePID(int distance, int power, int turn, int turn_sensor) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     float wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
@@ -252,17 +252,22 @@ void drivePID(int distance, int power, int turn) {
         motorSteer(power,curve);
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);
-    waitforButton();
     if (turn != CENTER) {
-        int sansar;
-        if (turn == LEFT) {
-            sansar = color_sensor2;
-        } else if (turn == RIGHT) {
-            sansar = color_sensor3;
+        int sansar1;
+        int sansar2;
+        if (turn_sensor == LEFT) {
+            sansar1 = color_sensor2;
+            sansar2 = color_sensor2;
+        } else if (turn_sensor == RIGHT) {
+            sansar1 = color_sensor3;
+            sansar2 = color_sensor3;
+        } else if (turn_sensor == CENTER) {
+            sansar1 = color_sensor2;
+            sansar2 = color_sensor3;
         } else {
             exit(127);
         }
-        while (ev3_color_sensor_get_reflect(sansar) > 20) {
+        while (ev3_color_sensor_get_reflect(sansar1) > 20 && ev3_color_sensor_get_reflect(sansar2) > 20) {
             wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
             float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
             integral = error + integral * 0.5;
@@ -270,15 +275,14 @@ void drivePID(int distance, int power, int turn) {
             motorSteer(10,curve);
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
-        waitforButton();
         drive(6, 5, 0);
         tslp_tsk(5);
         waitforButton();
         switch (turn)
         {
             case LEFT:
-                motorSteer(15, -100);
-                tslp_tsk(1000);
+                motorSteer(10, -100);
+                tslp_tsk(500);
                 motorSteer(5, -100);
                 while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
                 ev3_motor_steer(left_motor, right_motor, 0, 0);
@@ -356,7 +360,7 @@ void test() {
    /*
    drivePID(100000,40, CENTER);
    */
-    drivePID(20, 50, LEFT);
+    drivePID(40, 40, LEFT, CENTER);
 }
 
 void button_clicked_handler(intptr_t button) {
