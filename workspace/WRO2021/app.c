@@ -245,12 +245,13 @@ void drivePID(int distance, int power, int turn) {
     float wheelDistance = ev3_motor_get_counts(left_motor) / 2 - ev3_motor_get_counts(right_motor) / 2;
     float lasterror = 0, integral = 0;
     while (wheelDistance < distance) {
-        wheelDistance = (ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
+        wheelDistance = (ev3_motor_get_counts(left_motor) / 2 - ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
         float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
         integral = error + integral * 0.5;
         float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
         motorSteer(power,curve);
     }
+    ev3_motor_steer(left_motor, right_motor, 0, 0);
     waitforButton();
     if (turn != CENTER) {
         int sansar;
@@ -262,11 +263,11 @@ void drivePID(int distance, int power, int turn) {
             exit(127);
         }
         while (ev3_color_sensor_get_reflect(sansar) > 20) {
-            wheelDistance = (ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.1415926535 * 8.1) / 360);
+            wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
             float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
             integral = error + integral * 0.5;
             float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
-            motorSteer(power,curve);
+            motorSteer(10,curve);
         }
         switch (turn)
         {
@@ -289,7 +290,6 @@ void drivePID(int distance, int power, int turn) {
                 break;
         }
     }
-    ev3_motor_steer(left_motor, right_motor, 0, 0);
 }
 
 void openDoor(int car) {
@@ -353,7 +353,7 @@ void test() {
    /*
    drivePID(100000,40, CENTER);
    */
-    drivePID(20, 10, LEFT);
+    drivePID(20, 50, LEFT);
 }
 
 void button_clicked_handler(intptr_t button) {
@@ -368,5 +368,7 @@ void button_clicked_handler(intptr_t button) {
     }
 }
 void waitforButton() {
+    ev3_led_set_color(LED_OFF);
     while (!ev3_button_is_pressed(ENTER_BUTTON)) {}
+    ev3_led_set_color(GREEN);
 }
