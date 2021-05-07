@@ -52,8 +52,6 @@ int mapPositions[3][4] = {
     },
 };
 
-// do has cisdord?
-
 void main_task(intptr_t unused) {
     init();
     ///*
