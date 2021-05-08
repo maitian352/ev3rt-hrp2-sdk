@@ -326,9 +326,30 @@ void closeDoor() {
 }
 
 void detectCars(){
-    for(int i = 0;i < 6;i++){
+    int red = 2;
+    int green = 2;
+    int blue = 2;
+    for(int i = 0;i < 5;i++){
         drive(11,20,0);
-        roadcarpositions[i] = read_car(2);
+        roadcarPositions[i] = read_car(2);
+        if(roadcarPositions[i] === RED){
+            red --;
+        }
+        if(roadcarPositions[i] === GREEN){
+            green --;
+        }
+        if(roadcarPositions[i] === BLUE){
+            blue --;
+        }
+    }
+    if(red == 1){
+        roadcarPositions[5] = RED;
+    }
+    if(green == 1){
+        roadcarPositions[5] = GREEN;
+    }
+    if(blue == 1){
+        roadcarPositions[5] = BLUE;
     }
 }
 
