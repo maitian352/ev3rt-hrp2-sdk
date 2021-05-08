@@ -269,7 +269,7 @@ void drivePID(int distance, int power, int turn, int turn_sensor) {
             wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
             float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
             integral = error + integral * 0.5;
-            float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
+            float curve = 0.05 * error + 0.002 * integral + 0.08 * (error - lasterror);
             motorSteer(10,curve);
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
@@ -325,6 +325,13 @@ void closeDoor() {
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
 }
 
+void detectCars(){
+    for(int i = 0;i < 6;i++){
+        drive(11,20,0);
+        roadcarpositions[i] = read_car(2);
+    }
+}
+
 void test() {
     /*
     drive(11,10,0);
@@ -357,10 +364,10 @@ void test() {
         closeDoor();
     }
     */
-   /*
-   drivePID(100000,40, CENTER);
-   */
-    drivePID(40, 40, LEFT, CENTER);
+   ///*
+   drivePID(100000,40, CENTER,CENTER);
+   //*/
+    //drivePID(40, 40, LEFT, CENTER);
 }
 
 void button_clicked_handler(intptr_t button) {
