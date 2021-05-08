@@ -333,13 +333,13 @@ void detectCars(){
         drive(11,20,0);
         roadcarPositions[i] = read_car(2);
         if(roadcarPositions[i] === RED){
-            red --;
+            red--;
         }
         if(roadcarPositions[i] === GREEN){
-            green --;
+            green--;
         }
         if(roadcarPositions[i] === BLUE){
-            blue --;
+            blue--;
         }
     }
     if(red == 1){
