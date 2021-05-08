@@ -11,6 +11,7 @@
 #define RIGHT 2
 
 #define PURPLE 1000
+#define F 7
 
 void init();
 void readcar(int sansar);

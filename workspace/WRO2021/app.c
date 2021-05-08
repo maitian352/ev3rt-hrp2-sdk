@@ -269,7 +269,7 @@ void drivePID(int distance, int power, int turn, int turn_sensor) {
             wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
             float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
             integral = error + integral * 0.5;
-            float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
+            float curve = 0.05 * error + 0.002 * integral + 0.08 * (error - lasterror);
             motorSteer(10,curve);
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
@@ -325,13 +325,57 @@ void closeDoor() {
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
 }
 
+void detectCars(){
+    int red = 2;
+    int green = 2;
+    int blue = 2;
+    for(int i = 0;i < 5;i++){
+        drive(11,20,0);
+        roadcarPositions[i] = read_car(2);
+        if(roadcarPositions[i] === RED){
+            red--;
+        }
+        if(roadcarPositions[i] === GREEN){
+            green--;
+        }
+        if(roadcarPositions[i] === BLUE){
+            blue--;
+        }
+    }
+    if(red == 1){
+        roadcarPositions[5] = RED;
+    }
+    if(green == 1){
+        roadcarPositions[5] = GREEN;
+    }
+    if(blue == 1){
+        roadcarPositions[5] = BLUE;
+    }
+}
+
 void test() {
     ///*
     drivePID(100000,40, CENTER, CENTER);
     //*/
     /*
-    drivePID(40, 40, LEFT, CENTER);
+    drive(11,10,0);
+    ev3_motor_rotate(a_motor,-440,20,true);
+    //ev3_motor_rotate(a_motor,-420,20,true);
+    drive(11,10,0);
+    tslp_tsk(1000);
+    ev3_motor_rotate(a_motor,-440,20,true);
+    drive(11,10,0);
+    tslp_tsk(1000);
+    ev3_motor_rotate(a_motor,810,20,true);
     */
+    /*(
+    drive(10,10,0);
+    ev3_motor_rotate(a_motor,-420,20,true);
+    drive(10,10,0);
+    ev3_motor_rotate(a_motor,-420,20,true);
+    drive(10,10,0);
+    */
+    //drivePID(40, 40, LEFT, CENTER);
 }
 
 void button_clicked_handler(intptr_t button) {
