@@ -112,7 +112,7 @@ void init() {
     ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
 }
 
-void read_car(int sansar) {
+int read_car(int sansar) {
     int yeet;
     switch (sansar)
     {
@@ -248,6 +248,7 @@ void drivePID(int distance, int power, int turn, int turn_sensor) {
         integral = error + integral * 0.5;
         float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
         motorSteer(power,curve);
+        tslp_tsk(20);
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);
     if (turn != CENTER) {
@@ -274,7 +275,7 @@ void drivePID(int distance, int power, int turn, int turn_sensor) {
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
         drive(6, 5, 0);
-        tslp_tsk(5);
+        tslp_tsk(20);
         waitforButton();
         switch (turn)
         {
@@ -332,13 +333,13 @@ void detectCars(){
     for(int i = 0;i < 5;i++){
         drive(11,20,0);
         roadcarPositions[i] = read_car(2);
-        if(roadcarPositions[i] === RED){
+        if(roadcarPositions[i] == RED){
             red--;
         }
-        if(roadcarPositions[i] === GREEN){
+        if(roadcarPositions[i] == GREEN){
             green--;
         }
-        if(roadcarPositions[i] === BLUE){
+        if(roadcarPositions[i] == BLUE){
             blue--;
         }
     }
