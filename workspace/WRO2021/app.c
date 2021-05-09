@@ -355,6 +355,9 @@ void detectCars(){
 }
 
 void test() {
+    ///*
+    drivePID(100000,40, CENTER, CENTER);
+    //*/
     /*
     drive(11,10,0);
     ev3_motor_rotate(a_motor,-440,20,true);
@@ -373,22 +376,6 @@ void test() {
     ev3_motor_rotate(a_motor,-420,20,true);
     drive(10,10,0);
     */
-    /*
-    while (true) {
-        openDoor(LEFT);
-        tslp_tsk(PURPLE);
-        closeDoor();
-        openDoor(CENTER);
-        tslp_tsk(PURPLE);
-        closeDoor();
-        openDoor(RIGHT); 
-        tslp_tsk(PURPLE);
-        closeDoor();
-    }
-    */
-   ///*
-   drivePID(100000,40, CENTER,CENTER);
-   //*/
     //drivePID(40, 40, LEFT, CENTER);
 }
 
