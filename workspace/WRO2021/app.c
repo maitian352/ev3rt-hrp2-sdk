@@ -287,8 +287,8 @@ void PID(int distance, int power, int turn, int turn_sensor) {
         switch (turn)
         {
             case LEFT:
-                ev3_motor_set_power(left_motor,10);
-                ev3_motor_set_power(right_motor,1);
+                ev3_motor_set_power(left_motor,20);
+                ev3_motor_set_power(right_motor,3);
                 //motorSteer(10, -50);
                 tslp_tsk(1500);
                 //motorSteer(5, -50);
