@@ -206,7 +206,6 @@ void display_values() {
     sprintf(msg, "L: %d  ", value);
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
 }
-float d = 0;
 
 void motorSteer(int power, int curve) {
     if(curve == 0){
