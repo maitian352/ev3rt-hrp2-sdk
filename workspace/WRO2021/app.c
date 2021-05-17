@@ -206,7 +206,6 @@ void display_values() {
     sprintf(msg, "L: %d  ", value);
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
 }
-float d = 0;
 
 void motorSteer(int power, int curve) {
     if(curve == 0){
@@ -246,21 +245,16 @@ void PID(int distance, int power, int turn, int turn_sensor) {
     ev3_motor_reset_counts(right_motor);
     float wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
     float lasterror = 0, integral = 0;
-    int running = true;
     while (wheelDistance < distance) {
         wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
-        float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-        error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
+        //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+        float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
         integral = error + integral * 0.5;
         //float curve = 0.06 * error + 0.001 * integral + 0.11 * (error - lasterror);
         float curve = 0.1 * error + 0 * integral + 0 * (error - lasterror);
-        //float curve = d * error + 0 * integral + d * (error - lasterror);
         motorSteer(power,curve);
         lasterror = error;
         tslp_tsk(1);
-        //if (ev3_button_is_pressed(ENTER_BUTTON)) {
-            running = false;
-        //}
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);
     //while (ev3_button_is_pressed(ENTER_BUTTON)) {}
