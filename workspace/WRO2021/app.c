@@ -257,7 +257,6 @@ void PID(int distance, int power, int turn, int turn_sensor) {
         tslp_tsk(1);
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);
-    //while (ev3_button_is_pressed(ENTER_BUTTON)) {}
     if (turn != CENTER) {
         int sansar1;
         int sansar2;
