@@ -275,7 +275,8 @@ void PID(int distance, int power, int turn, int turn_sensor) {
         }
         while (ev3_color_sensor_get_reflect(sansar1) > 20 && ev3_color_sensor_get_reflect(sansar2) > 20) {
             wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
-            float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+            //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+            float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
             integral = error + integral * 0.5;
             float curve = 0.1 * error + 0 * integral + 0 * (error - lasterror);
             motorSteer(10,curve);
