@@ -283,7 +283,7 @@ void PID(int distance, int power, int turn, int turn_sensor) {
             wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
             float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
             integral = error + integral * 0.5;
-            float curve = 0.05 * error + 0.002 * integral + 0.08 * (error - lasterror);
+            float curve = 0.1 * error + 0 * integral + 0 * (error - lasterror);
             motorSteer(10,curve);
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
@@ -294,6 +294,7 @@ void PID(int distance, int power, int turn, int turn_sensor) {
         {
             case LEFT:
                 ev3_motor_set_power(left_motor,10);
+                ev3_motor_set_power(right_motor,1);
                 //motorSteer(10, -50);
                 tslp_tsk(1500);
                 //motorSteer(5, -50);
