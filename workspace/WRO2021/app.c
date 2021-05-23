@@ -21,6 +21,12 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
 // define variables
 rgb_raw_t rgb1;
 rgb_raw_t rgb4;
+/**
+ * \brief Stores locations for doors
+ * \param bay The bay number (LEFT, CENTER, RIGHT) [0-2]
+ * \param location End location for bay (LEFT, CENTER, RIGHT) [0-2]
+ * \param motor Rack or door motor [0-1]
+**/
 int doorLocations[3][3][2] = {
     {
         {0, 340},
@@ -38,15 +44,25 @@ int doorLocations[3][3][2] = {
         {0, 120}
     }
 };
-int rackPositions[2] = {
-    CENTER, CENTER
-};
+/**
+ * \brief Stores the current item in the bays (RED, GREEN, BLUE, BATTERY, BATTERYx2)
+ * \param bay Bay number (LEFT, CENTER, RIGHT) [0-2]
+**/
 int bayPositions[3] = {
-    NONE, NONE, NONE, NONE
+    NONE, NONE, NONE
 };
+/**
+ * \brief stores the values of the cars on the road (RED, GREEN, BLUE)
+ * \param index Car index [0-5]
+**/
 int roadcarPositions[6] = {
     NONE, NONE, NONE, NONE, NONE, NONE
 };
+/**
+ * \brief Stores the current locations of the cars in the parking garage
+ * \param row The row of parking spots [0-2]
+ * \param number The number of the parking spot from entrance [0-3]
+**/
 int mapcarPositions[3][4] = {
     {
         NONE,NONE,NONE,NONE
@@ -58,6 +74,11 @@ int mapcarPositions[3][4] = {
         NONE,NONE,NONE,NONE
     }
 };
+/**
+ * \brief Stores the color of the parking spots in the parking garage
+ * \param row The row of the parking spots [0-2]
+ * \param number The number of the parking spot from entrance [0-3]
+**/
 int mapPositions[3][4] = {
     {
         BLUE,BLUE,RED,GREEN
@@ -77,6 +98,9 @@ void main_task(intptr_t unused) {
     //*/
 }
 
+/**
+ * \brief Initializes the robot
+**/
 void init() {
     // Register button handlers
     ev3_button_set_on_clicked(BACK_BUTTON, button_clicked_handler, BACK_BUTTON);
@@ -126,6 +150,10 @@ void init() {
     ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
 }
 
+/**
+ * \brief Returns the color (NONE, RED, GREEN, BLUE, WALL) of the selected sensor (1 or 4)
+ * \param Sensor [color_sensor1, color_sensor4]
+**/
 int readcar(int sansar) {
     int yeet;
     switch (sansar)
@@ -170,6 +198,9 @@ int readcar(int sansar) {
     }
     return yeet;
 }
+/**
+ * \brief Detects and writes down values of all 6 cars on the road
+**/
 void detectRoadCars(){
     int red = 2;
     int green = 2;
@@ -198,20 +229,41 @@ void detectRoadCars(){
     }
 }
 
-void deliver(int car, int location) {
+/**
+ * \brief Delivers and picks up cars and batteries at the current location
+ * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
+ * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT]
+ * \param location The location where the selected bay is to be delivered [LEFT, CENTER, RIGHT]
+ * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
+**/
+void deliver(int parkingspot, int car, int location) {
     // check if something is already there and needs to be picked up
     // if something needs to be placed there then place it there
     // pick up whatever
 }
+/**
+ * \brief Opens the door and bay of selected bay
+ * \param bay The bay number that needs to be opened [LEFT, CENTER, RIGHT]
+ * \param location The place the bay needs to be opened in [LEFT, CENTER, RIGHT]
+ * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
+**/
 void openDoor(int car, int location) {
     ev3_motor_rotate(a_motor, (doorLocations[car][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
     ev3_motor_rotate(d_motor, (doorLocations[car][location][1]-ev3_motor_get_counts(d_motor)), 20, true);
 }
+/**
+ * \brief Resets the bays and doors to neutral position
+**/
 void closeDoor() {
     ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
 }
 
+/**
+ * \brief Starts motors at selected power and curve
+ * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
+ * \param curve Curve ratio of motors as a percent, where negative means left, and 0 means straight [-100-100]
+**/
 void motorSteer(int power, int curve) {
     if(curve == 0){
         ev3_motor_set_power(right_motor,power);
@@ -226,6 +278,12 @@ void motorSteer(int power, int curve) {
         ev3_motor_set_power(left_motor,-power);
     }
 }
+/**
+ * \brief Drives robot at selected power and curve for a distance
+ * \param distance The absolute distance in centimeters calculated as average between two motors
+ * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
+ * \param curve Curve ratio of motors as a percent, where negative means left, and 0 means straight [-100-100]
+**/
 void drive(int distance, int power, int curve) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
@@ -237,6 +295,15 @@ void drive(int distance, int power, int curve) {
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);
 }
+/**
+ * \brief Drives robot following a line at a selected power for a distance, turning at the end if needed
+ * \param distance The absolute distance in centimeters calculated as average between two motors
+ * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
+ * \param turn Turn selection where CENTER means no turn [LEFT, CENTER, RIGHT]
+ * \param turn_sensor Sensors used to detect line where CENTER means both sensors and NONE is no line detection [NONE, LEFT, CENTER, RIGHT]
+ * \param readCar The parking spot that the robot will detect where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
+ * \exception \b turn and \b readCar do not apply when \b turn_sensor is NONE
+**/
 void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
@@ -254,7 +321,7 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
         tslp_tsk(1);
     }
     ev3_motor_steer(left_motor, right_motor, 0, 0);
-    if (turn != CENTER) {
+    if (turn_sensor != NONE) {
         int sansar1;
         int sansar2;
         if (turn_sensor == LEFT) {
@@ -314,6 +381,9 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
     }
 }
 
+/**
+ * \brief Drives out of base and collects batteries
+**/
 void driveOutBase(){
     ev3_motor_rotate(a_motor, 220, 20, true);
     ev3_motor_rotate(d_motor, 340, 20, true);
@@ -337,6 +407,9 @@ void driveOutBase(){
     PID(15,10,RIGHT,CENTER,0);
 }
 
+/**
+ * \brief Displays sensor values of drive motors and color sensors on the EV3 LCD screen
+**/
 void displayvalues() {
     // declare variables
     char msg[100];
@@ -387,6 +460,9 @@ void displayvalues() {
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
 }
 
+/**
+ * \brief Handles buttons
+**/
 void button_clicked_handler(intptr_t button) {
     switch(button) {
     case BACK_BUTTON:
@@ -398,6 +474,9 @@ void button_clicked_handler(intptr_t button) {
         break;
     }
 }
+/**
+ * \brief Pauses a thread until the CENTER button is pressed on the EV3
+**/
 void waitforButton() {
     ev3_led_set_color(LED_OFF);
     while (!ev3_button_is_pressed(ENTER_BUTTON)) {}
@@ -405,6 +484,9 @@ void waitforButton() {
     while (ev3_button_is_pressed(ENTER_BUTTON)) {}
 }
 
+/**
+ * \brief Test program
+**/
 void test() {
     //driveOutBase();
     PID(72,40,RIGHT,CENTER,3);

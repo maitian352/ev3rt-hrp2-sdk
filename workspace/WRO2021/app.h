@@ -5,10 +5,12 @@
 #define RED 1
 #define GREEN 2
 #define BLUE 3
-#define WALL 4
-#define LEFT 0
-#define CENTER 1
-#define RIGHT 2
+#define WALL 6
+#define BATTERY 4
+#define BATTERYx2 5
+#define LEFT 1
+#define CENTER 2
+#define RIGHT 3
 
 #define PURPLE 1000
 #define F 7
@@ -16,7 +18,7 @@
 void init();
 int readcar(int sansar);
 void detectRoadCars();
-void deliver(int car, int location);
+void deliver(int parkingspot, int car, int location);
 void openDoor(int car, int location);
 void closeDoor();
 void motorSteer(int power, int curve);
