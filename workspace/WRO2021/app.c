@@ -306,29 +306,12 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
     }
 }
 
-void openDoor(int car) {
-    switch (car)
-    {
-        case LEFT:
-            ev3_motor_rotate(d_motor, (-100-ev3_motor_get_counts(d_motor)), 20, true);
-            rackPositions[1] = LEFT;
-            break;
-        case CENTER:
-            ev3_motor_rotate(d_motor, (-320-ev3_motor_get_counts(d_motor)), 20, true);
-            rackPositions[1] = CENTER;
-            break;
-        case RIGHT:
-            ev3_motor_rotate(d_motor, (130-ev3_motor_get_counts(d_motor)), 20, true);
-            rackPositions[1] = RIGHT;
-            break;
-        default:
-            ev3_motor_steer(left_motor, d_motor, 100, -99);
-            tslp_tsk(1000);
-            exit(127);
-            break;
-    }
+void openDoor(int car, int location) {
+    ev3_motor_rotate(a_motor, (doorLocations[car][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
+    ev3_motor_rotate(d_motor, (doorLocations[car][location][1]-ev3_motor_get_counts(d_motor)), 20, true);
 }
 void closeDoor() {
+    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
 }
 
