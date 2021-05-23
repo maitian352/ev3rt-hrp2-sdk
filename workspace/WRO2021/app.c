@@ -21,6 +21,25 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
 // define variables
 rgb_raw_t rgb1;
 rgb_raw_t rgb4;
+int doorLocations[3][3][2] = {
+    {
+        {0, 340},
+        {450, 340},
+        {999, 999}
+    },
+    {
+        {-420, -90},
+        {0, 340},
+        {450, 90}
+    },
+    {
+        {
+            {999, 999},
+            {-420, 350},
+            {0, 120}
+        }
+    }
+}
 int rackPositions[2] = {
     CENTER, CENTER
 };
@@ -79,10 +98,10 @@ void init() {
     // Set up sensors
     ev3_color_sensor_get_reflect(color_sensor2);
     ev3_color_sensor_get_reflect(color_sensor3);
-    //bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
-    //assert(val1);
-    // val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-    //assert(val4);
+    bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
+    assert(val1);
+    val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+    assert(val4);
 
     // Configure brick
     ev3_lcd_set_font(EV3_FONT_MEDIUM);
@@ -94,7 +113,7 @@ void init() {
     ev3_motor_set_power(a_motor, 0);
     ev3_motor_set_power(d_motor, 0);
     tslp_tsk(500);
-    ev3_motor_rotate(a_motor, -480, 20, true);
+    ev3_motor_rotate(a_motor, -480, 20, false);
     ev3_motor_rotate(d_motor, 190, 20, true);
     ev3_motor_reset_counts(a_motor);
     ev3_motor_reset_counts(d_motor);
