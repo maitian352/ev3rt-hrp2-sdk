@@ -15,15 +15,17 @@
 
 void init();
 void readcar(int sansar);
-void display_values();
+void detectRoadCars();
+void deliver(int car, int location);
+void openDoor(int car, int location);
+void closeDoor();
 void motorSteer(int power, int curve);
 void drive(int distance, int power, int curve);
 void PID(int distance, int power, int turn, int turn_sensor, int readCar);
-void openDoor(int car, int location);
-void closeDoor();
-void test();
-void button_clicked_handler(intptr_t button);
+void displayvalues();
 void waitforButton();
+void button_clicked_handler(intptr_t button);
+void test();
 
 extern void	main_task(intptr_t exinf);
 #endif /* TOPPERS_MACRO_ONLY */

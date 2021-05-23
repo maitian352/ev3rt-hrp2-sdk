@@ -128,7 +128,7 @@ void init() {
     ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
 }
 
-int read_car(int sansar) {
+int readcar(int sansar) {
     int yeet;
     switch (sansar)
     {
@@ -172,55 +172,44 @@ int read_car(int sansar) {
     }
     return yeet;
 }
+void detectRoadCars(){
+    int red = 2;
+    int green = 2;
+    int blue = 2;
+    for(int i = 0;i < 5;i++){
+        drive(11,20,0);
+        roadcarPositions[i] = readcar(2);
+        if(roadcarPositions[i] == RED){
+            red--;
+        }
+        if(roadcarPositions[i] == GREEN){
+            green--;
+        }
+        if(roadcarPositions[i] == BLUE){
+            blue--;
+        }
+    }
+    if(red == 1){
+        roadcarPositions[5] = RED;
+    }
+    if(green == 1){
+        roadcarPositions[5] = GREEN;
+    }
+    if(blue == 1){
+        roadcarPositions[5] = BLUE;
+    }
+}
 
-void display_values() {
-    // declare variables
-    char msg[100];
-    int value;
+void deliver(int car, int location) {
 
-    // wait for values to be refreshed
-    tslp_tsk(3);
-
-    // read motor counts
-    value = ev3_motor_get_counts(left_motor);
-    sprintf(msg, "L: %d   ", value);
-    ev3_lcd_draw_string(msg, 10*0, 15*0);
-    value = ev3_motor_get_counts(right_motor);
-    sprintf(msg, "R: %d   ", value);
-    ev3_lcd_draw_string(msg, 10*8, 15*0);
-
-    // read sensor rgb1
-    bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
-    assert(val1);
-    sprintf(msg, "RGB1:");
-    sprintf(msg, "R: %d", rgb1.r);
-    ev3_lcd_draw_string(msg, 10*0, 15*2.5);
-    sprintf(msg, "G: %d", rgb1.g);
-    ev3_lcd_draw_string(msg, 10*6, 15*2.5);
-    sprintf(msg, "B: %d", rgb1.b);
-    ev3_lcd_draw_string(msg, 10*12, 15*2.5);
-
-    // read sensor rgb4
-    bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-    assert(val4);
-    sprintf(msg, "RGB4:");
-    ev3_lcd_draw_string(msg, 10*0, 15*4);
-    sprintf(msg, "R: %d  ", rgb4.r);
-    ev3_lcd_draw_string(msg, 10*0, 15*5);
-    sprintf(msg, "G: %d  ", rgb4.g);
-    ev3_lcd_draw_string(msg, 10*6, 15*5);
-    sprintf(msg, "B: %d  ", rgb4.b);
-    ev3_lcd_draw_string(msg, 10*12, 15*5);
-
-    // read linefollow sensors
-    sprintf(msg, "Light2 & Light3:");
-    ev3_lcd_draw_string(msg, 10*0, 15*6.5);
-    value = ev3_color_sensor_get_reflect(color_sensor2);
-    sprintf(msg, "L: %d  ", value);
-    ev3_lcd_draw_string(msg, 10*0, 15*7.5);
-    value = ev3_color_sensor_get_reflect(color_sensor3);
-    sprintf(msg, "L: %d  ", value);
-    ev3_lcd_draw_string(msg, 10*7, 15*7.5);
+}
+void openDoor(int car, int location) {
+    ev3_motor_rotate(a_motor, (doorLocations[car][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
+    ev3_motor_rotate(d_motor, (doorLocations[car][location][1]-ev3_motor_get_counts(d_motor)), 20, true);
+}
+void closeDoor() {
+    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
+    ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
 }
 
 void motorSteer(int power, int curve) {
@@ -290,7 +279,7 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
         if(readCar != 0){
-            mapcarPositions[(int)floor(readCar / 4)][readCar % 4] = read_car(4);
+            mapcarPositions[(int)floor(readCar / 4)][readCar % 4] = readcar(4);
         }
         drive(15, 10, 0);
         tslp_tsk(200);
@@ -325,45 +314,7 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
     }
 }
 
-void openDoor(int car, int location) {
-    ev3_motor_rotate(a_motor, (doorLocations[car][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
-    ev3_motor_rotate(d_motor, (doorLocations[car][location][1]-ev3_motor_get_counts(d_motor)), 20, true);
-}
-void closeDoor() {
-    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
-    ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
-}
-
-void detectCars(){
-    int red = 2;
-    int green = 2;
-    int blue = 2;
-    for(int i = 0;i < 5;i++){
-        drive(11,20,0);
-        roadcarPositions[i] = read_car(2);
-        if(roadcarPositions[i] == RED){
-            red--;
-        }
-        if(roadcarPositions[i] == GREEN){
-            green--;
-        }
-        if(roadcarPositions[i] == BLUE){
-            blue--;
-        }
-    }
-    if(red == 1){
-        roadcarPositions[5] = RED;
-    }
-    if(green == 1){
-        roadcarPositions[5] = GREEN;
-    }
-    if(blue == 1){
-        roadcarPositions[5] = BLUE;
-    }
-}
-
 void driveOutBase(){
-    /*
     ev3_motor_rotate(a_motor, 220, 20, true);
     ev3_motor_rotate(d_motor, 340, 20, true);
     drive(26,10,5);
@@ -383,7 +334,79 @@ void driveOutBase(){
     while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
     motorSteer(0,0);
-    PID(15,10,RIGHT,CENTER,0);*/
+    PID(15,10,RIGHT,CENTER,0);
+}
+
+void displayvalues() {
+    // declare variables
+    char msg[100];
+    int value;
+
+    // wait for values to be refreshed
+    tslp_tsk(3);
+
+    // read motor counts
+    value = ev3_motor_get_counts(left_motor);
+    sprintf(msg, "L: %d   ", value);
+    ev3_lcd_draw_string(msg, 10*0, 15*0);
+    value = ev3_motor_get_counts(right_motor);
+    sprintf(msg, "R: %d   ", value);
+    ev3_lcd_draw_string(msg, 10*8, 15*0);
+
+    // read sensor rgb1
+    bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
+    assert(val1);
+    sprintf(msg, "RGB1:");
+    sprintf(msg, "R: %d", rgb1.r);
+    ev3_lcd_draw_string(msg, 10*0, 15*2.5);
+    sprintf(msg, "G: %d", rgb1.g);
+    ev3_lcd_draw_string(msg, 10*6, 15*2.5);
+    sprintf(msg, "B: %d", rgb1.b);
+    ev3_lcd_draw_string(msg, 10*12, 15*2.5);
+
+    // read sensor rgb4
+    bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+    assert(val4);
+    sprintf(msg, "RGB4:");
+    ev3_lcd_draw_string(msg, 10*0, 15*4);
+    sprintf(msg, "R: %d  ", rgb4.r);
+    ev3_lcd_draw_string(msg, 10*0, 15*5);
+    sprintf(msg, "G: %d  ", rgb4.g);
+    ev3_lcd_draw_string(msg, 10*6, 15*5);
+    sprintf(msg, "B: %d  ", rgb4.b);
+    ev3_lcd_draw_string(msg, 10*12, 15*5);
+
+    // read linefollow sensors
+    sprintf(msg, "Light2 & Light3:");
+    ev3_lcd_draw_string(msg, 10*0, 15*6.5);
+    value = ev3_color_sensor_get_reflect(color_sensor2);
+    sprintf(msg, "L: %d  ", value);
+    ev3_lcd_draw_string(msg, 10*0, 15*7.5);
+    value = ev3_color_sensor_get_reflect(color_sensor3);
+    sprintf(msg, "L: %d  ", value);
+    ev3_lcd_draw_string(msg, 10*7, 15*7.5);
+}
+
+void button_clicked_handler(intptr_t button) {
+    switch(button) {
+    case BACK_BUTTON:
+            ev3_motor_stop(left_motor, false);
+            ev3_motor_stop(right_motor, false);
+            ev3_motor_stop(a_motor, false);
+            ev3_motor_stop(d_motor, false);
+        exit(0);
+        break;
+    }
+}
+void waitforButton() {
+    ev3_led_set_color(LED_OFF);
+    while (!ev3_button_is_pressed(ENTER_BUTTON)) {}
+    ev3_led_set_color(GREEN);
+    while (ev3_button_is_pressed(ENTER_BUTTON)) {}
+}
+
+void test() {
+    //driveOutBase();
     PID(72,40,RIGHT,CENTER,3);
     PID(14,20,CENTER,CENTER,0);
     if(mapcarPositions[0][3] == NONE){
@@ -411,61 +434,4 @@ void driveOutBase(){
         drive(4,10,0);
         closeDoor();
     }
-}
-
-void test() {
-    ///*
-    //drive(1000,30, 0);
-    //PID(200,35,LEFT,LEFT);
-    //PID(100000,35, CENTER, CENTER);
-    //while(true){
-        //d += 0.01;
-        //char msg[100];
-        //sprintf(msg, "%.3f      ", d);
-        //ev3_lcd_draw_string(msg, 10*0, 15*0);
-        //waitforButton();
-        //PID(200,35,LEFT,LEFT);
-    //}
-    //*/
-    /*
-    drive(11,10,0);
-    ev3_motor_rotate(a_motor,-440,20,true);
-    //ev3_motor_rotate(a_motor,-420,20,true);
-    drive(11,10,0);
-    tslp_tsk(1000);
-    ev3_motor_rotate(a_motor,-440,20,true);
-    drive(11,10,0);
-    tslp_tsk(1000);
-    ev3_motor_rotate(a_motor,810,20,true);
-    */
-    /*(
-    drive(10,10,0);
-    ev3_motor_rotate(a_motor,-420,20,true);
-    drive(10,10,0);
-    ev3_motor_rotate(a_motor,-420,20,true);
-    drive(10,10,0);
-    */
-    //PID(70, 40, RIGHT, CENTER);
-    //while(true){
-    //    display_values();
-    //}
-    driveOutBase();
-}
-
-void button_clicked_handler(intptr_t button) {
-    switch(button) {
-    case BACK_BUTTON:
-            ev3_motor_stop(left_motor, false);
-            ev3_motor_stop(right_motor, false);
-            ev3_motor_stop(a_motor, false);
-            ev3_motor_stop(d_motor, false);
-        exit(0);
-        break;
-    }
-}
-void waitforButton() {
-    ev3_led_set_color(LED_OFF);
-    while (!ev3_button_is_pressed(ENTER_BUTTON)) {}
-    ev3_led_set_color(GREEN);
-    while (ev3_button_is_pressed(ENTER_BUTTON)) {}
 }
