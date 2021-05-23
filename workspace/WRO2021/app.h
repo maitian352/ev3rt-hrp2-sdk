@@ -14,7 +14,7 @@
 #define F 7
 
 void init();
-void readcar(int sansar);
+int readcar(int sansar);
 void detectRoadCars();
 void deliver(int car, int location);
 void openDoor(int car, int location);

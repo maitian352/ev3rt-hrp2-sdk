@@ -33,13 +33,11 @@ int doorLocations[3][3][2] = {
         {450, 90}
     },
     {
-        {
-            {999, 999},
-            {-420, 350},
-            {0, 120}
-        }
+        {999, 999},
+        {-420, 350},
+        {0, 120}
     }
-}
+};
 int rackPositions[2] = {
     CENTER, CENTER
 };
@@ -100,7 +98,7 @@ void init() {
     ev3_color_sensor_get_reflect(color_sensor3);
     bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     assert(val1);
-    val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+    bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
     assert(val4);
 
     // Configure brick
@@ -409,29 +407,47 @@ void test() {
     //driveOutBase();
     PID(72,40,RIGHT,CENTER,3);
     PID(14,20,CENTER,CENTER,0);
+    /*
     if(mapcarPositions[0][3] == NONE){
-        openDoor(RIGHT);
+        openDoor(RIGHT, RIGHT);
         drive(4,10,0);
         closeDoor();
         drive(12,-10,0);
-        openDoor(RIGHT);
+        openDoor(RIGHT, RIGHT);
         drive(4,10,0);
         closeDoor();
     }
-    else{
+    else{*/
         ev3_motor_rotate(a_motor, 460, 20, true);
+        openDoor(LEFT, LEFT);
+        tslp_tsk(5000);
         drive(4,10,0);
+        tslp_tsk(5000);
         closeDoor();
+        ev3_motor_rotate(a_motor, 460, -20, true);
+        tslp_tsk(500);
         drive(12,-10,0);
+        tslp_tsk(500);
         ev3_motor_rotate(a_motor, 460, 20, true);
+        openDoor(LEFT, LEFT);
+        tslp_tsk(500);
         drive(4,10,0);
+        tslp_tsk(500);
         closeDoor();
-        openDoor(RIGHT);
+        ev3_motor_rotate(a_motor, 460, -20, true);
+        tslp_tsk(500);
+        openDoor(RIGHT, RIGHT);
+        tslp_tsk(500);
         drive(4,-10,0);
+        tslp_tsk(500);
         closeDoor();
+        tslp_tsk(500);
         drive(12,-10,0);
-        openDoor(RIGHT);
+        tslp_tsk(500);
+        openDoor(RIGHT, RIGHT);
+        tslp_tsk(500);
         drive(4,10,0);
+        tslp_tsk(500);
         closeDoor();
-    }
+    //}
 }
