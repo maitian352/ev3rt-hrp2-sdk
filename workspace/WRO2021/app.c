@@ -330,7 +330,7 @@ void openDoor(int car, int location) {
     ev3_motor_rotate(d_motor, (doorLocations[car][location][1]-ev3_motor_get_counts(d_motor), 20, true));
 }
 void closeDoor() {
-    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, true);
+    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
 }
 
