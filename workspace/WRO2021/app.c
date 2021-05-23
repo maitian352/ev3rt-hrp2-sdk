@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <string.h>
+#include <math.h>
 
 #define DEBUG
 
@@ -288,8 +289,8 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
             motorSteer(10,curve);
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
-        if(readCar !== 0){
-            mapcarPositions[floor(readCar / 4)][readCar % 4] = read_car(4);
+        if(readCar != 0){
+            mapcarPositions[(int)floor(readCar / 4)][readCar % 4] = read_car(4);
         }
         drive(15, 10, 0);
         tslp_tsk(200);
@@ -362,10 +363,11 @@ void detectCars(){
 }
 
 void driveOutBase(){
+    /*
     ev3_motor_rotate(a_motor, 220, 20, true);
     ev3_motor_rotate(d_motor, 340, 20, true);
     drive(26,10,5);
-    drive(4.75,10,5);
+    drive(5.75,10,5);
     ev3_motor_rotate(d_motor, 460, -20, true);
     drive(4,10,5);
     ev3_motor_rotate(d_motor, 460, 20, true);
@@ -373,7 +375,7 @@ void driveOutBase(){
     ev3_motor_rotate(d_motor, 460, -20, true);
     drive(6.5,10,5);
     ev3_motor_rotate(a_motor, 220, -20, true);
-    ev3_motor_rotate(d_motor, 150, 20, true);
+    ev3_motor_rotate(d_motor, 120, 20, true);
     motorSteer(10,-100);
     tslp_tsk(1000);
     ev3_motor_reset_counts(left_motor);
@@ -381,12 +383,12 @@ void driveOutBase(){
     while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
     motorSteer(0,0);
-    PID(15,10,RIGHT,CENTER,0);
+    PID(15,10,RIGHT,CENTER,0);*/
     PID(72,40,RIGHT,CENTER,3);
     PID(14,20,CENTER,CENTER,0);
-    if(mapcarPositions[0][3] === NONE){
+    if(mapcarPositions[0][3] == NONE){
         openDoor(RIGHT);
-        drive(4,-10,0);
+        drive(4,10,0);
         closeDoor();
         drive(12,-10,0);
         openDoor(RIGHT);
@@ -394,11 +396,18 @@ void driveOutBase(){
         closeDoor();
     }
     else{
-        openDoor(LEFT);
+        ev3_motor_rotate(a_motor, 460, 20, true);
+        drive(4,10,0);
+        closeDoor();
+        drive(12,-10,0);
+        ev3_motor_rotate(a_motor, 460, 20, true);
+        drive(4,10,0);
+        closeDoor();
+        openDoor(RIGHT);
         drive(4,-10,0);
         closeDoor();
         drive(12,-10,0);
-        openDoor(LEFT);
+        openDoor(RIGHT);
         drive(4,10,0);
         closeDoor();
     }
