@@ -199,7 +199,9 @@ void detectRoadCars(){
 }
 
 void deliver(int car, int location) {
-
+    // check if something is already there and needs to be picked up
+    // if something needs to be placed there then place it there
+    // pick up whatever
 }
 void openDoor(int car, int location) {
     ev3_motor_rotate(a_motor, (doorLocations[car][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
