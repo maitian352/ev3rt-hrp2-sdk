@@ -24,6 +24,7 @@ void closeDoor();
 void test();
 void button_clicked_handler(intptr_t button);
 void waitforButton();
+void detectLineOfCars();
 
 extern void	main_task(intptr_t exinf);
 #endif /* TOPPERS_MACRO_ONLY */

@@ -340,7 +340,7 @@ void shiftDoorRight() {
     ev3_motor_rotate(a_motor, 460, 20, true);
 }
 
-void detectCars(){
+void detectLineOfCars(){
     int red = 2;
     int green = 2;
     int blue = 2;
