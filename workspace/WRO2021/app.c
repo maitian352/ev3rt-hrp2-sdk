@@ -306,13 +306,38 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
     }
 }
 
-void openDoor(int car, int location) {
-    ev3_motor_rotate(a_motor, (doorLocations[car][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
-    ev3_motor_rotate(d_motor, (doorLocations[car][location][1]-ev3_motor_get_counts(d_motor)), 20, true);
+void openDoor(int car) {
+    switch (car)
+    {
+        case LEFT:
+            ev3_motor_rotate(d_motor, (-100-ev3_motor_get_counts(d_motor)), 20, true);
+            rackPositions[1] = LEFT;
+            break;
+        case CENTER:
+            ev3_motor_rotate(d_motor, (-320-ev3_motor_get_counts(d_motor)), 20, true);
+            rackPositions[1] = CENTER;
+            break;
+        case RIGHT:
+            ev3_motor_rotate(d_motor, (130-ev3_motor_get_counts(d_motor)), 20, true);
+            rackPositions[1] = RIGHT;
+            break;
+        default:
+            ev3_motor_steer(left_motor, d_motor, 100, -99);
+            tslp_tsk(1000);
+            exit(127);
+            break;
+    }
 }
 void closeDoor() {
     ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
+}
+
+void shiftDoorLeft() {
+    ev3_motor_rotate(a_motor, 460, -20, true);
+}
+void shiftDoorRight() {
+    ev3_motor_rotate(a_motor, 460, 20, true);
 }
 
 void detectCars(){
@@ -367,6 +392,7 @@ void driveOutBase(){
     PID(15,10,RIGHT,CENTER,0);*/
     PID(72,40,RIGHT,CENTER,3);
     PID(14,20,CENTER,CENTER,0);
+    /*
     if(mapcarPositions[0][3] == NONE){
         openDoor(RIGHT);
         drive(4,10,0);
@@ -376,22 +402,39 @@ void driveOutBase(){
         drive(4,10,0);
         closeDoor();
     }
-    else{
+    else{*/
         ev3_motor_rotate(a_motor, 460, 20, true);
+        openDoor(LEFT);
+        tslp_tsk(5000);
         drive(4,10,0);
+        tslp_tsk(5000);
         closeDoor();
+        ev3_motor_rotate(a_motor, 460, -20, true);
+        tslp_tsk(500);
         drive(12,-10,0);
+        tslp_tsk(500);
         ev3_motor_rotate(a_motor, 460, 20, true);
+        openDoor(LEFT);
+        tslp_tsk(500);
         drive(4,10,0);
+        tslp_tsk(500);
         closeDoor();
+        ev3_motor_rotate(a_motor, 460, -20, true);
+        tslp_tsk(500);
         openDoor(RIGHT);
+        tslp_tsk(500);
         drive(4,-10,0);
+        tslp_tsk(500);
         closeDoor();
+        tslp_tsk(500);
         drive(12,-10,0);
+        tslp_tsk(500);
         openDoor(RIGHT);
+        tslp_tsk(500);
         drive(4,10,0);
+        tslp_tsk(500);
         closeDoor();
-    }
+    //}
 }
 
 void test() {
