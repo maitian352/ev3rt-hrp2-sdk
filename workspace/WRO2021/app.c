@@ -272,9 +272,6 @@ void doBays(int parkingspot) {
             else if(bayPositions[0] == BATTERYx2){
                 
             }
-            else if(bayPositions[0] == BATTERYx2){
-                
-            }
             else if(bayPositions[0] == RED){
                 
             }
