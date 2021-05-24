@@ -13,7 +13,7 @@
 #define RIGHT 3
 
 #define PURPLE 1000
-#define F 7
+#define F 100
 
 void init();
 int readcar(int sansar);
