@@ -29,7 +29,7 @@ rgb_raw_t rgb4;
 **/
 int doorLocations[3][3][2] = {
     {
-        {0, 340},
+        {0, -90},
         {450, 340},
         {999, 999}
     },
@@ -40,7 +40,7 @@ int doorLocations[3][3][2] = {
     },
     {
         {999, 999},
-        {-420, 350},
+        {-420, 340},
         {0, 120}
     }
 };
@@ -135,7 +135,7 @@ void init() {
     ev3_motor_set_power(a_motor, 0);
     ev3_motor_set_power(d_motor, 0);
     tslp_tsk(500);
-    ev3_motor_rotate(a_motor, -480, 20, false);
+    ev3_motor_rotate(a_motor, -480, 20, true);
     ev3_motor_rotate(d_motor, 190, 20, true);
     ev3_motor_reset_counts(a_motor);
     ev3_motor_reset_counts(d_motor);
@@ -488,50 +488,62 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
-    //driveOutBase();
-    PID(72,40,RIGHT,CENTER,3);
-    PID(14,20,CENTER,CENTER,0);
-    /*
-    if(mapcarPositions[0][3] == NONE){
-        openDoor(RIGHT, RIGHT);
-        drive(4,10,0);
-        closeDoor();
-        drive(12,-10,0);
-        openDoor(RIGHT, RIGHT);
-        drive(4,10,0);
-        closeDoor();
-    }
-    else{*/
-        ev3_motor_rotate(a_motor, 460, 20, true);
-        openDoor(LEFT, LEFT);
-        tslp_tsk(5000);
-        drive(4,10,0);
-        tslp_tsk(5000);
-        closeDoor();
-        ev3_motor_rotate(a_motor, 460, -20, true);
-        tslp_tsk(500);
-        drive(12,-10,0);
-        tslp_tsk(500);
-        ev3_motor_rotate(a_motor, 460, 20, true);
-        openDoor(LEFT, LEFT);
-        tslp_tsk(500);
-        drive(4,10,0);
-        tslp_tsk(500);
-        closeDoor();
-        ev3_motor_rotate(a_motor, 460, -20, true);
-        tslp_tsk(500);
-        openDoor(RIGHT, RIGHT);
-        tslp_tsk(500);
-        drive(4,-10,0);
-        tslp_tsk(500);
-        closeDoor();
-        tslp_tsk(500);
-        drive(12,-10,0);
-        tslp_tsk(500);
-        openDoor(RIGHT, RIGHT);
-        tslp_tsk(500);
-        drive(4,10,0);
-        tslp_tsk(500);
-        closeDoor();
-    //}
+    // driveOutBase();
+    // PID(72,40,RIGHT,CENTER,3);
+    // PID(14,20,CENTER,CENTER,0);
+    // if(mapcarPositions[0][3] == NONE){
+    //     openDoor(RIGHT, RIGHT);
+    //     drive(4,10,0);
+    //     closeDoor();
+    //     drive(12,-10,0);
+    //     openDoor(RIGHT, RIGHT);
+    //     drive(4,10,0);
+    //     closeDoor();
+    // }
+    // else{
+    //     ev3_motor_rotate(a_motor, 460, 20, true);
+    //     openDoor(LEFT, LEFT);
+    //     tslp_tsk(5000);
+    //     drive(4,10,0);
+    //     tslp_tsk(5000);
+    //     closeDoor();
+    //     ev3_motor_rotate(a_motor, 460, -20, true);
+    //     tslp_tsk(500);
+    //     drive(12,-10,0);
+    //     tslp_tsk(500);
+    //     ev3_motor_rotate(a_motor, 460, 20, true);
+    //     openDoor(LEFT, LEFT);
+    //     tslp_tsk(500);
+    //     drive(4,10,0);
+    //     tslp_tsk(500);
+    //     closeDoor();
+    //     ev3_motor_rotate(a_motor, 460, -20, true);
+    //     tslp_tsk(500);
+    //     openDoor(RIGHT, RIGHT);
+    //     tslp_tsk(500);
+    //     drive(4,-10,0);
+    //     tslp_tsk(500);
+    //     closeDoor();
+    //     tslp_tsk(500);
+    //     drive(12,-10,0);
+    //     tslp_tsk(500);
+    //     openDoor(RIGHT, RIGHT);
+    //     tslp_tsk(500);
+    //     drive(4,10,0);
+    //     tslp_tsk(500);
+    //     closeDoor();
+    // }
+    closeDoor();
+    openDoor(LEFT, LEFT);
+    waitforButton();
+    closeDoor();
+    openDoor(RIGHT, CENTER);
+    waitforButton();
+    closeDoor();
+    openDoor(CENTER, RIGHT);
+    waitforButton();
+    closeDoor();
+    openDoor(CENTER, CENTER);
+    waitforButton();
+    closeDoor();
 }
