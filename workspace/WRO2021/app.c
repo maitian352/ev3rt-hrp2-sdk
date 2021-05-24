@@ -591,19 +591,4 @@ void test() {
     //     tslp_tsk(500);
     //     closeDoor();
     // }
-    openDoor(LEFT, LEFT);
-    waitforButton();
-    openDoor(LEFT, CENTER);
-    waitforButton();
-    openDoor(CENTER, LEFT);
-    waitforButton();
-    openDoor(CENTER, CENTER);
-    waitforButton();
-    openDoor(CENTER, RIGHT);
-    waitforButton();
-    openDoor(RIGHT, CENTER);
-    waitforButton();
-    openDoor(RIGHT, RIGHT);
-    waitforButton();
-    closeDoor();
 }
