@@ -284,7 +284,18 @@ void doBays(int parkingspot) {
             else if(bayPositions[0] == BLUE){
                 
             }
-            deliver(parkingspot, RIGHT, RIGHT, true);
+            else if(bayPositions[0] == REDB){
+                
+            }
+            else if(bayPositions[0] == GREENB){
+                
+            }
+            else if(bayPositions[0] == BLUEB){
+                
+            }
+            else{
+
+            }
         }
         else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === WALL){
             deliver(parkingspot, RIGHT, RIGHT, true);
