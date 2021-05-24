@@ -499,7 +499,7 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
-    doBays(0);
+    // doBays(0);
     // driveOutBase();
     // PID(72,40,RIGHT,CENTER,3);
     // PID(14,20,CENTER,CENTER,0);
