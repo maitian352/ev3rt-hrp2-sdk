@@ -236,10 +236,8 @@ void detectRoadCars(){
  * \param location The location where the selected bay is to be delivered [LEFT, CENTER, RIGHT]
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
 **/
-void deliver(int parkingspot, int car, int location) {
-    // check if something is already there and needs to be picked up
-    // if something needs to be placed there then place it there
-    // pick up whatever
+void deliver(int parkingspot, int car, int location, int battery) {
+    // deliver [Object object]
 }
 /**
  * \brief Opens the door and bay of selected bay
@@ -257,6 +255,19 @@ void openDoor(int car, int location) {
 void closeDoor() {
     ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
+}
+
+/**
+ * \brief Does everything related to moving bays
+ * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
+ * \exception Function name is bad
+**/
+void doBays(int parkingspot) {
+    if(parkingspot == 0){
+        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === NONE){
+            deliver()
+        }
+    }
 }
 
 /**
@@ -488,6 +499,7 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
+    doBays(0);
     //driveOutBase();
     PID(72,40,RIGHT,CENTER,3);
     PID(14,20,CENTER,CENTER,0);
