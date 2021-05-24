@@ -234,10 +234,11 @@ void detectRoadCars(){
  * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
  * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT]
  * \param location The location where the selected bay is to be delivered [LEFT, CENTER, RIGHT]
+ * \param battery Deliver batteries or not [true, false]
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
 **/
 void deliver(int parkingspot, int car, int location, int battery) {
-    // deliver [Object object]
+    // deliver [object Object] and collect [array Array]
 }
 /**
  * \brief Opens the door and bay of selected bay
@@ -263,9 +264,46 @@ void closeDoor() {
  * \exception Function name is bad
 **/
 void doBays(int parkingspot) {
-    if(parkingspot == 0){
+    if(parkingspot == 3){
         if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === NONE){
-            deliver()
+            if(bayPositions[0] == BATTERY){
+                
+            }
+            else if(bayPositions[0] == BATTERYx2){
+                
+            }
+            else if(bayPositions[0] == BATTERYx2){
+                
+            }
+            else if(bayPositions[0] == RED){
+                
+            }
+            else if(bayPositions[0] == GREEN){
+                
+            }
+            else if(bayPositions[0] == BLUE){
+                
+            }
+            deliver(parkingspot, RIGHT, RIGHT, true);
+        }
+        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === WALL){
+            deliver(parkingspot, RIGHT, RIGHT, true);
+        }
+        else{
+            deliver(parkingspot, LEFT, CENTER, false);
+            deliver(parkingspot, RIGHT, RIGHT, true);
+        }
+    }
+    else if(parkingspot == 1){
+        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === NONE){
+            deliver(parkingspot, RIGHT, RIGHT, true);
+        }
+        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === WALL){
+            deliver(parkingspot, RIGHT, RIGHT, true);
+        }
+        else{
+            deliver(parkingspot, LEFT, CENTER, false);
+            deliver(parkingspot, RIGHT, RIGHT, true);
         }
     }
 }

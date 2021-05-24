@@ -5,15 +5,18 @@
 #define RED 1
 #define GREEN 2
 #define BLUE 3
-#define WALL 6
-#define BATTERY 4
-#define BATTERYx2 5
+#define WALL 9
+#define BATTERY 7
+#define BATTERYx2 8
+#define REDB 4
+#define GREENB 5
+#define BLUEB 6
 #define LEFT 1
 #define CENTER 2
 #define RIGHT 3
 
 #define PURPLE 1000
-#define F 7
+#define F 100
 
 void init();
 int readcar(int sansar);
