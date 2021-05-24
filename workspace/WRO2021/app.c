@@ -30,18 +30,18 @@ rgb_raw_t rgb4;
 int doorLocations[3][3][2] = {
     {
         {0, -90},
-        {450, 340},
-        {999, 999}
+        {450, 400},
+        {PURPLE, PURPLE}
     },
     {
-        {-420, -90},
-        {0, 340},
-        {450, 90}
+        {-430, -90},
+        {0, 400},
+        {450, 140}
     },
     {
-        {999, 999},
-        {-420, 340},
-        {0, 120}
+        {PURPLE, PURPLE},
+        {-430, 400},
+        {0, 140}
     }
 };
 /**
@@ -548,7 +548,7 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
-    doBays(0);
+    // doBays(0);
     // driveOutBase();
     // PID(72,40,RIGHT,CENTER,3);
     // PID(14,20,CENTER,CENTER,0);
