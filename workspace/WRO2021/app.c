@@ -45,14 +45,14 @@ int doorLocations[3][3][2] = {
     }
 };
 /**
- * \brief Stores the current item in the bays (RED, GREEN, BLUE, BATTERY, BATTERYx2)
- * \param bay Bay number (LEFT, CENTER, RIGHT) [0-2]
+ * \brief Stores the current item in the bays [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
+ * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayPositions[3] = {
     NONE, NONE, NONE
 };
 /**
- * \brief stores the values of the cars on the road (RED, GREEN, BLUE)
+ * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
  * \param index Car index [0-5]
 **/
 int roadcarPositions[6] = {
@@ -240,6 +240,16 @@ void detectRoadCars(){
 **/
 void deliver(int parkingspot, int car, int location, bool battery) {
     // deliver [object Object] and collect [array Array]
+    PID(8, 10, NONE, CENTER, NONE);
+    switch (mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)])
+    {
+    case RED:
+        /* code */
+        break;
+    
+    default:
+        break;
+    }
 }
 /**
  * \brief Opens the door and bay of selected bay
@@ -259,8 +269,8 @@ void closeDoor() {
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
 }
 /**
- * \brief Returns whether or not we have a car of __ type in our bay
- * \param cartype Type of car to look for
+ * \brief Returns whether or not we have a car of __ type in our bay 
+ * \param cartype Type of car to look for [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
 **/
 int searchforcar(int cartype) {
     if(bayPositions[0] == cartype){
