@@ -265,7 +265,7 @@ void closeDoor() {
 **/
 void doBays(int parkingspot) {
     if(parkingspot == 3){
-        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === NONE){
+        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
             if(bayPositions[0] == BATTERY){
                 
             }
@@ -297,7 +297,7 @@ void doBays(int parkingspot) {
 
             }
         }
-        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === WALL){
+        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
             deliver(parkingspot, RIGHT, RIGHT, true);
         }
         else{
@@ -306,10 +306,10 @@ void doBays(int parkingspot) {
         }
     }
     else if(parkingspot == 1){
-        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === NONE){
+        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
             deliver(parkingspot, RIGHT, RIGHT, true);
         }
-        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] === WALL){
+        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
             deliver(parkingspot, RIGHT, RIGHT, true);
         }
         else{
