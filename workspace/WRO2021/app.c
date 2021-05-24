@@ -30,12 +30,12 @@ rgb_raw_t rgb4;
 int doorLocations[3][3][2] = {
     {
         {0, -90},
-        {450, 400},
+        {450, 380},
         {PURPLE, PURPLE}
     },
     {
         {-430, -90},
-        {0, 400},
+        {0, 380},
         {450, 140}
     },
     {
@@ -591,17 +591,19 @@ void test() {
     //     tslp_tsk(500);
     //     closeDoor();
     // }
-    closeDoor();
     openDoor(LEFT, LEFT);
     waitforButton();
-    closeDoor();
-    openDoor(RIGHT, CENTER);
+    openDoor(LEFT, CENTER);
     waitforButton();
-    closeDoor();
+    openDoor(CENTER, LEFT);
+    waitforButton();
+    openDoor(CENTER, CENTER);
+    waitforButton();
     openDoor(CENTER, RIGHT);
     waitforButton();
-    closeDoor();
-    openDoor(CENTER, CENTER);
+    openDoor(RIGHT, CENTER);
+    waitforButton();
+    openDoor(RIGHT, RIGHT);
     waitforButton();
     closeDoor();
 }

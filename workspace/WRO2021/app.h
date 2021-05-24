@@ -11,9 +11,9 @@
 #define REDB 4
 #define GREENB 5
 #define BLUEB 6
-#define LEFT 1
-#define CENTER 2
-#define RIGHT 3
+#define LEFT 0
+#define CENTER 1
+#define RIGHT 2
 
 #define PURPLE 1000
 #define F 100
