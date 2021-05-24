@@ -236,8 +236,9 @@ void detectRoadCars(){
  * \param location The location where the selected bay is to be delivered [LEFT, CENTER, RIGHT]
  * \param battery Deliver batteries or not [true, false]
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
+ * \exception Delivering from LEFT to RIGHT results in delivering from LEFT to LEFT
 **/
-void deliver(int parkingspot, int car, int location, int battery) {
+void deliver(int parkingspot, int car, int location, bool battery) {
     // deliver [object Object] and collect [array Array]
 }
 /**
@@ -257,49 +258,62 @@ void closeDoor() {
     ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
 }
+/**
+ * \brief Returns whether or not we have a car of __ type in our bay
+ * \param cartype Type of car to look for
+**/
+int searchforcar(int cartype) {
+    if(bayPositions[0] == cartype){
+        return 1;
+    }
+    if(bayPositions[1] == cartype){
+        return 2;
+    }
+    if(bayPositions[2] == cartype){
+        return 3;
+    }
+    return 0
+}
 
 /**
  * \brief Does everything related to moving bays
  * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
  * \exception Function name is bad
 **/
-void doBays(int parkingspot) {
+void doParkingSpot(int parkingspot) {
     if(parkingspot == 3){
         if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-            if(bayPositions[0] == BATTERY){
-                
+            if(searchforcar(BATTERY)){
+                deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
             }
-            else if(bayPositions[0] == BATTERYx2){
-                
+            else if(searchforcar(BATTERYx2)){
+                deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
             }
-            else if(bayPositions[0] == RED){
-                
-            }
-            else if(bayPositions[0] == GREEN){
-                
-            }
-            else if(bayPositions[0] == BLUE){
-                
-            }
-            else if(bayPositions[0] == REDB){
-                
-            }
-            else if(bayPositions[0] == GREENB){
-                
-            }
-            else if(bayPositions[0] == BLUEB){
-                
-            }
-            else{
-
+            if(searchforcar(BLUE)){
+                deliver(parkingspot,searchforcar(BLUE),CENTER,false);
             }
         }
         else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
-            deliver(parkingspot, RIGHT, RIGHT, true);
         }
         else{
-            deliver(parkingspot, LEFT, CENTER, false);
-            deliver(parkingspot, RIGHT, RIGHT, true);
+            if(bayPositions[0] == NONE){
+                deliver(parkingspot,LEFT,CENTER,false);
+            }
+            else if(bayPositions[1] == NONE){
+                deliver(parkingspot,CENTER,CENTER,false);
+            }
+            else if(bayPositions[2] == NONE){
+                deliver(parkingspot,RIGHT,CENTER,false);
+            }
+            if(searchforcar(BATTERY)){
+                deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
+            }
+            else if(searchforcar(BATTERYx2)){
+                deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
+            }
+            if(searchforcar(BLUE)){
+                deliver(parkingspot,searchforcar(BLUE),CENTER,false);
+            }
         }
     }
     else if(parkingspot == 1){
