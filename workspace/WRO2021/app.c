@@ -316,6 +316,41 @@ void doParkingSpot(int parkingspot) {
             }
         }
     }
+    else if(parkingspot == 7){
+        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
+            if(searchforcar(BATTERY)){
+                deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
+            }
+            else if(searchforcar(BATTERYx2)){
+                deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
+            }
+            if(searchforcar(GREEN)){
+                deliver(parkingspot,searchforcar(GREEN),CENTER,false);
+            }
+        }
+        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
+        }
+        else{
+            if(bayPositions[0] == NONE){
+                deliver(parkingspot,LEFT,CENTER,false);
+            }
+            else if(bayPositions[1] == NONE){
+                deliver(parkingspot,CENTER,CENTER,false);
+            }
+            else if(bayPositions[2] == NONE){
+                deliver(parkingspot,RIGHT,CENTER,false);
+            }
+            if(searchforcar(BATTERY)){
+                deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
+            }
+            else if(searchforcar(BATTERYx2)){
+                deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
+            }
+            if(searchforcar(GREEN)){
+                deliver(parkingspot,searchforcar(GREEN),CENTER,false);
+            }
+        }
+    }
     else if(parkingspot == 1){
         if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
             deliver(parkingspot, RIGHT, RIGHT, true);
@@ -374,6 +409,7 @@ void drive(int distance, int power, int curve) {
  * \param turn_sensor Sensors used to detect line where CENTER means both sensors and NONE is no line detection [NONE, LEFT, CENTER, RIGHT]
  * \param readCar The parking spot that the robot will detect where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
  * \exception \b turn and \b readCar do not apply when \b turn_sensor is NONE
+ * \exception If readCar is -1, it will not read
 **/
 void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
     ev3_motor_reset_counts(left_motor);
@@ -416,7 +452,7 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
             motorSteer(10,curve);
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
-        if(readCar != 0){
+        if(readCar != -1){
             mapcarPositions[(int)floor(readCar / 4)][readCar % 4] = readcar(4);
         }
         drive(15, 10, 0);
