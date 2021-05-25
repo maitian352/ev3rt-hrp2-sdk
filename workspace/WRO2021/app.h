@@ -1,16 +1,16 @@
 #ifndef _TEST_FILE_H_
 #define _TEST_FILE_H_
 
-#define NONE 0
-#define RED 1
-#define GREEN 2
-#define BLUE 3
-#define WALL 9
-#define BATTERY 7
-#define BATTERYx2 8
-#define REDB 4
-#define GREENB 5
-#define BLUEB 6
+#define NONE -1
+#define RED 0
+#define GREEN 1
+#define BLUE 2
+#define WALL 8
+#define BATTERY 6
+#define BATTERYx2 7
+#define REDB 3
+#define GREENB 4
+#define BLUEB 5
 #define LEFT 0
 #define CENTER 1
 #define RIGHT 2
