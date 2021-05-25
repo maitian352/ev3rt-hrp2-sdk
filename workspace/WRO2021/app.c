@@ -75,19 +75,35 @@ int mapcarPositions[3][4] = {
     }
 };
 /**
+ * \brief Stores the current locations of the batteries in the parking garage
+ * \param row The row of parking spots [0-2]
+ * \param number The number of the parking spot from entrance [0-3]
+**/
+int batteryPositions[3][4] = {
+    {
+        NONE,NONE,NONE,NONE
+    },
+    {
+        NONE,NONE,NONE,NONE
+    },
+    {
+        NONE,NONE,NONE,NONE
+    }
+};
+/**
  * \brief Stores the color of the parking spots in the parking garage
  * \param row The row of the parking spots [0-2]
  * \param number The number of the parking spot from entrance [0-3]
 **/
 int mapPositions[3][4] = {
     {
-        BLUE,BLUE,RED,GREEN
+        GREEN,RED,BLUE,BLUE
     },
     {
-        GREEN,RED,GREEN,BLUE
+        BLUE,GREEN,RED,GREEN
     },
     {
-        RED,RED,GREEN,BLUE
+        BLUE,GREEN,RED,RED
     },
 };
 
@@ -258,6 +274,7 @@ void closeDoor() {
     ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
 }
+
 /**
  * \brief Returns whether or not we have a car of __ type in our bay
  * \param cartype Type of car to look for
@@ -274,97 +291,72 @@ int searchforcar(int cartype) {
     }
     return 0
 }
-
+/**
+ * \brief Battery module for doParkingSpot
+ * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
+**/
+void deliverBattery(int parkingspot) {
+    if(searchforcar(BATTERY)){
+        deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
+        batteryPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = BATTERY;
+    }
+    else if(searchforcar(BATTERYx2)){
+        deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
+        batteryPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = BATTERY;
+    }
+}
+/**
+ * \brief Collect car module for doParkingSpot
+ * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
+**/
+void collectCar(int parkingspot) {
+    if(bayPositions[0] == NONE){
+        deliver(parkingspot,LEFT,CENTER,false);
+        mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
+    }
+    else if(bayPositions[1] == NONE){
+        deliver(parkingspot,CENTER,CENTER,false);
+        mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
+    }
+    else if(bayPositions[2] == NONE){
+        deliver(parkingspot,RIGHT,CENTER,false);
+        mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
+    }
+}
+/**
+ * \brief Car module for doParkingSpot
+ * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
+ * \param car Car to deliver
+**/
+void deliverCar(int parkingspot, int car) {
+    if(searchforcar(car)){
+        deliver(parkingspot,searchforcar(car),CENTER,false);
+        mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = car;
+    }
+}
 /**
  * \brief Does everything related to moving bays
  * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
  * \exception Function name is bad
 **/
 void doParkingSpot(int parkingspot) {
-    if(parkingspot == 3){
-        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-            if(searchforcar(BATTERY)){
-                deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
-            }
-            else if(searchforcar(BATTERYx2)){
-                deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
-            }
-            if(searchforcar(BLUE)){
-                deliver(parkingspot,searchforcar(BLUE),CENTER,false);
-            }
+    if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
+        if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] !== RED){
+            deliverBattery();
         }
-        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
-        }
-        else{
-            if(bayPositions[0] == NONE){
-                deliver(parkingspot,LEFT,CENTER,false);
-            }
-            else if(bayPositions[1] == NONE){
-                deliver(parkingspot,CENTER,CENTER,false);
-            }
-            else if(bayPositions[2] == NONE){
-                deliver(parkingspot,RIGHT,CENTER,false);
-            }
-            if(searchforcar(BATTERY)){
-                deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
-            }
-            else if(searchforcar(BATTERYx2)){
-                deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
-            }
-            if(searchforcar(BLUE)){
-                deliver(parkingspot,searchforcar(BLUE),CENTER,false);
-            }
-        }
+        deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
     }
-    else if(parkingspot == 7){
-        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-            if(searchforcar(BATTERY)){
-                deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
-            }
-            else if(searchforcar(BATTERYx2)){
-                deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
-            }
-            if(searchforcar(GREEN)){
-                deliver(parkingspot,searchforcar(GREEN),CENTER,false);
-            }
-        }
-        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
-        }
-        else{
-            if(bayPositions[0] == NONE){
-                deliver(parkingspot,LEFT,CENTER,false);
-            }
-            else if(bayPositions[1] == NONE){
-                deliver(parkingspot,CENTER,CENTER,false);
-            }
-            else if(bayPositions[2] == NONE){
-                deliver(parkingspot,RIGHT,CENTER,false);
-            }
-            if(searchforcar(BATTERY)){
-                deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
-            }
-            else if(searchforcar(BATTERYx2)){
-                deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
-            }
-            if(searchforcar(GREEN)){
-                deliver(parkingspot,searchforcar(GREEN),CENTER,false);
-            }
-        }
+    else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
+
     }
-    else if(parkingspot == 1){
-        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-            deliver(parkingspot, RIGHT, RIGHT, true);
+    else{
+        collectCar();
+        if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] !== RED){
+            deliverBattery();
         }
-        else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
-            deliver(parkingspot, RIGHT, RIGHT, true);
-        }
-        else{
-            deliver(parkingspot, LEFT, CENTER, false);
-            deliver(parkingspot, RIGHT, RIGHT, true);
-        }
+        deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
     }
 }
-
 /**
  * \brief Starts motors at selected power and curve
  * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
