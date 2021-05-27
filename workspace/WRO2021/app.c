@@ -50,7 +50,7 @@ int doorLocations[3][3][2] = {
  * \brief Stores the current item in the bays [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
-int bayPositions[3] = {
+int bayCars[3] = {
     NONE, NONE, NONE
 };
 /**
@@ -302,13 +302,13 @@ void closeDoor() {
  * \param cartype Type of car to look for [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
 **/
 int searchforcar(int cartype) {
-    if(bayPositions[0] == cartype){
+    if(bayCars[0] == cartype){
         return 1;
     }
-    if(bayPositions[1] == cartype){
+    if(bayCars[1] == cartype){
         return 2;
     }
-    if(bayPositions[2] == cartype){
+    if(bayCars[2] == cartype){
         return 3;
     }
     return 0
@@ -321,10 +321,12 @@ void deliverBattery(int parkingspot) {
     if(searchforcar(BATTERY)){
         deliver(parkingspot,searchforcar(BATTERY),RIGHT,true);
         batteryPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = BATTERY;
+        bayCars[searchforcar(BATTERY)] = NONE;
     }
     else if(searchforcar(BATTERYx2)){
         deliver(parkingspot,searchforcar(BATTERYx2),RIGHT,true);
         batteryPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = BATTERY;
+        bayCars[searchforcar(BATTERYx2)] = NONE;
     }
 }
 /**
@@ -332,16 +334,19 @@ void deliverBattery(int parkingspot) {
  * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
 **/
 void collectCar(int parkingspot) {
-    if(bayPositions[0] == NONE){
-        deliver(parkingspot,LEFT,CENTER,false);
+    if(bayCars[0] == NONE){
+        collect(parkingspot,LEFT,CENTER,false);
+        bayCars[0] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
     }
-    else if(bayPositions[1] == NONE){
-        deliver(parkingspot,CENTER,CENTER,false);
+    else if(bayCars[1] == NONE){
+        collect(parkingspot,CENTER,CENTER,false);
+        bayCars[1] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
     }
-    else if(bayPositions[2] == NONE){
-        deliver(parkingspot,RIGHT,CENTER,false);
+    else if(bayCars[2] == NONE){
+        collect(parkingspot,RIGHT,CENTER,false);
+        bayCars[2] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
     }
 }
@@ -354,6 +359,7 @@ void deliverCar(int parkingspot, int car) {
     if(searchforcar(car)){
         deliver(parkingspot,searchforcar(car),CENTER,false);
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = car;
+        bayCars[searchforcar(car)] = NONE;
     }
 }
 /**
@@ -373,10 +379,12 @@ void doParkingSpot(int parkingspot) {
     }
     else{
         collectCar();
-        if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] !== RED){
-            deliverBattery();
+        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
+            if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] !== RED){
+                deliverBattery();
+            }
+            deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
         }
-        deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
     }
 }
 /**
