@@ -21,7 +21,7 @@
 void init();
 int readcar(int sansar);
 void detectRoadCars();
-void deliver(int parkingspot, int bay, int location, bool battery);
+void deliver(int bay, int location, int battery);
 void openDoor(int bay, int location);
 void closeDoor();
 int searchforcar(int cartype);
