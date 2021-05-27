@@ -254,18 +254,9 @@ void detectRoadCars(){
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
  * \exception Delivering from LEFT to RIGHT results in delivering from LEFT to LEFT
 **/
-void deliver(int parkingspot, int car, int location, bool battery) {
+void deliver(int parkingspot, int bay, int location, bool battery) {
     // deliver [object Object] and collect [array Array]
-    PID(8, 10, NONE, CENTER, NONE);
-    switch (mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)])
-    {
-    case RED:
-        /* code */
-        break;
-    
-    default:
-        break;
-    }
+    openDoor(bay, location);
 }
 /**
  * \brief Opens the door and bay of selected bay
@@ -273,7 +264,7 @@ void deliver(int parkingspot, int car, int location, bool battery) {
  * \param location The place the bay needs to be opened in [LEFT, CENTER, RIGHT]
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
 **/
-void openDoor(int car, int location) {
+void openDoor(int bay, int location) {
     ev3_motor_rotate(a_motor, (doorLocations[car][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
     ev3_motor_rotate(d_motor, (doorLocations[car][location][1]-ev3_motor_get_counts(d_motor)), 20, true);
 }
