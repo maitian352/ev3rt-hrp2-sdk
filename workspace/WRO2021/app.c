@@ -361,10 +361,12 @@ void doParkingSpot(int parkingspot) {
     }
     else{
         collectCar();
-        if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] !== RED){
-            deliverBattery();
+        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
+            if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] !== RED){
+                deliverBattery();
+            }
+            deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
         }
-        deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
     }
 }
 /**
