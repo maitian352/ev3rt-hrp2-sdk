@@ -366,7 +366,7 @@ void deliverCar(int parkingspot, int car) {
 **/
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
-    if (battery && bayPositions[bay] == BATTERYx2) {
+    if (battery && bayCars[bay] == BATTERYx2) {
         drive(8, 15, 0);
         drive(5, -15, 0);
         closeDoor();
@@ -380,8 +380,10 @@ void deliver(int bay, int location, int battery) {
 /**
  * \brief Collects a car
  * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT]
+ * \exception PURPLE is not 1000 in this function
 **/
 void collect(int bay) {
+    #define PURPLE 100
     openDoor(bay, CENTER);
     drive(12, 15, 0);
     closeDoor();
