@@ -335,17 +335,17 @@ void deliverBattery(int parkingspot) {
 **/
 void collectCar(int parkingspot) {
     if(bayCars[0] == NONE){
-        collect(LEFT,CENTER,false);
+        collect(LEFT,CENTER);
         bayCars[0] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
     }
     else if(bayCars[1] == NONE){
-        collect(CENTER,CENTER,false);
+        collect(CENTER,CENTER);
         bayCars[1] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
     }
     else if(bayCars[2] == NONE){
-        collect(RIGHT,CENTER,false);
+        collect(RIGHT,CENTER);
         bayCars[2] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
     }
@@ -370,7 +370,7 @@ void deliverCar(int parkingspot, int car) {
 void doParkingSpot(int parkingspot) {
     if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
         if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
-            deliverBattery();
+            deliverBattery(parkingspot);
         }
         deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
     }
@@ -378,10 +378,10 @@ void doParkingSpot(int parkingspot) {
 
     }
     else{
-        collectCar();
+        collectCar(parkingspot);
         if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
             if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
-                deliverBattery();
+                deliverBattery(parkingspot);
             }
             deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
         }
