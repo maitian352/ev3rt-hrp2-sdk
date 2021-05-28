@@ -255,8 +255,8 @@ void detectRoadCars(){
  * \exception Delivering from LEFT to RIGHT results in delivering from LEFT to LEFT
 **/
 void openDoor(int bay, int location) {
-    ev3_motor_rotate(a_motor, (doorLocations[car][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
-    ev3_motor_rotate(d_motor, (doorLocations[car][location][1]-ev3_motor_get_counts(d_motor)), 20, true);
+    ev3_motor_rotate(a_motor, (doorLocations[bay][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
+    ev3_motor_rotate(d_motor, (doorLocations[bay][location][1]-ev3_motor_get_counts(d_motor)), 20, true);
 }
 /**
  * \brief Resets the bays and doors to neutral position
@@ -290,7 +290,7 @@ int searchforcar(int cartype) {
 void doParkingSpot(int parkingspot) {
     if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
         if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
-            deliverBattery();
+            deliverBattery(parkingspot);
         }
         deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
     }
@@ -298,10 +298,10 @@ void doParkingSpot(int parkingspot) {
 
     }
     else{
-        collectCar();
+        collectCar(parkingspot);
         if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
             if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
-                deliverBattery();
+                deliverBattery(parkingspot);
             }
             deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
         }
