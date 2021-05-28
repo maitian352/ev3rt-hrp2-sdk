@@ -357,30 +357,6 @@ void deliverCar(int parkingspot, int car) {
     }
 }
 /**
- * \brief Does parking spot
- * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
-**/
-void doParkingSpot(int parkingspot) {
-    if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-        if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
-            deliverBattery(parkingspot);
-        }
-        deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
-    }
-    else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
-
-    }
-    else{
-        collectCar(parkingspot);
-        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-            if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
-                deliverBattery(parkingspot);
-            }
-            deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
-        }
-    }
-}
-/**
  * \brief Delivers specified bay to a location
  * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT]
  * \param location The location where the selected bay is to be delivered [LEFT, CENTER, RIGHT]
