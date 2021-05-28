@@ -366,15 +366,20 @@ void deliverCar(int parkingspot, int car) {
 **/
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
+    tslp_tsk(10);
     if (battery && bayCars[bay] == BATTERYx2) {
         drive(8, 10, 0);
         drive(5, -10, 0);
+        tslp_tsk(10);
         closeDoor();
+        tslp_tsk(10);
         drive(3, -10, 0);
     } else {
         drive(8, 10, 0);
         drive(8, -10, 0);
+        tslp_tsk(10);
         closeDoor();
+        tslp_tsk(10);
     }
 }
 /**
@@ -384,8 +389,11 @@ void deliver(int bay, int location, int battery) {
 **/
 void collect(int bay) {
     openDoor(bay, CENTER);
+    tslp_tsk(10);
     drive(12, 10, 0);
+    tslp_tsk(10);
     closeDoor();
+    tslp_tsk(10);
     drive(12, -10, 0);
 }
 /**
