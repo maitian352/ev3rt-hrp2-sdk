@@ -248,37 +248,6 @@ void detectRoadCars(){
 }
 
 /**
- * \brief Delivers specified bay to a location
- * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT]
- * \param location The location where the selected bay is to be delivered [LEFT, CENTER, RIGHT]
- * \param battery Deliver batteries or not [true, false]
- * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
- * \exception Delivering from LEFT to RIGHT results in delivering from LEFT to LEFT
-**/
-void deliver(int bay, int location, int battery) {
-    openDoor(bay, location);
-    if (battery && bayPositions[bay] == BATTERYx2) {
-        drive(8, 15, 0);
-        drive(5, -15, 0);
-        closeDoor();
-        drive(3, -15, 0);
-    } else {
-        drive(8, 15, 0);
-        drive(8, -15, 0);
-        closeDoor();
-    }
-}
-/**
- * \brief Collects a car
- * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT]
-**/
-void collect(int bay) {
-    openDoor(bay, CENTER);
-    drive(12, 15, 0);
-    closeDoor();
-    drive(12, -15, 0);
-}
-/**
  * \brief Opens the door and bay of selected bay
  * \param bay The bay number that needs to be opened [LEFT, CENTER, RIGHT]
  * \param location The place the bay needs to be opened in [LEFT, CENTER, RIGHT]
@@ -312,6 +281,31 @@ int searchforcar(int cartype) {
         return 3;
     }
     return 0
+}
+/**
+ * \brief Does everything related to moving bays
+ * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
+ * \exception Function name is bad
+**/
+void doParkingSpot(int parkingspot) {
+    if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
+        if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
+            deliverBattery();
+        }
+        deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
+    }
+    else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
+
+    }
+    else{
+        collectCar();
+        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
+            if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
+                deliverBattery();
+            }
+            deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
+        }
+    }
 }
 /**
  * \brief Battery module for doParkingSpot
@@ -363,29 +357,35 @@ void deliverCar(int parkingspot, int car) {
     }
 }
 /**
- * \brief Does everything related to moving bays
- * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
- * \exception Function name is bad
+ * \brief Delivers specified bay to a location
+ * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT]
+ * \param location The location where the selected bay is to be delivered [LEFT, CENTER, RIGHT]
+ * \param battery Deliver batteries or not [true, false]
+ * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
+ * \exception Delivering from LEFT to RIGHT results in delivering from LEFT to LEFT
 **/
-void doParkingSpot(int parkingspot) {
-    if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-        if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
-            deliverBattery();
-        }
-        deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
+void deliver(int bay, int location, int battery) {
+    openDoor(bay, location);
+    if (battery && bayPositions[bay] == BATTERYx2) {
+        drive(8, 15, 0);
+        drive(5, -15, 0);
+        closeDoor();
+        drive(3, -15, 0);
+    } else {
+        drive(8, 15, 0);
+        drive(8, -15, 0);
+        closeDoor();
     }
-    else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
-
-    }
-    else{
-        collectCar();
-        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-            if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
-                deliverBattery();
-            }
-            deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
-        }
-    }
+}
+/**
+ * \brief Collects a car
+ * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT]
+**/
+void collect(int bay) {
+    openDoor(bay, CENTER);
+    drive(12, 15, 0);
+    closeDoor();
+    drive(12, -15, 0);
 }
 /**
  * \brief Starts motors at selected power and curve
