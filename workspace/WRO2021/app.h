@@ -21,11 +21,15 @@
 void init();
 int readcar(int sansar);
 void detectRoadCars();
-void deliver(int bay, int location, int battery);
 void openDoor(int bay, int location);
 void closeDoor();
 int searchforcar(int cartype);
 void doParkingSpot(int parkingspot);
+void deliverBattery(int parkingspot);
+void collectCar(int parkingspot);
+void deliverCar(int parkingspot, int car);
+void deliver(int bay, int location, int battery);
+void collect(int bay);
 void motorSteer(int power, int curve);
 void drive(int distance, int power, int curve);
 void PID(int distance, int power, int turn, int turn_sensor, int readCar);
