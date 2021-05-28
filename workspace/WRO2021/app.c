@@ -255,15 +255,15 @@ void detectRoadCars(){
  * \exception Delivering from LEFT to RIGHT results in delivering from LEFT to LEFT
 **/
 void openDoor(int bay, int location) {
-    ev3_motor_rotate(a_motor, (doorLocations[bay][location][0]-ev3_motor_get_counts(a_motor)), 20, false);
-    ev3_motor_rotate(d_motor, (doorLocations[bay][location][1]-ev3_motor_get_counts(d_motor)), 20, true);
+    ev3_motor_rotate(a_motor, (doorLocations[bay][location][0]-ev3_motor_get_counts(a_motor)), 30, false);
+    ev3_motor_rotate(d_motor, (doorLocations[bay][location][1]-ev3_motor_get_counts(d_motor)), 30, true);
 }
 /**
  * \brief Resets the bays and doors to neutral position
 **/
 void closeDoor() {
-    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 20, false);
-    ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 20, true);
+    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 30, false);
+    ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 30, true);
 }
 
 /**
@@ -367,13 +367,13 @@ void deliverCar(int parkingspot, int car) {
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
     if (battery && bayCars[bay] == BATTERYx2) {
-        drive(8, 15, 0);
-        drive(5, -15, 0);
+        drive(8, 10, 0);
+        drive(5, -10, 0);
         closeDoor();
-        drive(3, -15, 0);
+        drive(3, -10, 0);
     } else {
-        drive(8, 15, 0);
-        drive(8, -15, 0);
+        drive(8, 10, 0);
+        drive(8, -10, 0);
         closeDoor();
     }
 }
@@ -384,9 +384,9 @@ void deliver(int bay, int location, int battery) {
 **/
 void collect(int bay) {
     openDoor(bay, CENTER);
-    drive(12, 15, 0);
+    drive(12, 10, 0);
     closeDoor();
-    drive(12, -15, 0);
+    drive(12, -10, 0);
 }
 /**
  * \brief Starts motors at selected power and curve
