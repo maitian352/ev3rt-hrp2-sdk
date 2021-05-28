@@ -154,7 +154,7 @@ void init() {
     ev3_motor_set_power(d_motor, 0);
     tslp_tsk(500);
     ev3_motor_rotate(a_motor, -480, 20, true);
-    ev3_motor_rotate(d_motor, 200, 20, true);
+    ev3_motor_rotate(d_motor, 210, 20, true);
     ev3_motor_reset_counts(a_motor);
     ev3_motor_reset_counts(d_motor);
 
@@ -288,22 +288,23 @@ int searchforcar(int cartype) {
  * \exception Function name is bad
 **/
 void doParkingSpot(int parkingspot) {
-    if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-        if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
+    if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
+        if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] != RED){
             deliverBattery(parkingspot);
         }
-        deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
+        deliverCar(parkingspot,mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4]);
     }
-    else if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == WALL){
+    else if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == WALL){
 
     }
     else{
         collectCar(parkingspot);
-        if(mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] == NONE){
-            if(mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)] != RED){
+        waitforButton();
+        if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
+            if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] != RED){
                 deliverBattery(parkingspot);
             }
-            deliverCar(parkingspot,mapPositions[parkingspot % 4][(int)floor(parkingspot / 4)]);
+            deliverCar(parkingspot,mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4]);
         }
     }
 }
@@ -314,12 +315,12 @@ void doParkingSpot(int parkingspot) {
 void deliverBattery(int parkingspot) {
     if(searchforcar(BATTERY) != -1){
         deliver(searchforcar(BATTERY),RIGHT,true);
-        batteryPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = BATTERY;
+        batteryPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = BATTERY;
         bayCars[searchforcar(BATTERY)] = NONE;
     }
     else if(searchforcar(BATTERYx2) != -1){
         deliver(searchforcar(BATTERYx2),RIGHT,true);
-        batteryPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = BATTERY;
+        batteryPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = BATTERY;
         bayCars[searchforcar(BATTERYx2)] = NONE;
     }
 }
@@ -330,18 +331,18 @@ void deliverBattery(int parkingspot) {
 void collectCar(int parkingspot) {
     if(bayCars[0] == NONE){
         collect(LEFT);
-        bayCars[0] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
-        mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
+        bayCars[0] = mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4];
+        mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = NONE;
     }
     else if(bayCars[1] == NONE){
         collect(CENTER);
-        bayCars[1] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
-        mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
+        bayCars[1] = mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4];
+        mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = NONE;
     }
     else if(bayCars[2] == NONE){
         collect(RIGHT);
-        bayCars[2] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
-        mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
+        bayCars[2] = mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4];
+        mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = NONE;
     }
 }
 /**
@@ -352,7 +353,7 @@ void collectCar(int parkingspot) {
 void deliverCar(int parkingspot, int car) {
     if(searchforcar(car) != -1){
         deliver(searchforcar(car),CENTER,false);
-        mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = car;
+        mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = car;
         bayCars[searchforcar(car)] = NONE;
     }
 }
