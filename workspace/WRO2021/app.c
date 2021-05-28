@@ -67,7 +67,7 @@ int roadcarPositions[6] = {
 **/
 int mapcarPositions[3][4] = {
     {
-        NONE,NONE,NONE,NONE
+        NONE,NONE,NONE,RED
     },
     {
         NONE,NONE,NONE,NONE
@@ -272,15 +272,15 @@ void closeDoor() {
 **/
 int searchforcar(int cartype) {
     if(bayCars[0] == cartype){
-        return 1;
+        return 0;
     }
     if(bayCars[1] == cartype){
-        return 2;
+        return 1;
     }
     if(bayCars[2] == cartype){
-        return 3;
+        return 2;
     }
-    return 0;
+    return -1;
 }
 /**
  * \brief Does everything related to moving bays
@@ -312,12 +312,12 @@ void doParkingSpot(int parkingspot) {
  * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
 **/
 void deliverBattery(int parkingspot) {
-    if(searchforcar(BATTERY)){
+    if(searchforcar(BATTERY) != -1){
         deliver(searchforcar(BATTERY),RIGHT,true);
         batteryPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = BATTERY;
         bayCars[searchforcar(BATTERY)] = NONE;
     }
-    else if(searchforcar(BATTERYx2)){
+    else if(searchforcar(BATTERYx2) != -1){
         deliver(searchforcar(BATTERYx2),RIGHT,true);
         batteryPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = BATTERY;
         bayCars[searchforcar(BATTERYx2)] = NONE;
@@ -350,7 +350,7 @@ void collectCar(int parkingspot) {
  * \param car Car to deliver
 **/
 void deliverCar(int parkingspot, int car) {
-    if(searchforcar(car)){
+    if(searchforcar(car) != -1){
         deliver(searchforcar(car),CENTER,false);
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = car;
         bayCars[searchforcar(car)] = NONE;
@@ -367,16 +367,15 @@ void deliverCar(int parkingspot, int car) {
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
     tslp_tsk(10);
+    drive(10, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
-        drive(8, 10, 0);
         drive(5, -10, 0);
         tslp_tsk(10);
         closeDoor();
         tslp_tsk(10);
-        drive(3, -10, 0);
+        drive(5, -10, 0);
     } else {
-        drive(8, 10, 0);
-        drive(8, -10, 0);
+        drive(10, -10, 0);
         tslp_tsk(10);
         closeDoor();
         tslp_tsk(10);
@@ -626,9 +625,9 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
-    deliver(1,2,true);
+    //deliver(1,2,true);
             //deliverBattery(3);
-    //doParkingSpot(3);
+    doParkingSpot(3);
     // doBays(0);
     // driveOutBase();
     // PID(72,40,RIGHT,CENTER,3);
