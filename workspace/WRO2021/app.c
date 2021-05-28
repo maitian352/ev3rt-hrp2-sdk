@@ -51,7 +51,7 @@ int doorLocations[3][3][2] = {
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayCars[3] = {
-    NONE, NONE, NONE
+    BLUE, BATTERY, NONE
 };
 /**
  * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
@@ -173,7 +173,7 @@ void init() {
  * \param Sensor [color_sensor1, color_sensor4]
 **/
 int readcar(int sansar) {
-    int yeet;
+    int yeet = NONE;
     switch (sansar)
     {
     case 1:
@@ -618,6 +618,9 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
+    deliver(1,2,true);
+            //deliverBattery(3);
+    //doParkingSpot(3);
     // doBays(0);
     // driveOutBase();
     // PID(72,40,RIGHT,CENTER,3);
