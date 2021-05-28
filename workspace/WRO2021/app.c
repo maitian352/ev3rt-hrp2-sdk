@@ -27,23 +27,23 @@ rgb_raw_t rgb4;
  * \param location End location for bay (LEFT, CENTER, RIGHT) [0-2]
  * \param motor Rack or door motor [0-1]
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
- * \exception Delivering from LEFT to RIGHT results in delivering from LEFT to LEFT
+ * \exception Opening door to CENTER may open LEFT location as well
 **/
 int doorLocations[3][3][2] = {
     {
-        {0, -90},
-        {450, 380},
+        {0, -120},
+        {450, -360},
         {PURPLE, PURPLE}
     },
     {
-        {-430, -90},
-        {0, 380},
-        {450, 140}
+        {-430, -120},
+        {0, 360},
+        {450, 100}
     },
     {
         {PURPLE, PURPLE},
-        {-430, -90},
-        {0, 140}
+        {-430, -360},
+        {0, 100}
     }
 };
 /**
@@ -154,7 +154,7 @@ void init() {
     ev3_motor_set_power(d_motor, 0);
     tslp_tsk(500);
     ev3_motor_rotate(a_motor, -480, 20, true);
-    ev3_motor_rotate(d_motor, 190, 20, true);
+    ev3_motor_rotate(d_motor, 200, 20, true);
     ev3_motor_reset_counts(a_motor);
     ev3_motor_reset_counts(d_motor);
 
@@ -252,7 +252,7 @@ void detectRoadCars(){
  * \param bay The bay number that needs to be opened [LEFT, CENTER, RIGHT]
  * \param location The place the bay needs to be opened in [LEFT, CENTER, RIGHT]
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
- * \exception Delivering from LEFT to RIGHT results in delivering from LEFT to LEFT
+ * \exception Opening door to CENTER will open LEFT location as well
 **/
 void openDoor(int bay, int location) {
     ev3_motor_rotate(a_motor, (doorLocations[bay][location][0]-ev3_motor_get_counts(a_motor)), 30, false);
@@ -362,7 +362,7 @@ void deliverCar(int parkingspot, int car) {
  * \param location The location where the selected bay is to be delivered [LEFT, CENTER, RIGHT]
  * \param battery Deliver batteries or not [true, false]
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
- * \exception Delivering from LEFT to RIGHT results in delivering from LEFT to LEFT
+ * \exception Opening door to CENTER will open LEFT location as well
 **/
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
