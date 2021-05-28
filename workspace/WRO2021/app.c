@@ -280,7 +280,7 @@ int searchforcar(int cartype) {
     if(bayCars[2] == cartype){
         return 3;
     }
-    return 0
+    return 0;
 }
 /**
  * \brief Does everything related to moving bays
@@ -329,17 +329,17 @@ void deliverBattery(int parkingspot) {
 **/
 void collectCar(int parkingspot) {
     if(bayCars[0] == NONE){
-        collect(LEFT,CENTER);
+        collect(LEFT);
         bayCars[0] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
     }
     else if(bayCars[1] == NONE){
-        collect(CENTER,CENTER);
+        collect(CENTER);
         bayCars[1] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
     }
     else if(bayCars[2] == NONE){
-        collect(RIGHT,CENTER);
+        collect(RIGHT);
         bayCars[2] = mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)];
         mapcarPositions[parkingspot % 4][(int)floor(parkingspot / 4)] = NONE;
     }
@@ -407,7 +407,6 @@ void deliver(int bay, int location, int battery) {
  * \exception PURPLE is not 1000 in this function
 **/
 void collect(int bay) {
-    #define PURPLE 100
     openDoor(bay, CENTER);
     drive(12, 15, 0);
     closeDoor();
