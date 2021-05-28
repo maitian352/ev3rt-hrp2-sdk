@@ -32,7 +32,7 @@ rgb_raw_t rgb4;
 int doorLocations[3][3][2] = {
     {
         {0, -120},
-        {450, -360},
+        {450, 360},
         {PURPLE, PURPLE}
     },
     {
@@ -42,7 +42,7 @@ int doorLocations[3][3][2] = {
     },
     {
         {PURPLE, PURPLE},
-        {-430, -360},
+        {-430, 360},
         {0, 100}
     }
 };
