@@ -32,18 +32,18 @@ rgb_raw_t rgb4;
 int doorLocations[3][3][2] = {
     {
         {0, 460},
-        {450, 140},
+        {450, 300},
         {PURPLE, PURPLE}
     },
     {
         {-430, 460},
-        {0, 140},
-        {450, 300}
+        {0, 300},
+        {450, 110}
     },
     {
         {PURPLE, PURPLE},
-        {-430, 140},
-        {0, 300}
+        {-430, 300},
+        {0, 110}
     }
 };
 /**
@@ -367,6 +367,7 @@ void deliverCar(int parkingspot, int car) {
 **/
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
+    waitforButton();
     tslp_tsk(10);
     drive(10, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
