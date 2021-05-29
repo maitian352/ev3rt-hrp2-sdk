@@ -154,7 +154,7 @@ void init() {
     ev3_motor_set_power(d_motor, 0);
     tslp_tsk(500);
     ev3_motor_rotate(a_motor, -480, 20, true);
-    ev3_motor_rotate(d_motor, 220, 20, true);
+    ev3_motor_rotate(d_motor, 200, 20, true);
     ev3_motor_reset_counts(a_motor);
     ev3_motor_reset_counts(d_motor);
 
@@ -368,15 +368,15 @@ void deliverCar(int parkingspot, int car) {
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
     tslp_tsk(10);
-    drive(10, 10, 0);
+    drive(12, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
         drive(5, -10, 0);
         tslp_tsk(10);
         closeDoor();
         tslp_tsk(10);
-        drive(5, -10, 0);
+        drive(7, -10, 0);
     } else {
-        drive(10, -10, 0);
+        drive(12, -10, 0);
         tslp_tsk(10);
         closeDoor();
         tslp_tsk(10);
