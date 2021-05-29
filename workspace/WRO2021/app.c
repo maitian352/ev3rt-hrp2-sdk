@@ -38,12 +38,12 @@ int doorLocations[3][3][2] = {
     {
         {-430, 460},
         {0, 300},
-        {450, 380}
+        {450, 180}
     },
     {
         {PURPLE, PURPLE},
         {-430, 300},
-        {0, 380}
+        {0, 180}
     }
 };
 /**
@@ -154,7 +154,7 @@ void init() {
     ev3_motor_set_power(d_motor, 0);
     tslp_tsk(500);
     ev3_motor_rotate(a_motor, -480, 20, true);
-    ev3_motor_rotate(d_motor, 170, 20, true);
+    ev3_motor_rotate(d_motor, 90, 20, true);
     ev3_motor_reset_counts(a_motor);
     ev3_motor_reset_counts(d_motor);
 
