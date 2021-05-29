@@ -31,18 +31,18 @@ rgb_raw_t rgb4;
 **/
 int doorLocations[3][3][2] = {
     {
-        {0, 460},
-        {450, 300},
+        {0, 500},
+        {450, 290},
         {PURPLE, PURPLE}
     },
     {
-        {-430, 460},
-        {0, 300},
+        {-400, 500},
+        {0, 290},
         {450, 110}
     },
     {
         {PURPLE, PURPLE},
-        {-430, 300},
+        {-400, 290},
         {0, 110}
     }
 };
@@ -635,19 +635,19 @@ void test() {
     // PID(72,40,RIGHT,CENTER,3);
     // PID(14,20,CENTER,CENTER,0);
     // }
-    openDoor(LEFT, LEFT);
-    waitforButton();
-    openDoor(LEFT, CENTER);
-    waitforButton();
-    openDoor(CENTER, LEFT);
-    waitforButton();
-    openDoor(CENTER, CENTER);
-    waitforButton();
-    openDoor(CENTER, RIGHT);
-    waitforButton();
-    openDoor(RIGHT, CENTER);
-    waitforButton();
-    openDoor(RIGHT, RIGHT);
-    waitforButton();
-    closeDoor();
+    // openDoor(LEFT, LEFT);
+    // waitforButton();
+    // openDoor(LEFT, CENTER);
+    // waitforButton();
+    // openDoor(CENTER, LEFT);
+    // waitforButton();
+    // openDoor(CENTER, CENTER);
+    // waitforButton();
+    // openDoor(CENTER, RIGHT);
+    // waitforButton();
+    // openDoor(RIGHT, CENTER);
+    // waitforButton();
+    // openDoor(RIGHT, RIGHT);
+    // waitforButton();
+    // closeDoor();
 }
