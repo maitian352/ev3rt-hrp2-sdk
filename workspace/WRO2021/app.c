@@ -112,7 +112,10 @@ int mapPositions[3][4] = {
 void main_task(intptr_t unused) {
     init();
     ///*
-    test();
+    //driveOutBase();
+    PID(72,40,RIGHT,CENTER,3);
+    //PID(14,20,CENTER,CENTER,0);
+    //test();
     //*/
 }
 
@@ -629,7 +632,7 @@ void waitforButton() {
 void test() {
     //deliver(1,2,true);
     //deliverBattery(3);
-    //doParkingSpot(3);
+    doParkingSpot(3);
     // doBays(0);
     // driveOutBase();
     // PID(72,40,RIGHT,CENTER,3);
