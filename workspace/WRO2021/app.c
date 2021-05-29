@@ -32,18 +32,18 @@ rgb_raw_t rgb4;
 int doorLocations[3][3][2] = {
     {
         {0, 460},
-        {450, 30},
+        {450, 300},
         {PURPLE, PURPLE}
     },
     {
         {-430, 460},
-        {0, 340},
-        {450, 180}
+        {0, 300},
+        {450, 110}
     },
     {
         {PURPLE, PURPLE},
-        {-430, 340},
-        {0, 180}
+        {-430, 300},
+        {0, 110}
     }
 };
 /**
@@ -154,7 +154,7 @@ void init() {
     ev3_motor_set_power(d_motor, 0);
     tslp_tsk(500);
     ev3_motor_rotate(a_motor, -480, 20, true);
-    ev3_motor_rotate(d_motor, 190, 20, true);
+    ev3_motor_rotate(d_motor, 180, 20, true);
     ev3_motor_reset_counts(a_motor);
     ev3_motor_reset_counts(d_motor);
 
@@ -367,6 +367,7 @@ void deliverCar(int parkingspot, int car) {
 **/
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
+    waitforButton();
     tslp_tsk(10);
     drive(10, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
