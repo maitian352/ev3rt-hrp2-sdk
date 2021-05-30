@@ -168,6 +168,50 @@ void init() {
 }
 
 /**
+ * \brief Drives out of base and collects batteries
+**/
+void driveOutBase(){
+    ev3_motor_rotate(a_motor, 220, 20, true);
+    ev3_motor_rotate(d_motor, 340, 20, true);
+    drive(26,10,5);
+    drive(5.75,10,5);
+    ev3_motor_rotate(d_motor, 460, -20, true);
+    drive(4,10,5);
+    ev3_motor_rotate(d_motor, 460, 20, true);
+    drive(1.75,10,5);
+    ev3_motor_rotate(d_motor, 460, -20, true);
+    drive(6.5,10,5);
+    ev3_motor_rotate(a_motor, 220, -20, true);
+    ev3_motor_rotate(d_motor, 120, 20, true);
+    motorSteer(10,-100);
+    tslp_tsk(1000);
+    ev3_motor_reset_counts(left_motor);
+    ev3_motor_reset_counts(right_motor);
+    while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
+    while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
+    motorSteer(0,0);
+    PID(15,10,RIGHT,CENTER,0);
+}
+
+/**
+ * \brief Opens the door and bay of selected bay
+ * \param bay The bay number that needs to be opened [LEFT, CENTER, RIGHT]
+ * \param location The place the bay needs to be opened in [LEFT, CENTER, RIGHT]
+ * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
+ * \exception Opening door to CENTER will open LEFT location as well
+**/
+void openDoor(int bay, int location) {
+    ev3_motor_rotate(a_motor, (doorLocations[bay][location][0]-ev3_motor_get_counts(a_motor)), 30, false);
+    ev3_motor_rotate(d_motor, (doorLocations[bay][location][1]-ev3_motor_get_counts(d_motor)), 30, true);
+}
+/**
+ * \brief Resets the bays and doors to neutral position
+**/
+void closeDoor() {
+    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 30, false);
+    ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 30, true);
+}
+/**
  * \brief Returns the color (NONE, RED, GREEN, BLUE, WALL) of the selected sensor (1 or 4)
  * \param Sensor [color_sensor1, color_sensor4]
 **/
@@ -245,26 +289,6 @@ void detectRoadCars(){
         roadcarPositions[5] = BLUE;
     }
 }
-
-/**
- * \brief Opens the door and bay of selected bay
- * \param bay The bay number that needs to be opened [LEFT, CENTER, RIGHT]
- * \param location The place the bay needs to be opened in [LEFT, CENTER, RIGHT]
- * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
- * \exception Opening door to CENTER will open LEFT location as well
-**/
-void openDoor(int bay, int location) {
-    ev3_motor_rotate(a_motor, (doorLocations[bay][location][0]-ev3_motor_get_counts(a_motor)), 30, false);
-    ev3_motor_rotate(d_motor, (doorLocations[bay][location][1]-ev3_motor_get_counts(d_motor)), 30, true);
-}
-/**
- * \brief Resets the bays and doors to neutral position
-**/
-void closeDoor() {
-    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 30, false);
-    ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 30, true);
-}
-
 /**
  * \brief Returns whether or not we have a car of __ type in our bay 
  * \param cartype Type of car to look for [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
@@ -517,32 +541,6 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
                 break;
         }
     }
-}
-
-/**
- * \brief Drives out of base and collects batteries
-**/
-void driveOutBase(){
-    ev3_motor_rotate(a_motor, 220, 20, true);
-    ev3_motor_rotate(d_motor, 340, 20, true);
-    drive(26,10,5);
-    drive(5.75,10,5);
-    ev3_motor_rotate(d_motor, 460, -20, true);
-    drive(4,10,5);
-    ev3_motor_rotate(d_motor, 460, 20, true);
-    drive(1.75,10,5);
-    ev3_motor_rotate(d_motor, 460, -20, true);
-    drive(6.5,10,5);
-    ev3_motor_rotate(a_motor, 220, -20, true);
-    ev3_motor_rotate(d_motor, 120, 20, true);
-    motorSteer(10,-100);
-    tslp_tsk(1000);
-    ev3_motor_reset_counts(left_motor);
-    ev3_motor_reset_counts(right_motor);
-    while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
-    while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
-    motorSteer(0,0);
-    PID(15,10,RIGHT,CENTER,0);
 }
 
 /**
