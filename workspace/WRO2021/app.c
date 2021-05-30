@@ -111,8 +111,9 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    driveOutBase();
-    PID(72,40,RIGHT,CENTER,3);
+    //driveOutBase();
+    //PID(72,40,RIGHT,CENTER,3);
+    test();
 }
 
 /**
