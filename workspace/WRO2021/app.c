@@ -171,22 +171,22 @@ void init() {
  * \brief Drives out of base and collects batteries
 **/
 void driveOutBase(){
-    ev3_motor_rotate(a_motor, 220, 20, true);
-    ev3_motor_rotate(d_motor, 340, 20, true);
-    drive(26,10,5);
-    drive(5.75,10,5);
-    ev3_motor_rotate(d_motor, 460, -20, true);
-    drive(4,10,5);
-    ev3_motor_rotate(d_motor, 460, 20, true);
-    drive(1.75,10,5);
-    ev3_motor_rotate(d_motor, 460, -20, true);
-    drive(6.5,10,5);
-    ev3_motor_rotate(a_motor, 220, -20, true);
-    ev3_motor_rotate(d_motor, 120, 20, true);
-    motorSteer(10,-100);
+    ev3_motor_rotate(a_motor, 220, 30, true);
+    ev3_motor_rotate(d_motor, 340, 30, true);
+    drive(26,20,5);
+    drive(5.75,15,5);
+    ev3_motor_rotate(d_motor, 460, -30, true);
+    drive(4,15,5);
+    ev3_motor_rotate(d_motor, 460, 30, true);
+    drive(1.75,15,5);
+    ev3_motor_rotate(d_motor, 460, -30, true);
+    drive(6.5,15,5);
+    ev3_motor_rotate(a_motor, 220, -30, true);
+    ev3_motor_rotate(d_motor, 120, 30, true);
     tslp_tsk(1000);
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
+    motorSteer(10,-100);
     while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
     motorSteer(0,0);
@@ -504,23 +504,18 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
             float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
             integral = error + integral * 0.5;
             float curve = 0.13 * error + 0 * integral + 0 * (error - lasterror);
-            motorSteer(10,curve);
+            motorSteer(15,curve);
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
         if(readCar != -1){
             mapcarPositions[(int)floor(readCar / 4)][readCar % 4] = readcar(4);
         }
-        drive(15, 10, 0);
+        drive(15, 15, 0);
         tslp_tsk(200);
         switch (turn)
         {
             case LEFT:
-                ev3_motor_set_power(left_motor,20);
-                ev3_motor_set_power(right_motor,3);
-                //motorSteer(10, -50);
-                tslp_tsk(800);
-                //motorSteer(5, -50);
-                ev3_motor_set_power(left_motor,5);
+                motorSteer(15, -50);
                 while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
                 while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
                 ev3_motor_steer(left_motor, right_motor, 0, 0);
@@ -528,9 +523,7 @@ void PID(int distance, int power, int turn, int turn_sensor, int readCar) {
             case RIGHT:
                 ev3_motor_set_power(left_motor,-3);
                 ev3_motor_set_power(right_motor,-20);
-                //motorSteer(10, -50);
                 tslp_tsk(800);
-                //motorSteer(5, -50);
                 ev3_motor_set_power(right_motor,-5);
                 while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
                 while (ev3_color_sensor_get_reflect(color_sensor3) < 25) {}
@@ -624,27 +617,10 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
-    //deliver(1,2,true);
-    //deliverBattery(3);
-    doParkingSpot(3);
-    // doBays(0);
-    // driveOutBase();
-    // PID(72,40,RIGHT,CENTER,3);
-    // PID(14,20,CENTER,CENTER,0);
-    // }
-    // openDoor(LEFT, LEFT);
-    // waitforButton();
-    // openDoor(LEFT, CENTER);
-    // waitforButton();
-    // openDoor(CENTER, LEFT);
-    // waitforButton();
-    // openDoor(CENTER, CENTER);
-    // waitforButton();
-    // openDoor(CENTER, RIGHT);
-    // waitforButton();
-    // openDoor(RIGHT, CENTER);
-    // waitforButton();
-    // openDoor(RIGHT, RIGHT);
-    // waitforButton();
-    // closeDoor();
+    while (ev3_color_sensor_get_reflect(color_sensor2) > 15 && ev3_color_sensor_get_reflect(color_sensor3) > 15) {
+        motorSteer(15,0);
+        tslp_tsk(10);
+    }
+    drive(15, 10, 0);
+    motorSteer(15, -50);
 }
