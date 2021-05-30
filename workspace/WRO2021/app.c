@@ -51,7 +51,7 @@ int doorLocations[3][3][2] = {
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayCars[3] = {
-    BLUE, BATTERY, NONE
+    NONE, BATTERY, NONE
 };
 /**
  * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
@@ -653,4 +653,5 @@ void test() {
     // while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
     // ev3_motor_steer(left_motor, right_motor, 0, 0);
     PID(70, 30, RIGHT, CENTER, 0);
+    doParkingSpot(3);
 }
