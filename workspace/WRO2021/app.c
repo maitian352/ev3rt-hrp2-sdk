@@ -542,9 +542,9 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar) {
                     ev3_motor_steer(left_motor, right_motor, 0, 0);
                 break;
             case RIGHT:
-                    motorSteer(20, 65);
+                    motorSteer(-20, -65);
                     tslp_tsk(800);
-                    motorSteer(5, 65);
+                    motorSteer(-5, -65);
                     while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
                     while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {}
                     ev3_motor_steer(left_motor, right_motor, 0, 0);
