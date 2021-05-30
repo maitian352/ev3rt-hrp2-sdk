@@ -414,7 +414,6 @@ void deliver(int bay, int location, int battery) {
 **/
 void collect(int bay) {
     openDoor(bay, CENTER);
-                                        waitforButton();
     tslp_tsk(10);
     drive(16, 10, 0);
     tslp_tsk(10);
@@ -653,6 +652,6 @@ void test() {
     // while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     // while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
     // ev3_motor_steer(left_motor, right_motor, 0, 0);
-    PID(70, 30, RIGHT, CENTER, 0);
+    PID(70, 30, RIGHT, CENTER, false);
     doParkingSpot(3);
 }
