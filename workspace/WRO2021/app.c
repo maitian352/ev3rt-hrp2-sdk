@@ -478,7 +478,7 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar) {
         //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
         float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
         integral = error + integral * 0.5;
-        float curve = 0.15 * error + 0 * integral + 0.05 * (error - lasterror);
+        float curve = 0.13 * error + 0 * integral + 0.05 * (error - lasterror);
         motorSteer(power,curve);
         lasterror = error;
         tslp_tsk(1);
@@ -506,8 +506,8 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar) {
             //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
             float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
             integral = error + integral * 0.5;
-            float curve = 0.15 * error + 0 * integral + 0.05 * (error - lasterror);
-            motorSteer(10,curve);
+            float curve = 0.13 * error + 0 * integral + 0.05 * (error - lasterror);
+            motorSteer(15,curve);
             lasterror = error;
             tslp_tsk(1);
         }
