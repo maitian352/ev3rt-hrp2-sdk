@@ -392,16 +392,16 @@ void deliverCar(int parkingspot, int car) {
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
     waitforButton();
-    tslp_tsk(10);
-    drive(10, 10, 0);
+    tslp_tsk(16);
+    drive(15, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
         drive(5, -10, 0);
         tslp_tsk(10);
         closeDoor();
         tslp_tsk(10);
-        drive(5, -10, 0);
+        drive(11, -10, 0);
     } else {
-        drive(10, -10, 0);
+        drive(16, -10, 0);
         tslp_tsk(10);
         closeDoor();
         tslp_tsk(10);
@@ -414,12 +414,13 @@ void deliver(int bay, int location, int battery) {
 **/
 void collect(int bay) {
     openDoor(bay, CENTER);
+                                        waitforButton();
     tslp_tsk(10);
-    drive(12, 10, 0);
+    drive(16, 10, 0);
     tslp_tsk(10);
     closeDoor();
     tslp_tsk(10);
-    drive(12, -10, 0);
+    drive(16, -10, 0);
 }
 /**
  * \brief Starts motors at selected power and curve
@@ -507,7 +508,7 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar) {
             float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
             integral = error + integral * 0.5;
             float curve = 0.13 * error + 0 * integral + 0.05 * (error - lasterror);
-            motorSteer(15,curve);
+            motorSteer(10,curve);
             lasterror = error;
             tslp_tsk(1);
         }
