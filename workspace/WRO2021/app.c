@@ -256,6 +256,7 @@ int readcar(int sansar) {
         yeet = GREEN;
     }
     default:
+        exit(127);
         break;
     }
     return yeet;
