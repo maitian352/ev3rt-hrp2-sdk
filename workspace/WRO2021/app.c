@@ -260,6 +260,7 @@ int readcar(int sansar) {
         ev3_lcd_draw_string(msg, 10*0, 15*6);
     break;
     default:
+        exit(127);
         break;
     }
     return yeet;
@@ -520,7 +521,7 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
         // detect cars
         tslp_tsk(1000);
         waitforButton();
-        if(readCar != -1){
+        //if(readCar != -1){
             char msg[100];
             
         
@@ -529,7 +530,7 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
             //mapcarPositions[(int)floor(readCar / 4)][readCar % 4] = readcar(2);
             //sprintf(msg, "%d", mapcarPositions[(int)floor(readCar / 4)][readCar % 4]);
             //ev3_lcd_draw_string(msg, 10*0, 15*4);
-        }
+        //}
         waitforButton();
         // turn
         tslp_tsk(100);
@@ -666,7 +667,7 @@ void test() {
     // while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     // while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
     // ev3_motor_steer(left_motor, right_motor, 0, 0);
-    //PID(70, 30, RIGHT, CENTER, 3, RIGHT);
+    PID(70, 30, RIGHT, CENTER, 3, RIGHT);
     while(true){
         char msg[100];
         
@@ -676,3 +677,4 @@ void test() {
     //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     doParkingSpot(3);
 }
+ 
