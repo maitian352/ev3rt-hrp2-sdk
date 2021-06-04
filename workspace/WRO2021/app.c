@@ -130,10 +130,10 @@ void init() {
     ev3_motor_config(d_motor, MEDIUM_MOTOR);
     
     // Configure sensors
-    //ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
+    ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
     ev3_sensor_config(color_sensor2, COLOR_SENSOR);
     ev3_sensor_config(color_sensor3, COLOR_SENSOR);
-    //ev3_sensor_config(color_sensor4, HT_NXT_COLOR_SENSOR);
+    ev3_sensor_config(color_sensor4, HT_NXT_COLOR_SENSOR);
     
     // Set up sensors
     ev3_color_sensor_get_reflect(color_sensor2);
@@ -191,7 +191,7 @@ void driveOutBase(){
     while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
     motorSteer(0,0);
-    PID(15,10,RIGHT,CENTER,0);
+    PID(15,10,RIGHT,CENTER,0,LEFT);
 }
 
 /**
@@ -222,13 +222,13 @@ int readcar(int sansar) {
     {
     case 1:
         ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
-        if(rgb1.r > 20 && rgb1.g > 20){
+        if(rgb1.r > 30 && rgb1.g > 30 && rgb1.b > 15){
         yeet = WALL;
     }
-    else if(rgb1.r > 9 && rgb1.g > 5 && rgb1.b > 5){
+    else if(rgb1.r > 10 && rgb1.g > 6){
         yeet = RED;
     }
-    else if(rgb1.r > 5 && rgb1.g > 5 && rgb1.b > 10){
+    else if(rgb1.g > 6 && rgb1.b > 10){
         yeet = BLUE;
     }
     else if(rgb1.r < 5 && rgb1.g < 5 && rgb1.b < 5){
@@ -240,13 +240,13 @@ int readcar(int sansar) {
         break;
     case 2:
         ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-        if(rgb4.r > 25 && rgb4.g > 20 && rgb4.b > 20){
+        if(rgb4.r > 30 && rgb4.g > 30 && rgb4.b > 15){
         yeet = WALL;
     }
-    else if(rgb4.r > 5 && rgb4.g > 5){
+    else if(rgb4.r > 10 && rgb4.g > 6){
         yeet = RED;
     }
-    else if(rgb4.g > 5 && rgb4.b > 10){
+    else if(rgb4.g > 6 && rgb4.b > 10){
         yeet = BLUE;
     }
     else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
@@ -255,6 +255,10 @@ int readcar(int sansar) {
     else{
         yeet = GREEN;
     }
+            char msg[100];
+        sprintf(msg, "%d,%d,%d",rgb4.r,rgb4.g,rgb4.b);
+        ev3_lcd_draw_string(msg, 10*0, 15*6);
+    break;
     default:
         break;
     }
@@ -414,7 +418,7 @@ void deliver(int bay, int location, int battery) {
 **/
 void collect(int bay) {
     openDoor(bay, CENTER);
-                                        waitforButton();
+    waitforButton();
     tslp_tsk(10);
     drive(16, 10, 0);
     tslp_tsk(10);
@@ -468,7 +472,7 @@ void drive(float distance, int power, int curve) {
  * \exception \b turn and \b readCar do not apply when \b turn_sensor is NONE
  * \exception If readCar is -1, it will not read
 **/
-void PID(float distance, int power, int turn, int turn_sensor, int readCar) {
+void PID(float distance, int power, int turn, int turn_sensor, int readCar, int side) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     // line follow
@@ -514,13 +518,22 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar) {
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
         // detect cars
-        if(readCar != false){
-            exit(0);
-            mapcarPositions[(int)floor(readCar / 4)][readCar % 4] = readcar(4);
+        tslp_tsk(1000);
+        waitforButton();
+        if(readCar != -1){
+            char msg[100];
+            
+        
+        sprintf(msg, "%d", readcar(2));
+        ev3_lcd_draw_string(msg, 10*0, 15*4);
+            //mapcarPositions[(int)floor(readCar / 4)][readCar % 4] = readcar(2);
+            //sprintf(msg, "%d", mapcarPositions[(int)floor(readCar / 4)][readCar % 4]);
+            //ev3_lcd_draw_string(msg, 10*0, 15*4);
         }
+        waitforButton();
         // turn
         tslp_tsk(100);
-        drive(11, 15, 0);
+        drive(10, 15, 0);
         while (wheelDistance < 11) {
             wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
             //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
@@ -653,6 +666,13 @@ void test() {
     // while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     // while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
     // ev3_motor_steer(left_motor, right_motor, 0, 0);
-    PID(70, 30, RIGHT, CENTER, 0);
+    //PID(70, 30, RIGHT, CENTER, 3, RIGHT);
+    while(true){
+        char msg[100];
+        
+        sprintf(msg, "%d", readcar(2));
+        ev3_lcd_draw_string(msg, 10*0, 15*4);
+    }
+    //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     doParkingSpot(3);
 }
