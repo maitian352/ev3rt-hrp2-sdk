@@ -396,7 +396,6 @@ void deliverCar(int parkingspot, int car) {
 **/
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
-    waitforButton();
     tslp_tsk(16);
     drive(15, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
@@ -419,7 +418,6 @@ void deliver(int bay, int location, int battery) {
 **/
 void collect(int bay) {
     openDoor(bay, CENTER);
-    waitforButton();
     tslp_tsk(10);
     drive(16, 10, 0);
     tslp_tsk(10);
@@ -455,6 +453,7 @@ void motorSteer(int power, int curve) {
 void drive(float distance, int power, int curve) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
+    tslp_tsk(10);
     float wheelDistance = (-ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.141592653 * 8.1) / 360);
     while (abs(wheelDistance) < distance) {
         wheelDistance = (-ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.141592653 * 8.1) / 360);
@@ -667,13 +666,13 @@ void test() {
     // while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     // while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
     // ev3_motor_steer(left_motor, right_motor, 0, 0);
-    PID(70, 30, RIGHT, CENTER, 3, RIGHT);
-    while(true){
-        char msg[100];
+    // PID(70, 30, RIGHT, CENTER, 3, RIGHT);
+    // while(true){
+    //     char msg[100];
         
-        sprintf(msg, "%d", readcar(2));
-        ev3_lcd_draw_string(msg, 10*0, 15*4);
-    }
-    //PID(0, 30, CENTER, CENTER, 3, RIGHT);
+    //     sprintf(msg, "%d", readcar(2));
+    //     ev3_lcd_draw_string(msg, 10*0, 15*4);
+    // }
+    // //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     doParkingSpot(3);
 }
