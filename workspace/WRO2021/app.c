@@ -249,7 +249,7 @@ int readcar(int sensor, int parkingspot) {
         }
     }
     else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == BLUE){
-        if(rgb4.r > 13){
+        if(rgb4.r > 12){
             cardetected = RED;
         }
         else{
@@ -292,7 +292,7 @@ int readcar(int sensor, int parkingspot) {
         }
     }
     char msg[100];
-    sprintf(msg, "%d,%d,%d",rgb4.r,rgb4.g,rgb4.b);
+    sprintf(msg, "%d %d %d   hi",rgb4.r,rgb4.g,rgb4.b);
     ev3_lcd_draw_string(msg, 10*0, 15*6);
     return cardetected;
 }
@@ -709,11 +709,14 @@ void test() {
     //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     // PID(70, 30, RIGHT, CENTER, 3, RIGHT);
     while(true){
+        //waitforButton();
+        tslp_tsk(100);
+        int color = readcar(2,3);
         char msg[100];
         
-        sprintf(msg, "%d ", readcar(2,3));
+        sprintf(msg, "%d   ", color);
         ev3_lcd_draw_string(msg, 10*0, 15*4);
     }
     // //PID(0, 30, CENTER, CENTER, 3, RIGHT);
-    doParkingSpot(3);
+    //doParkingSpot(3);
 }
