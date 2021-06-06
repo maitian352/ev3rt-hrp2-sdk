@@ -217,83 +217,75 @@ void closeDoor() {
  * \param Sensor [color_sensor1, color_sensor4]
 **/
 int readcar(int sensor, int parkingspot) {
-    int cardetected = NONE;
-    rgb_raw_t rgb1;
-    bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
-    assert(val1);
-    val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
-    assert(val1);
-    if(rgb1.r > 30 && rgb1.g > 30 && rgb1.b > 15){
-        cardetected = WALL;
-    }
-    else if(rgb1.r < 7 && rgb1.g < 7 && rgb1.b < 8){
-        cardetected = NONE;
-    }
-    else{
-        if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED){
-            if(rgb4.b > 25){
-                cardetected = BLUE;
-            }
-            else{
-                cardetected = GREEN;
-            }
-        }
-        else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == GREEN){
-            if(rgb4.r > 12){
-                cardetected = RED;
-            }
-            else{
-                cardetected = BLUE;
-            }
-        }
-        else{
-            if(rgb4.r > 12){
-                cardetected = RED;
-            }
-            else{
-                cardetected = GREEN;
-            }
-        }
-    }
-    char msg[100];
-    sprintf(msg, "%d,%d,%d",rgb1.r,rgb1.g,rgb1.b);
-    ev3_lcd_draw_string(msg, 10*0, 15*6);
     rgb_raw_t rgb4;
     bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
     assert(val4);
     val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
     assert(val4);
-    waitforButton();
-    if(rgb4.r > 30 && rgb4.g > 30 && rgb4.b > 15){
+    int cardetected = NONE;
+    if(rgb4.r > 43 && rgb4.g > 30 && rgb4.b > 15){
         cardetected = WALL;
     }
-    else if(rgb4.r < 7 && rgb4.g < 7 && rgb4.b < 8){
+    else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
         cardetected = NONE;
     }
-    else{
-        if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED){
-            if(rgb4.b > 25){
-                cardetected = BLUE;
-            }
-            else{
-                cardetected = GREEN;
-            }
-        }
-        else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == GREEN){
-            if(rgb4.r > 12){
-                cardetected = RED;
-            }
-            else{
-                cardetected = BLUE;
-            }
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === RED){
+        if(rgb4.b > 13){
+            cardetected = BLUE;
         }
         else{
-            if(rgb4.r > 12){
-                cardetected = RED;
-            }
-            else{
-                cardetected = GREEN;
-            }
+            cardetected = GREEN;
+        }
+    }
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === GREEN){
+        if(rgb4.r > 12){
+            cardetected = RED;
+        }
+        else{
+            cardetected = BLUE;
+        }
+    }
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === BLUE){
+        if(rgb4.r > 13){
+            cardetected = RED;
+        }
+        else{
+            cardetected = GREEN;
+        }
+    }
+    rgb_raw_t rgb1;
+    bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
+    assert(val1);
+    val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
+    assert(val1);
+    if(rgb4.r > 43 && rgb4.g > 30 && rgb4.b > 15){
+        cardetected = WALL;
+    }
+    else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
+        cardetected = NONE;
+    }
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === RED){
+        if(rgb4.b > 18){
+            cardetected = BLUE;
+        }
+        else{
+            cardetected = GREEN;
+        }
+    }
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === GREEN){
+        if(rgb4.r > 9){
+            cardetected = RED;
+        }
+        else{
+            cardetected = BLUE;
+        }
+    }
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === BLUE){
+        if(rgb4.r > 10){
+            cardetected = RED;
+        }
+        else{
+            cardetected = GREEN;
         }
     }
     return cardetected;
