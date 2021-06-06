@@ -229,7 +229,7 @@ int readcar(int sensor, int parkingspot) {
     else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
         cardetected = NONE;
     }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === RED){
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED){
         if(rgb4.b > 13){
             cardetected = BLUE;
         }
@@ -237,7 +237,7 @@ int readcar(int sensor, int parkingspot) {
             cardetected = GREEN;
         }
     }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === GREEN){
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == GREEN){
         if(rgb4.r > 12){
             cardetected = RED;
         }
@@ -245,7 +245,7 @@ int readcar(int sensor, int parkingspot) {
             cardetected = BLUE;
         }
     }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === BLUE){
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == BLUE){
         if(rgb4.r > 13){
             cardetected = RED;
         }
@@ -258,36 +258,39 @@ int readcar(int sensor, int parkingspot) {
     assert(val1);
     val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     assert(val1);
-    if(rgb4.r > 43 && rgb4.g > 30 && rgb4.b > 15){
-        cardetected = WALL;
+    if(rgb1.r > 43 && rgb1.g > 30 && rgb1.b > 15){
+        //cardetected = WALL;
     }
-    else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
-        cardetected = NONE;
+    else if(rgb1.r < 5 && rgb1.g < 5 && rgb1.b < 5){
+        //cardetected = NONE;
     }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === RED){
-        if(rgb4.b > 18){
-            cardetected = BLUE;
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED){
+        if(rgb1.b > 18){
+            //cardetected = BLUE;
         }
         else{
-            cardetected = GREEN;
+            //cardetected = GREEN;
         }
     }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === GREEN){
-        if(rgb4.r > 9){
-            cardetected = RED;
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == GREEN){
+        if(rgb1.r > 9){
+            //cardetected = RED;
         }
         else{
-            cardetected = BLUE;
+            //cardetected = BLUE;
         }
     }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] === BLUE){
-        if(rgb4.r > 10){
-            cardetected = RED;
+    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == BLUE){
+        if(rgb1.r > 10){
+            //cardetected = RED;
         }
         else{
-            cardetected = GREEN;
+            //cardetected = GREEN;
         }
     }
+    char msg[100];
+    sprintf(msg, "%d,%d,%d",rgb4.r,rgb4.g,rgb4.b);
+    ev3_lcd_draw_string(msg, 10*0, 15*6);
     return cardetected;
 }
 /**
@@ -699,15 +702,15 @@ void test() {
     // while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     // while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
     // ev3_motor_steer(left_motor, right_motor, 0, 0);
-    PID(70, 30, RIGHT, CENTER, 7, 1);
+    //PID(70, 30, RIGHT, CENTER, 7, 1);
     //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     // PID(70, 30, RIGHT, CENTER, 3, RIGHT);
-    // while(true){
-    //     char msg[100];
+    while(true){
+        char msg[100];
         
-    //     sprintf(msg, "%d", readcar(2));
-    //     ev3_lcd_draw_string(msg, 10*0, 15*4);
-    // }
+        sprintf(msg, "%d ", readcar(2,3));
+        ev3_lcd_draw_string(msg, 10*0, 15*4);
+    }
     // //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     doParkingSpot(3);
 }
