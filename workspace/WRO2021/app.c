@@ -109,7 +109,10 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    //driveOutBase();
+    driveOutBase();
+    PID(16, 20, RIGHT, RIGHT, false, BATTERYx2);
+    waitforButton();
+    detectRoadCars();
     //PID(72,40,RIGHT,CENTER,3);
     test();
 }
@@ -191,7 +194,7 @@ void driveOutBase(){
     while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
     while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
     motorSteer(0,0);
-    PID(15,10,RIGHT,CENTER,0,LEFT);
+    PID(15,10,LEFT,CENTER,NONE,CENTER);
 }
 
 /**
