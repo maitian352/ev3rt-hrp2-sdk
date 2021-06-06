@@ -19,7 +19,7 @@
 #define F 100
 
 void init();
-int readcar(int sansar);
+int readcar(int sensor, int parkingspot);
 void detectRoadCars();
 void openDoor(int bay, int location);
 void closeDoor();
