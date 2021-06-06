@@ -51,7 +51,7 @@ int doorLocations[3][3][2] = {
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayCars[3] = {
-    NONE, BATTERY, NONE
+    NONE, NONE, NONE
 };
 /**
  * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
@@ -67,7 +67,7 @@ int roadcarPositions[6] = {
 **/
 int mapcarPositions[3][4] = {
     {
-        NONE,NONE,NONE,RED
+        NONE,NONE,NONE,NONE
     },
     {
         NONE,NONE,NONE,NONE
