@@ -167,26 +167,34 @@ void init() {
  * \brief Drives out of base and collects batteries
 **/
 void driveOutBase(){
-    ev3_motor_rotate(a_motor, 220, 30, true);
-    ev3_motor_rotate(d_motor, 340, 30, true);
-    drive(26,20,5);
-    drive(5.75,15,5);
-    ev3_motor_rotate(d_motor, 460, -30, true);
-    drive(4,15,5);
-    ev3_motor_rotate(d_motor, 460, 30, true);
-    drive(1.75,15,5);
-    ev3_motor_rotate(d_motor, 460, -30, true);
-    drive(6.5,15,5);
-    ev3_motor_rotate(a_motor, 220, -30, true);
-    ev3_motor_rotate(d_motor, 120, 30, true);
-    tslp_tsk(1000);
+    ev3_motor_rotate(a_motor, 420, 50, false);
+    ev3_motor_rotate(d_motor, 540, 50, false);
+    drive(25,20,1);
+    drive(5,10,1);
+    tslp_tsk(50);
+    ev3_motor_rotate(d_motor, 460, -50, true);
+    drive(3,10,1);
+    tslp_tsk(50);
+    ev3_motor_rotate(d_motor, 460, 50, true);
+    drive(1.2,10,1);
+    tslp_tsk(50);
+    ev3_motor_rotate(d_motor, 460, -50, true);
+    drive(8,10,1);
+    tslp_tsk(50);
+    ev3_motor_rotate(a_motor, 420, -50, true);
+    ev3_motor_rotate(d_motor, 80, -50, true);
+    tslp_tsk(50);
+    bayCars[CENTER] = BATTERYx2;
+    bayCars[RIGHT] = BATTERYx2;
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     motorSteer(10,-100);
-    while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
-    while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
+    tslp_tsk(500);
+    while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {tslp_tsk(10);}
+    while (ev3_color_sensor_get_reflect(color_sensor2) > 60) {tslp_tsk(10);}
+    while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {tslp_tsk(10);}
     motorSteer(0,0);
-    PID(15,10,LEFT,CENTER,NONE,CENTER);
+    PID(12,10,LEFT,CENTER,NONE,CENTER);
 }
 
 /**
