@@ -19,6 +19,7 @@
 #define F 100
 
 void init();
+void driveOutBase();
 int readcar(int sensor, int parkingspot);
 void detectRoadCars();
 void openDoor(int bay, int location);
