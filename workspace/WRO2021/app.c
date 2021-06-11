@@ -170,17 +170,17 @@ void init() {
 void driveOutBase(){
     ev3_motor_rotate(a_motor, 420, 60, false);
     ev3_motor_rotate(d_motor, 540, 60, false);
-    drive(25,20,2);
-    drive(5,10,2);
+    drive(25,20,5);
+    drive(5,10,5);
     tslp_tsk(50);
     ev3_motor_rotate(d_motor, 460, -50, true);
-    drive(3,10,2);
+    drive(3,10,5);
     tslp_tsk(50);
     ev3_motor_rotate(d_motor, 460, 50, true);
-    drive(1.2,10,2);
+    drive(1.2,10,5);
     tslp_tsk(50);
     ev3_motor_rotate(d_motor, 460, -50, true);
-    drive(7,10,2);
+    drive(6.5,10,5);
     tslp_tsk(50);
     ev3_motor_rotate(a_motor, 420, -50, true);
     ev3_motor_rotate(d_motor, 80, -50, true);
