@@ -102,7 +102,10 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    //driveOutBase();
+    driveOutBase();
+    // PID(16, 20, RIGHT, RIGHT, false, BATTERYx2);
+    // waitforButton();
+    // detectRoadCars();
     //PID(72,40,RIGHT,CENTER,3);
     test();
 }
@@ -165,26 +168,34 @@ void init() {
  * \brief Drives out of base and collects batteries
 **/
 void driveOutBase(){
-    ev3_motor_rotate(a_motor, 220, 30, true);
-    ev3_motor_rotate(d_motor, 340, 30, true);
-    drive(26,20,5);
-    drive(5.75,15,5);
-    ev3_motor_rotate(d_motor, 460, -30, true);
-    drive(4,15,5);
-    ev3_motor_rotate(d_motor, 460, 30, true);
-    drive(1.75,15,5);
-    ev3_motor_rotate(d_motor, 460, -30, true);
-    drive(6.5,15,5);
-    ev3_motor_rotate(a_motor, 220, -30, true);
-    ev3_motor_rotate(d_motor, 120, 30, true);
-    tslp_tsk(1000);
+    ev3_motor_rotate(a_motor, 420, 60, false);
+    ev3_motor_rotate(d_motor, 540, 60, false);
+    drive(25,20,2);
+    drive(5,10,2);
+    tslp_tsk(50);
+    ev3_motor_rotate(d_motor, 460, -50, true);
+    drive(3,10,2);
+    tslp_tsk(50);
+    ev3_motor_rotate(d_motor, 460, 50, true);
+    drive(1.2,10,2);
+    tslp_tsk(50);
+    ev3_motor_rotate(d_motor, 460, -50, true);
+    drive(7,10,2);
+    tslp_tsk(50);
+    ev3_motor_rotate(a_motor, 420, -50, true);
+    ev3_motor_rotate(d_motor, 80, -50, true);
+    tslp_tsk(50);
+    bayCars[CENTER] = BATTERYx2;
+    bayCars[RIGHT] = BATTERYx2;
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     motorSteer(10,-100);
-    while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
-    while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {}
+    tslp_tsk(1000);
+    while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor2) > 60) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {tslp_tsk(5);}
     motorSteer(0,0);
-    PID(15,10,RIGHT,CENTER,0,LEFT);
+    PID(12,10,RIGHT,CENTER,NONE,CENTER);
 }
 
 /**
@@ -541,7 +552,6 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
         ev3_motor_steer(left_motor, right_motor, 0, 0);
         // detect cars
         tslp_tsk(1000);
-        waitforButton();
         int doturn = true;
         if(readCar != -1){
             char msg[100];
@@ -555,7 +565,6 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
                 doturn = false;
             }
         }
-        waitforButton();
         // turn
         if(doturn == true){
             tslp_tsk(100);
