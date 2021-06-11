@@ -7,6 +7,7 @@
 #include <string.h>
 #include <math.h>
 
+
 // define motors and sensors
 const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 = EV3_PORT_3, color_sensor4 = EV3_PORT_4, left_motor = EV3_PORT_B, right_motor = EV3_PORT_C, a_motor = EV3_PORT_A, d_motor = EV3_PORT_D;
 
@@ -604,6 +605,53 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
             tslp_tsk(100);
         }
     }
+}
+
+
+void runAll(){
+    for(int i = 3;i >= 0;i++){
+        if(mapcarPositions[0][i] == NONE){
+
+        }
+        else{
+            doParkingSpot(i);
+        }
+        PID(0,30,LEFT,CENTER,-1,1);
+        PID(0,30,LEFT,CENTER,-1,1);
+        if(mapcarPositions[1][i] == NONE){
+
+        }
+        else{
+            doParkingSpot(i + 4);
+        }
+        if(i == 0){
+            PID(0,30,LEFT,CENTER,-1,1);
+        }
+        else{
+            PID(0,30,RIGHT,CENTER,-1,1);
+            PID(30,30,LEFT,CENTER,2,1);
+        }
+    }
+    if(mapcarPositions[1][0] == NONE){
+        PID(0,30,CENTER,CENTER,2,1);
+        for(int i = 0;i < 4;i++){
+            if(mapcarPositions[2][i] == NONE){
+
+            }
+            else{
+                doParkingSpot(i + 8);
+            }
+            PID(0,30,LEFT,CENTER,-1,1);
+            PID(30,30,RIGHT,CENTER,-1,1);
+        }
+    }
+    else if(mapcarPositions[1][1] == NONE){
+        PID(30,30,LEFT,CENTER,2,1);
+    }
+    else if(mapcarPositions[1][2] == NONE){
+        PID(62,30,LEFT,CENTER,2,1);
+    }
+    PID(34,30,LEFT,CENTER,2,1);
 }
 
 /**
