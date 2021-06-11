@@ -667,10 +667,13 @@ void displayvalues() {
 void button_clicked_handler(intptr_t button) {
     switch(button) {
     case BACK_BUTTON:
+            ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
             ev3_motor_stop(left_motor, false);
             ev3_motor_stop(right_motor, false);
             ev3_motor_stop(a_motor, false);
             ev3_motor_stop(d_motor, false);
+            ev3_led_set_color(LED_RED);
+            ev3_lcd_draw_string("Program  Stopped", 10, 60);
         exit(0);
         break;
     }
