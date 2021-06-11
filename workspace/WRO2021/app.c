@@ -170,17 +170,17 @@ void init() {
 void driveOutBase(){
     ev3_motor_rotate(a_motor, 420, 60, false);
     ev3_motor_rotate(d_motor, 540, 60, false);
-    drive(25,20,2);
-    drive(5,10,2);
+    drive(25,20,5);
+    drive(5,10,5);
     tslp_tsk(50);
     ev3_motor_rotate(d_motor, 460, -50, true);
-    drive(3,10,2);
+    drive(3,10,5);
     tslp_tsk(50);
     ev3_motor_rotate(d_motor, 460, 50, true);
-    drive(1.2,10,2);
+    drive(1.2,10,5);
     tslp_tsk(50);
     ev3_motor_rotate(d_motor, 460, -50, true);
-    drive(7,10,2);
+    drive(6.5,10,5);
     tslp_tsk(50);
     ev3_motor_rotate(a_motor, 420, -50, true);
     ev3_motor_rotate(d_motor, 80, -50, true);
@@ -735,10 +735,13 @@ void displayvalues() {
 void button_clicked_handler(intptr_t button) {
     switch(button) {
     case BACK_BUTTON:
+            ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
             ev3_motor_stop(left_motor, false);
             ev3_motor_stop(right_motor, false);
             ev3_motor_stop(a_motor, false);
             ev3_motor_stop(d_motor, false);
+            ev3_led_set_color(LED_RED);
+            ev3_lcd_draw_string("Program  Stopped", 10, 60);
         exit(0);
         break;
     }
