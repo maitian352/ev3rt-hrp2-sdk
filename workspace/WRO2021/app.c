@@ -758,8 +758,8 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
-    detectRoadCars();
-    waitforButton();
+    //detectRoadCars();
+    //waitforButton();
     // while (ev3_color_sensor_get_reflect(color_sensor2) > 10 && ev3_color_sensor_get_reflect(color_sensor3) > 10) {
     //     motorSteer(10,0);
     //     tslp_tsk(10);
