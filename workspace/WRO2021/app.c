@@ -226,6 +226,7 @@ int readcar(int sensor, int parkingspot) {
     assert(val4);
     val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
     assert(val4);
+    tslp_tsk(5);
     int cardetected = NONE;
     if(rgb4.r > 43 && rgb4.g > 30 && rgb4.b > 15){
         cardetected = WALL;
