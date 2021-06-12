@@ -302,6 +302,7 @@ int readcar(int sensor, int parkingspot) {
  * \brief Detects and writes down values of all 6 cars on the road
 **/
 void detectRoadCars(){
+    char msg[100];
     rgb_raw_t rgb45;
     int red = 2;
     int green = 2;
