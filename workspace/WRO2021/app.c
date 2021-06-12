@@ -102,7 +102,7 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    driveOutBase();
+    //driveOutBase();
     // PID(16, 20, RIGHT, RIGHT, false, BATTERYx2);
     // waitforButton();
     // detectRoadCars();
@@ -135,9 +135,9 @@ void init() {
     //rgb_raw_t rgb1;
     //bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     //assert(val1);
-    //rgb_raw_t rgb4;
-    //bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-    //assert(val4);
+    rgb_raw_t rgb4;
+    bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+    assert(val4);
 
     // Configure brick
     ev3_lcd_set_font(EV3_FONT_MEDIUM);
@@ -301,41 +301,37 @@ int readcar(int sensor, int parkingspot) {
  * \brief Detects and writes down values of all 6 cars on the road
 **/
 void detectRoadCars(){
-    rgb_raw_t rgb4;
-    bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-    assert(val4);
+    rgb_raw_t rgb45;
     int red = 2;
     int green = 2;
     int blue = 2;
-    for(int i = 0;i < 5;i++){
+    rgb45.r = 100;
+    rgb45.g = 100;
+    rgb45.b = 100;
+    int cardetected = NONE;
+    bool_t val4;
+    for(int i = 0;i < 500;i++){
         drive(11,20,0);
-        int cardetected = NONE;
-        val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-        assert(val4);
-        val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-        assert(val4);
-        if(rgb4.r > 12){
+        val4 = 0;
+        
+        val4 = val4 + ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb45);
+        //assert(val4);
+        while (val4 < 2) {
+            tslp_tsk(100);
+            val4 = val4 + ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb45);
+            sprintf(msg, "%d %d %d       %d    ",rgb45.r,rgb45.g,rgb45.b,val4);
+            ev3_lcd_draw_string(msg, 10*0, 15*val4);
+        }
+        if(rgb45.r > 55){
             cardetected = RED;
         }
-        else if(rgb4.b > 13){
+        else if(rgb45.b > 55){
             cardetected = BLUE;
         }
         else{
             cardetected = GREEN;
         }
-        roadcarPositions[i] = cardetected;
-        if(roadcarPositions[i] == RED){
-            red--;
-        }
-        if(roadcarPositions[i] == GREEN){
-            green--;
-        }
-        if(roadcarPositions[i] == BLUE){
-            blue--;
-        }
-        char msg[100];
-        sprintf(msg, "%d",cardetected);
-        ev3_lcd_draw_string(msg, 10*0, 15*6);
+        waitforButton();
     }
     if(red == 1){
         roadcarPositions[5] = RED;
