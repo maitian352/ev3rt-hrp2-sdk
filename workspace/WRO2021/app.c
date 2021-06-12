@@ -302,12 +302,29 @@ int readcar(int sensor, int parkingspot) {
  * \brief Detects and writes down values of all 6 cars on the road
 **/
 void detectRoadCars(){
+    rgb_raw_t rgb4;
+    bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+    assert(val4);
     int red = 2;
     int green = 2;
     int blue = 2;
     for(int i = 0;i < 5;i++){
         drive(11,20,0);
-        roadcarPositions[i] = readcar(2,0);
+        int cardetected = NONE;
+        val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+        assert(val4);
+        val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+        assert(val4);
+        if(rgb4.r > 12){
+            cardetected = RED;
+        }
+        else if(rgb4.b > 13){
+            cardetected = BLUE;
+        }
+        else{
+            cardetected = GREEN;
+        }
+        roadcarPositions[i] = cardetected;
         if(roadcarPositions[i] == RED){
             red--;
         }
@@ -317,6 +334,9 @@ void detectRoadCars(){
         if(roadcarPositions[i] == BLUE){
             blue--;
         }
+        char msg[100];
+        sprintf(msg, "%d",cardetected);
+        ev3_lcd_draw_string(msg, 10*0, 15*6);
     }
     if(red == 1){
         roadcarPositions[5] = RED;
@@ -741,6 +761,8 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
+    detectRoadCars();
+    waitforButton();
     // while (ev3_color_sensor_get_reflect(color_sensor2) > 10 && ev3_color_sensor_get_reflect(color_sensor3) > 10) {
     //     motorSteer(10,0);
     //     tslp_tsk(10);
