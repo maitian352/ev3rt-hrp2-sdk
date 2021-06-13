@@ -102,7 +102,7 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    //driveOutBase();
+    driveOutBase();
     // PID(16, 20, RIGHT, RIGHT, false, BATTERYx2);
     // waitforButton();
     // detectRoadCars();
@@ -168,8 +168,8 @@ void init() {
  * \brief Drives out of base and collects batteries
 **/
 void driveOutBase(){
-    ev3_motor_rotate(a_motor, 420, 60, false);
-    ev3_motor_rotate(d_motor, 540, 60, false);
+    ev3_motor_rotate(a_motor, 420, 80, false);
+    ev3_motor_rotate(d_motor, 540, 80, false);
     drive(25,20,5);
     drive(5,10,5);
     tslp_tsk(50);
@@ -190,12 +190,23 @@ void driveOutBase(){
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     motorSteer(10,-100);
-    tslp_tsk(1000);
-    while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {tslp_tsk(5);}
-    while (ev3_color_sensor_get_reflect(color_sensor2) > 60) {tslp_tsk(5);}
-    while (ev3_color_sensor_get_reflect(color_sensor2) < 25) {tslp_tsk(5);}
+    tslp_tsk(800);
+    motorSteer(0, 100);
+    tslp_tsk(50);
+    drive(16, 15, 0);
+    motorSteer(10, 0);
+    while (ev3_color_sensor_get_reflect(color_sensor3 > 20)) {tslp_tsk(5);}
+    motorSteer(0, 0);
+    tslp_tsk(50);
+    drive(7, 10, 0);
+    tslp_tsk(50);
+    motorSteer(10, 100);
+    tslp_tsk(500);
+    motorSteer(5, 100);
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 50) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) > 20) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 25) {tslp_tsk(5);}
     motorSteer(0,0);
-    PID(12,10,RIGHT,CENTER,NONE,CENTER);
 }
 
 /**
@@ -513,7 +524,7 @@ void drive(float distance, int power, int curve) {
     ev3_motor_steer(left_motor, right_motor, 0, 0);
 }
 /**
- * \brief Drives robot following a line at a selected power for a distance, turning at the end if needed
+ * \brief Drives robot following a line at a selected power for a distance, turning at the end if needed, and reading cars
  * \param distance The absolute distance in centimeters calculated as average between two motors
  * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
  * \param turn Turn selection where CENTER means no turn [LEFT, CENTER, RIGHT]
@@ -777,6 +788,7 @@ void test() {
     //PID(70, 30, RIGHT, CENTER, 7, 1);
     //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     // PID(70, 30, RIGHT, CENTER, 3, RIGHT);
+    /*
     while(true){
         //waitforButton();
         tslp_tsk(100);
@@ -785,7 +797,7 @@ void test() {
         
         sprintf(msg, "%d   ", color);
         ev3_lcd_draw_string(msg, 10*0, 15*4);
-    }
+    }*/
     // //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     //doParkingSpot(3);
 }
