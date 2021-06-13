@@ -102,9 +102,10 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    driveOutBase();
-    PID(48,40,RIGHT,CENTER,3, 2);
-    runAll();
+    detectRoadCars();
+    //driveOutBase();
+    //PID(48,40,RIGHT,CENTER,3, 2);
+    //runAll();
     // test();
 }
 
@@ -369,8 +370,8 @@ void detectRoadCars(){
     rgb45.b = 100;
     int cardetected = NONE;
     bool_t val4;
-    for(int i = 0;i < 500;i++){
-        drive(11,20,0);
+    for(int i = 0;i < 5;i++){
+        drive(10,20,0);
         val4 = 0;
         
         val4 = val4 + ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb45);
@@ -378,19 +379,23 @@ void detectRoadCars(){
         while (val4 < 2) {
             tslp_tsk(100);
             val4 = val4 + ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb45);
-            sprintf(msg, "%d %d %d       %d    ",rgb45.r,rgb45.g,rgb45.b,val4);
-            ev3_lcd_draw_string(msg, 10*0, 15*val4);
         }
         if(rgb45.r > 55){
             cardetected = RED;
+            red -= 1;
         }
         else if(rgb45.b > 55){
             cardetected = BLUE;
+            blue -= 1;
         }
         else{
             cardetected = GREEN;
+            green -= 1;
         }
-        waitforButton();
+        roadcarPositions[i] = cardetected;
+        sprintf(msg, "%d %d %d       %d    ",rgb45.r,rgb45.g,rgb45.b,cardetected);
+        ev3_lcd_draw_string(msg, 10*0, 15);
+        //tslp_tsk(1000);
     }
     if(red == 1){
         roadcarPositions[5] = RED;
@@ -401,6 +406,8 @@ void detectRoadCars(){
     if(blue == 1){
         roadcarPositions[5] = BLUE;
     }
+    sprintf(msg, "%d",roadcarPositions[5]);
+    ev3_lcd_draw_string(msg, 10*0, 15*3);
 }
 /**
  * \brief Returns whether or not we have a car of __ type in our bay 
