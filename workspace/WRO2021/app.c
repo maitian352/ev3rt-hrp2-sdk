@@ -102,10 +102,10 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    detectRoadCars();
-    //driveOutBase();
-    //PID(48,40,RIGHT,CENTER,3, 2);
-    //runAll();
+    //detectRoadCars();
+    driveOutBase();
+    PID(48,30,RIGHT,CENTER,3, 2);
+    runAll();
     // test();
 }
 
@@ -200,11 +200,11 @@ void driveOutBase(){
     drive(7, 10, 0);
     tslp_tsk(50);
     motorSteer(10, 100);
-    tslp_tsk(500);
+    tslp_tsk(300);
     motorSteer(5, 100);
     while (ev3_color_sensor_get_reflect(color_sensor3) < 50) {tslp_tsk(5);}
-    while (ev3_color_sensor_get_reflect(color_sensor3) > 20) {tslp_tsk(5);}
-    while (ev3_color_sensor_get_reflect(color_sensor3) < 25) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 17) {tslp_tsk(5);}
     motorSteer(0,0);
 }
 /**
