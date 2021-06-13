@@ -20,6 +20,7 @@
 
 void init();
 void driveOutBase();
+void runAll();
 int readcar(int sensor, int parkingspot);
 void detectRoadCars();
 void openDoor(int bay, int location);

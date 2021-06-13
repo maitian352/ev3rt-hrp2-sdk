@@ -103,11 +103,9 @@ int mapPositions[3][4] = {
 void main_task(intptr_t unused) {
     init();
     driveOutBase();
-    // PID(16, 20, RIGHT, RIGHT, false, BATTERYx2);
-    // waitforButton();
-    // detectRoadCars();
-    //PID(72,40,RIGHT,CENTER,3);
-    test();
+    PID(48,40,RIGHT,CENTER,3, 2);
+    runAll();
+    // test();
 }
 
 /**
@@ -207,6 +205,54 @@ void driveOutBase(){
     while (ev3_color_sensor_get_reflect(color_sensor3) > 20) {tslp_tsk(5);}
     while (ev3_color_sensor_get_reflect(color_sensor3) < 25) {tslp_tsk(5);}
     motorSteer(0,0);
+}
+/**
+ * \brief Runs all things (Maitian put proper description)
+**/
+void runAll(){
+    for(int i = 3;i >= 0;i++){
+        if(mapcarPositions[0][i] == NONE){
+
+        }
+        else{
+            doParkingSpot(i);
+        }
+        PID(0,30,LEFT,CENTER,-1,1);
+        PID(0,30,LEFT,CENTER,-1,1);
+        if(mapcarPositions[1][i] == NONE){
+
+        }
+        else{
+            doParkingSpot(i + 4);
+        }
+        if(i == 0){
+            PID(0,30,LEFT,CENTER,-1,1);
+        }
+        else{
+            PID(0,30,RIGHT,CENTER,-1,1);
+            PID(30,30,LEFT,CENTER,2,1);
+        }
+    }
+    if(mapcarPositions[1][0] == NONE){
+        PID(0,30,CENTER,CENTER,2,1);
+        for(int i = 0;i < 4;i++){
+            if(mapcarPositions[2][i] == NONE){
+
+            }
+            else{
+                doParkingSpot(i + 8);
+            }
+            PID(0,30,LEFT,CENTER,-1,1);
+            PID(30,30,RIGHT,CENTER,-1,1);
+        }
+    }
+    else if(mapcarPositions[1][1] == NONE){
+        PID(30,30,LEFT,CENTER,2,1);
+    }
+    else if(mapcarPositions[1][2] == NONE){
+        PID(62,30,LEFT,CENTER,2,1);
+    }
+    PID(34,30,LEFT,CENTER,2,1);
 }
 
 /**
@@ -568,7 +614,7 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
             exit(127);
         }
         tslp_tsk(100);
-        while (ev3_color_sensor_get_reflect(sansar1) > 7 && ev3_color_sensor_get_reflect(sansar2) > 7) {
+        while (ev3_color_sensor_get_reflect(sansar1) > 10 || ev3_color_sensor_get_reflect(sansar2) > 10) {
             wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
             //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
             float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
@@ -636,52 +682,6 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
     }
 }
 
-
-void runAll(){
-    for(int i = 3;i >= 0;i++){
-        if(mapcarPositions[0][i] == NONE){
-
-        }
-        else{
-            doParkingSpot(i);
-        }
-        PID(0,30,LEFT,CENTER,-1,1);
-        PID(0,30,LEFT,CENTER,-1,1);
-        if(mapcarPositions[1][i] == NONE){
-
-        }
-        else{
-            doParkingSpot(i + 4);
-        }
-        if(i == 0){
-            PID(0,30,LEFT,CENTER,-1,1);
-        }
-        else{
-            PID(0,30,RIGHT,CENTER,-1,1);
-            PID(30,30,LEFT,CENTER,2,1);
-        }
-    }
-    if(mapcarPositions[1][0] == NONE){
-        PID(0,30,CENTER,CENTER,2,1);
-        for(int i = 0;i < 4;i++){
-            if(mapcarPositions[2][i] == NONE){
-
-            }
-            else{
-                doParkingSpot(i + 8);
-            }
-            PID(0,30,LEFT,CENTER,-1,1);
-            PID(30,30,RIGHT,CENTER,-1,1);
-        }
-    }
-    else if(mapcarPositions[1][1] == NONE){
-        PID(30,30,LEFT,CENTER,2,1);
-    }
-    else if(mapcarPositions[1][2] == NONE){
-        PID(62,30,LEFT,CENTER,2,1);
-    }
-    PID(34,30,LEFT,CENTER,2,1);
-}
 
 /**
  * \brief Displays sensor values of drive motors and color sensors on the EV3 LCD screen
