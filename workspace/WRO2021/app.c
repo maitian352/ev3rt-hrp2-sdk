@@ -42,7 +42,7 @@ int doorLocations[3][3][2] = {
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayCars[3] = {
-    NONE, NONE, NONE
+    NONE, BATTERYx2, BATTERYx2
 };
 /**
  * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
@@ -102,8 +102,8 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    driveOutBase();
-    PID(48,40,RIGHT,CENTER,3, 2);
+    //driveOutBase();
+    PID(48,30,RIGHT,CENTER,3, 2);
     runAll();
     // test();
 }
@@ -210,26 +210,30 @@ void driveOutBase(){
  * \brief Runs all things (Maitian put proper description)
 **/
 void runAll(){
-    for(int i = 3;i >= 0;i++){
-        if(mapcarPositions[0][i] == NONE){
+    for(int i = 3;i >= 0;i--){
+        if(mapcarPositions[0][i] == WALL){
 
         }
         else{
             doParkingSpot(i);
         }
-        PID(0,30,LEFT,CENTER,-1,1);
-        PID(0,30,LEFT,CENTER,-1,1);
-        if(mapcarPositions[1][i] == NONE){
+        waitforButton();
+        drive(11, 10, 0);
+        turn(LEFT);
+        drive(11, 10, 0);
+        turn(LEFT);
+        if(mapcarPositions[1][i] == WALL){
 
         }
         else{
             doParkingSpot(i + 4);
         }
+        drive(11, 10, 0);
         if(i == 0){
-            PID(0,30,LEFT,CENTER,-1,1);
+            turn(LEFT);
         }
         else{
-            PID(0,30,RIGHT,CENTER,-1,1);
+            turn(RIGHT);
             PID(30,30,LEFT,CENTER,2,1);
         }
     }
@@ -242,7 +246,7 @@ void runAll(){
             else{
                 doParkingSpot(i + 8);
             }
-            PID(0,30,LEFT,CENTER,-1,1);
+            turn(LEFT);
             PID(30,30,RIGHT,CENTER,-1,1);
         }
     }
@@ -270,7 +274,7 @@ void openDoor(int bay, int location) {
  * \brief Resets the bays and doors to neutral position
 **/
 void closeDoor() {
-    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 30, false);
+    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 30, true);
     ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 30, true);
 }
 /**
@@ -434,6 +438,7 @@ void doParkingSpot(int parkingspot) {
 
     }
     else{
+        drive(1,10,0);
         collectCar(parkingspot);
         waitforButton();
         if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
@@ -504,7 +509,7 @@ void deliverCar(int parkingspot, int car) {
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
     tslp_tsk(16);
-    PID(15, 10, CENTER, CENTER, -1, 1);
+    drive(15, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
         drive(5, -10, 0);
         tslp_tsk(10);
@@ -526,7 +531,7 @@ void deliver(int bay, int location, int battery) {
 void collect(int bay) {
     openDoor(bay, CENTER);
     tslp_tsk(10);
-    drive(16, 10, 0);
+    drive(15, 5, 0);
     tslp_tsk(10);
     closeDoor();
     tslp_tsk(10);
@@ -580,7 +585,7 @@ void drive(float distance, int power, int curve) {
  * \exception \b turn and \b readCar do not apply when \b turn_sensor is NONE
  * \exception If readCar is -1, it will not read
 **/
-void PID(float distance, int power, int turn, int turn_sensor, int readCar, int side) {
+void PID(float distance, int power, int turn1, int turn_sensor, int readCar, int side) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     // line follow
@@ -643,19 +648,9 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
         // turn
         if(doturn == true){
             tslp_tsk(100);
-            drive(10, 15, 0);
-            while (wheelDistance < 11) {
-                wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
-                //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-                float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
-                integral = error + integral * 0.5;
-                float curve = 0.15 * error + 0 * integral + 0.05 * (error - lasterror);
-                motorSteer(15,curve);
-                lasterror = error;
-                tslp_tsk(1);
-            }
+            drive(11, 15, 0);
             tslp_tsk(100);
-            turn(turn);
+            turn(turn1);
             tslp_tsk(100);
         }
     }
