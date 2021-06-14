@@ -42,7 +42,7 @@ int doorLocations[3][3][2] = {
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayCars[3] = {
-    NONE, NONE, NONE
+    NONE, BATTERYx2, BATTERYx2
 };
 /**
  * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
@@ -103,7 +103,7 @@ int mapPositions[3][4] = {
 void main_task(intptr_t unused) {
     init();
     //detectRoadCars();
-    driveOutBase();
+    //driveOutBase();
     PID(48,30,RIGHT,CENTER,3, 2);
     runAll();
     // test();
@@ -218,8 +218,9 @@ void runAll(){
         else{
             doParkingSpot(i);
         }
-        PID(0,30,LEFT,CENTER,-1,1);
-        PID(0,30,LEFT,CENTER,-1,1);
+        drive(11, -10, 0);
+        PID(0,30,LEFT,WALL,-1,1);
+        PID(0,30,LEFT,WALL,-1,1);
         if(mapcarPositions[1][i] == NONE){
 
         }
@@ -227,15 +228,17 @@ void runAll(){
             doParkingSpot(i + 4);
         }
         if(i == 0){
-            PID(0,30,LEFT,CENTER,-1,1);
+            drive(11, -10, 0);
+            PID(0,30,LEFT,WALL,-1,1);
         }
         else{
-            PID(0,30,RIGHT,CENTER,-1,1);
+            drive(11, -10, 0);
+            PID(0,30,RIGHT,WALL,-1,1);
             PID(30,30,LEFT,CENTER,2,1);
         }
     }
     if(mapcarPositions[1][0] == NONE){
-        PID(0,30,CENTER,CENTER,2,1);
+        PID(0,30,CENTER,WALL,2,1);
         for(int i = 0;i < 4;i++){
             if(mapcarPositions[2][i] == NONE){
 
@@ -380,11 +383,11 @@ void detectRoadCars(){
             tslp_tsk(100);
             val4 = val4 + ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb45);
         }
-        if(rgb45.r > 55){
+        if(rgb45.r > 50){
             cardetected = RED;
             red -= 1;
         }
-        else if(rgb45.b > 55){
+        else if(rgb45.b > 50){
             cardetected = BLUE;
             blue -= 1;
         }
@@ -511,7 +514,8 @@ void deliverCar(int parkingspot, int car) {
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
     tslp_tsk(16);
-    PID(15, 10, CENTER, CENTER, -1, 1);
+    drive(15, 10, 0);
+    waitforButton();
     if (battery && bayCars[bay] == BATTERYx2) {
         drive(5, -10, 0);
         tslp_tsk(10);
@@ -608,6 +612,7 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
         // detect line
         int sansar1;
         int sansar2;
+        int doDetect = 1;
         if (turn_sensor == LEFT) {
             sansar1 = color_sensor2;
             sansar2 = color_sensor2;
@@ -617,23 +622,27 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
         } else if (turn_sensor == CENTER) {
             sansar1 = color_sensor2;
             sansar2 = color_sensor3;
-        } else {
+        } else if (turn_sensor == WALL) {
+            doDetect = 0;
+        } else{
             exit(127);
         }
         tslp_tsk(100);
-        while (ev3_color_sensor_get_reflect(sansar1) > 10 || ev3_color_sensor_get_reflect(sansar2) > 10) {
-            wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
-            //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-            float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
-            integral = error + integral * 0.5;
-            float curve = 0.13 * error + 0 * integral + 0.05 * (error - lasterror);
-            motorSteer(5,curve);
-            lasterror = error;
-            tslp_tsk(1);
+        if(doDetect == 1){
+            while (ev3_color_sensor_get_reflect(sansar1) > 10 || ev3_color_sensor_get_reflect(sansar2) > 10) {
+                wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
+                //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+                float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
+                integral = error + integral * 0.5;
+                float curve = 0.13 * error + 0 * integral + 0.05 * (error - lasterror);
+                motorSteer(5,curve);
+                lasterror = error;
+                tslp_tsk(1);
+            }
         }
         ev3_motor_steer(left_motor, right_motor, 0, 0);
         // detect cars
-        tslp_tsk(1000);
+        tslp_tsk(100);
         int doturn = true;
         if(readCar != -1){
             char msg[100];
@@ -643,7 +652,7 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
             if(mapcarPositions[(int)floor(readCar / 4)][readCar % 4] == WALL){
                 doturn = false;
             }
-            if(bayCars[0] == NONE && bayCars[1] == NONE && bayCars[2] == NONE){
+            if(mapcarPositions[(int)floor(readCar / 4)][readCar % 4] == NONE && bayCars[0] == NONE && bayCars[1] == NONE && bayCars[2] == NONE){
                 doturn = false;
             }
         }
