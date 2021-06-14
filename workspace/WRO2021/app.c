@@ -655,33 +655,38 @@ void PID(float distance, int power, int turn, int turn_sensor, int readCar, int 
                 tslp_tsk(1);
             }
             tslp_tsk(100);
-            switch (turn)
-            {
-                case LEFT:
-                        motorSteer(-20, 65);
-                        tslp_tsk(800);
-                        motorSteer(-5, 65);
-                        while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
-                        while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
-                        ev3_motor_steer(left_motor, right_motor, 0, 0);
-                    break;
-                case RIGHT:
-                        motorSteer(-20, -65);
-                        tslp_tsk(800);
-                        motorSteer(-5, -65);
-                        while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
-                        while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {}
-                        ev3_motor_steer(left_motor, right_motor, 0, 0);
-                    break;
-                default:
-                    exit(127);
-                    break;
-            }
+            turn(turn);
             tslp_tsk(100);
         }
     }
 }
-
+/**
+ * \brief Turns robot 90 degrees following lines
+ * \param direction Turn direction [LEFT, RIGHT]
+ */
+void turn(int direction) {
+    switch (direction) {
+        case LEFT:
+                motorSteer(-20, 65);
+                tslp_tsk(800);
+                motorSteer(-5, 65);
+                while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
+                while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
+                ev3_motor_steer(left_motor, right_motor, 0, 0);
+            break;
+        case RIGHT:
+                motorSteer(-20, -65);
+                tslp_tsk(800);
+                motorSteer(-5, -65);
+                while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
+                while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {}
+                ev3_motor_steer(left_motor, right_motor, 0, 0);
+            break;
+        default:
+            exit(127);
+            break;
+    }
+}
 
 /**
  * \brief Displays sensor values of drive motors and color sensors on the EV3 LCD screen
