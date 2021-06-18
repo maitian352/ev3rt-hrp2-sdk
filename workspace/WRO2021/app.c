@@ -217,10 +217,10 @@ void runAll(){
         else{
             doParkingSpot(i);
         }
-        drive(9, 10, 0);
-        turn(LEFT);
-        drive(11, 10, 0);
-        turn(LEFT);
+        //drive(9, 10, 0);
+        //turn(LEFT);
+        //drive(11, 10, 0);
+        //turn(LEFT);
         if(mapcarPositions[1][i] == WALL){
 
         }
