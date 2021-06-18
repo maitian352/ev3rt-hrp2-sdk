@@ -228,4 +228,3 @@ why are you still here?
 <br></br>
 <br></br>
 BYE!
-<div onclick="window.location.assign('meadowguarder.herokuapp.com');">DONT CLICK THIS THIS</div>
