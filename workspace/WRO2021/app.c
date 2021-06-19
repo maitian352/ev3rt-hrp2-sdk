@@ -832,4 +832,3 @@ void test() {
         turn(LEFT, true);
     }
 }
-
