@@ -102,10 +102,11 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
+    drive(1000,30,0);
     //driveOutBase();
-    // PID(48,30,RIGHT,CENTER,3, 2);
-    // runAll();
-    test();
+    //PID(48,30,RIGHT,CENTER,3, 2);
+    //runAll();
+    //test();
 }
 
 /**
@@ -119,7 +120,7 @@ void init() {
     ev3_motor_config(left_motor, MEDIUM_MOTOR);
     ev3_motor_config(right_motor, MEDIUM_MOTOR);
     ev3_motor_config(a_motor, MEDIUM_MOTOR);
-    ev3_motor_config(d_motor, MEDIUM_MOTOR);
+    //ev3_motor_config(d_motor, MEDIUM_MOTOR);
     
     // Configure sensors
     ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
@@ -142,15 +143,15 @@ void init() {
 
     // reset bays
     ev3_motor_set_power(a_motor, 50);
-    ev3_motor_set_power(d_motor, -50);
+    //ev3_motor_set_power(d_motor, -50);
     tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
-    ev3_motor_set_power(d_motor, 0);
+    //ev3_motor_set_power(d_motor, 0);
     tslp_tsk(500);
     ev3_motor_rotate(a_motor, -480, 20, true);
-    ev3_motor_rotate(d_motor, 180, 20, true);
+    //ev3_motor_rotate(d_motor, 180, 20, true);
     ev3_motor_reset_counts(a_motor);
-    ev3_motor_reset_counts(d_motor);
+    //ev3_motor_reset_counts(d_motor);
 
     // wait for button press
     ev3_lcd_draw_string("Press OK to run", 14, 45);
@@ -215,12 +216,13 @@ void runAll(){
 
         }
         else{
-            doParkingSpot(i);
+            //doParkingSpot(i);
         }
         //drive(9, 10, 0);
         //turn(LEFT);
         //drive(11, 10, 0);
         //turn(LEFT);
+        //drive(1, 10, 0);
         waitforButton();
         turn(LEFT, true);
         turn(LEFT, false);
@@ -442,7 +444,6 @@ void doParkingSpot(int parkingspot) {
 
     }
     else{
-        drive(1,10,0);
         collectCar(parkingspot);
         if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
             if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] != RED){
@@ -511,8 +512,8 @@ void deliverCar(int parkingspot, int car) {
 **/
 void deliver(int bay, int location, int battery) {
     openDoor(bay, location);
-    tslp_tsk(16);
-    drive(15, 10, 0);
+    tslp_tsk(50);
+    drive(16, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
         drive(6, -10, 0);
         tslp_tsk(10);
@@ -534,7 +535,7 @@ void deliver(int bay, int location, int battery) {
 void collect(int bay) {
     openDoor(bay, CENTER);
     tslp_tsk(10);
-    drive(15, 5, 0);
+    drive(16, 5, 0);
     tslp_tsk(10);
     closeDoor();
     tslp_tsk(10);
@@ -568,7 +569,7 @@ void motorSteer(int power, int curve) {
 void drive(float distance, int power, int curve) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
-    tslp_tsk(10);
+    tslp_tsk(50);
     float wheelDistance = (-ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.141592653 * 8.1) / 360);
     while (abs(wheelDistance) < distance) {
         wheelDistance = (-ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.141592653 * 8.1) / 360);
@@ -651,7 +652,7 @@ void PID(float distance, int power, int turn1, int turn_sensor, int readCar, int
         // turn
         if(doturn == true){
             tslp_tsk(100);
-            drive(10, 15, 0);
+            drive(11, 15, 0);
             tslp_tsk(100);
             turn(turn1, false);
             tslp_tsk(100);
@@ -668,14 +669,14 @@ void turn(int direction, int inverted) {
         case LEFT:
             if (inverted) {
                 motorSteer(20, -65);
-                tslp_tsk(800);
+                tslp_tsk(700);
                 motorSteer(5, -65);
                 while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
                 while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
                 ev3_motor_steer(left_motor, right_motor, 0, 0);
             } else {
                 motorSteer(-20, 65);
-                tslp_tsk(800);
+                tslp_tsk(700);
                 motorSteer(-5, 65);
                 while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
                 while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
@@ -685,14 +686,14 @@ void turn(int direction, int inverted) {
         case RIGHT:
             if (inverted) {
                 motorSteer(20, 65);
-                tslp_tsk(800);
+                tslp_tsk(700);
                 motorSteer(5, 65);
                 while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
                 while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {}
                 ev3_motor_steer(left_motor, right_motor, 0, 0);
             } else {
                 motorSteer(-20, -65);
-                tslp_tsk(800);
+                tslp_tsk(700);
                 motorSteer(-5, -65);
                 while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
                 while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {}
@@ -703,6 +704,7 @@ void turn(int direction, int inverted) {
             exit(127);
             break;
     }
+    waitforButton();
 }
 
 /**
