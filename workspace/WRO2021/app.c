@@ -785,7 +785,7 @@ void button_clicked_handler(intptr_t button) {
 void waitforButton() {
     ev3_led_set_color(LED_OFF);
     while (!ev3_button_is_pressed(ENTER_BUTTON)) {}
-    ev3_led_set_color(GREEN);
+    ev3_led_set_color(LED_GREEN);
     while (ev3_button_is_pressed(ENTER_BUTTON)) {}
 }
 
@@ -834,4 +834,3 @@ void test() {
         turn(LEFT, true);
     }
 }
-
