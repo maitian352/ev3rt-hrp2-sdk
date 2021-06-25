@@ -20,22 +20,10 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
  * \exception Opening door to CENTER may open LEFT location as well
 **/
-int doorLocations[3][3][2] = {
-    {
-        {0, 500},
-        {450, 290},
-        {PURPLE, PURPLE}
-    },
-    {
-        {-400, 500},
-        {0, 290},
-        {410, 675}
-    },
-    {
-        {PURPLE, PURPLE},
-        {-400, 290},
-        {-95, 110}
-    }
+int doorLocations[3] = {
+    410,
+    0,
+    -445
 };
 /**
  * \brief Stores the current item in the bays [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
@@ -102,7 +90,7 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    drive(1000,30,0);
+    PID(200,30,CENTER,CENTER,0,1);
     //driveOutBase();
     //PID(48,30,RIGHT,CENTER,3, 2);
     //runAll();
