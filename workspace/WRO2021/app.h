@@ -24,7 +24,7 @@ void runAll();
 int readcar(int sensor, int parkingspot);
 void detectRoadCars();
 void collectRoadCars();
-void moveDoor(int bay);
+void moveDoor(int door);
 void resetDoor();
 int searchforcar(int cartype);
 void doParkingSpot(int parkingspot);

@@ -22,7 +22,7 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
 **/
 int doorLocations[3] = {
     430,
-    0,
+    PURPLE,
     -430
 };
 /**
@@ -259,23 +259,25 @@ void runAll(){
 }
 
 /**
- * \brief Opens the door and bay of selected bay
- * \param bay The bay number that needs to be opened [LEFT, CENTER, RIGHT]
- * \param location The place the bay needs to be opened in [LEFT, CENTER, RIGHT]
- * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
- * \exception Opening door to CENTER will open LEFT location as well
+ * \brief Moves the selected door number to the center
+ * \param door Which door that is moved to the center [LEFT, RIGHT]
+ * \exception CENTER will do the same thing as resetDoor() and will block the CENTER bay
+ * \exception Cannot back up or make turns without running "closeDoors()"
 **/
-void moveDoor(int bay) {
-    ev3_motor_rotate(d_motor, doorLocations[bay]-ev3_motor_get_counts(d_motor), 50, true);
+void moveDoor(int door) {
+    ev3_motor_rotate(d_motor, doorLocations[door]-ev3_motor_get_counts(d_motor), 50, true);
 }
 /**
- * \brief Resets the bays and doors to neutral position
+ * \brief Resets the to neutral position
+ * \exception Cannot back up or make turns without running "closeDoors()"
 **/
 void resetDoor() {
     ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, true);
 }
 /**
- * \brief raiSes the DoOr
+ * \brief Raises the doors
+ * \exception Will open all bays and cannot back up or make turns without running "closeDoors()"
+ * \exception Does not reset the doors
 **/
 void raiseDoor() {
     ev3_motor_set_power(a_motor, 50);
@@ -283,10 +285,19 @@ void raiseDoor() {
     ev3_motor_set_power(a_motor, 0);
 }
 /**
- * \brief maKes tHE dOoR go doWn
+ * \brief Lowers the doors
+ * \exception Does not reset the doors
 **/
 void lowerDoor() {
     ev3_motor_rotate(a_motor, -ev3_motor_get_counts(a_motor), 10, true);
+}
+/**
+ * \brief Closes all bays
+ * \exception Cannot line follow or turn without running "resetDoor()"
+ * \exception \b DOES \b NOT \b GUARANTEE \b THAT \b CARS \b WILL \b NOT \b LEAVE \b BAYS
+**/
+void closeDoors() {
+    ev3_motor_rotate(d_motor, 660-ev3_motor_get_counts(d_motor), 50, true);
 }
 /**
  * \brief Returns the color (NONE, RED, GREEN, BLUE, WALL) of the selected sensor (1 or 4)
@@ -418,24 +429,27 @@ void detectRoadCars(){
     }
 }
 /**
- * \brief Detects and writes down values of all 6 cars on the road
+ * \brief Collects 3 cars
+ * \exception Robot must be placed in front of the cars
+ * \exception Door must be set to the \b LEFT position before running
 **/
 void collectRoadCars(){
     drive(15.5,10,0);
     waitforButton();
-    ev3_motor_rotate(d_motor, -440, 50, true);
+    ev3_motor_rotate(d_motor, -460, 50, true);
     waitforButton();
     raiseDoor();
     waitforButton();
     drive(11.5,10,0);
-    ev3_motor_rotate(d_motor, 880, 50, true);
+    ev3_motor_rotate(d_motor, -460, 50, true);
     waitforButton();
     lowerDoor();
     waitforButton();
-    resetDoor();
+    ev3_motor_rotate(d_motor, 460, 50, true);
     waitforButton();
     raiseDoor();
     drive(11.5,10,0);
+    resetDoor();
 }
 /**
  * \brief Returns whether or not we have a car of __ type in our bay 
