@@ -90,7 +90,8 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    PID(200,30,CENTER,CENTER,0,1);
+    collectRoadCars();
+    //PID(200,30,CENTER,CENTER,0,1);
     //driveOutBase();
     //PID(48,30,RIGHT,CENTER,3, 2);
     //runAll();
@@ -108,38 +109,38 @@ void init() {
     ev3_motor_config(left_motor, MEDIUM_MOTOR);
     ev3_motor_config(right_motor, MEDIUM_MOTOR);
     ev3_motor_config(a_motor, MEDIUM_MOTOR);
-    //ev3_motor_config(d_motor, MEDIUM_MOTOR);
+    ev3_motor_config(d_motor, MEDIUM_MOTOR);
     
     // Configure sensors
-    ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
-    ev3_sensor_config(color_sensor2, COLOR_SENSOR);
-    ev3_sensor_config(color_sensor3, COLOR_SENSOR);
-    ev3_sensor_config(color_sensor4, HT_NXT_COLOR_SENSOR);
+    //ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
+    //ev3_sensor_config(color_sensor2, COLOR_SENSOR);
+    //ev3_sensor_config(color_sensor3, COLOR_SENSOR);
+    //ev3_sensor_config(color_sensor4, HT_NXT_COLOR_SENSOR);
     
     // Set up sensors
-    ev3_color_sensor_get_reflect(color_sensor2);
-    ev3_color_sensor_get_reflect(color_sensor3);
+    //ev3_color_sensor_get_reflect(color_sensor2);
+    //ev3_color_sensor_get_reflect(color_sensor3);
     //rgb_raw_t rgb1;
     //bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     //assert(val1);
-    rgb_raw_t rgb4;
-    bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-    assert(val4);
+    //rgb_raw_t rgb4;
+    //bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+    //assert(val4);
 
     // Configure brick
     ev3_lcd_set_font(EV3_FONT_MEDIUM);
 
     // reset bays
-    ev3_motor_set_power(a_motor, 50);
+    ev3_motor_set_power(d_motor, 50);
     //ev3_motor_set_power(d_motor, -50);
-    tslp_tsk(1000);
-    ev3_motor_set_power(a_motor, 0);
+    tslp_tsk(2000);
+    ev3_motor_set_power(d_motor, 0);
     //ev3_motor_set_power(d_motor, 0);
     tslp_tsk(500);
-    ev3_motor_rotate(a_motor, -480, 20, true);
+    ev3_motor_rotate(d_motor, -800, 20, true);
     //ev3_motor_rotate(d_motor, 180, 20, true);
+    ev3_motor_reset_counts(d_motor);
     ev3_motor_reset_counts(a_motor);
-    //ev3_motor_reset_counts(d_motor);
 
     // wait for button press
     ev3_lcd_draw_string("Press OK to run", 14, 45);
@@ -199,6 +200,8 @@ void driveOutBase(){
  * \brief Runs all things (Maitian put proper description)
 **/
 void runAll(){
+
+    /*
     for(int i = 3;i >= 0;i--){
         if(mapcarPositions[0][i] == WALL){
 
@@ -248,7 +251,7 @@ void runAll(){
     else if(mapcarPositions[1][2] == NONE){
         PID(62,30,LEFT,CENTER,2,1);
     }
-    PID(34,30,LEFT,CENTER,2,1);
+    PID(34,30,LEFT,CENTER,2,1);*/
 }
 
 /**
@@ -258,18 +261,29 @@ void runAll(){
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
  * \exception Opening door to CENTER will open LEFT location as well
 **/
-void openDoor(int bay, int location) {
-    ev3_motor_rotate(a_motor, (doorLocations[bay][location][0]-ev3_motor_get_counts(a_motor)), 30, false);
-    ev3_motor_rotate(d_motor, (doorLocations[bay][location][1]-ev3_motor_get_counts(d_motor)), 30, false);
-    while (abs(doorLocations[bay][location][0]-ev3_motor_get_counts(a_motor)) > 20 && (doorLocations[bay][location][1]-ev3_motor_get_counts(d_motor)) > 20) {}
+void openDoor(int bay) {
+    //ev3_motor_rotate(a_motor, (doorLocations[bay][location][0]-ev3_motor_get_counts(a_motor)), 30, false);
+    ev3_motor_rotate(d_motor, doorLocations[bay]-ev3_motor_get_counts(d_motor), 30, true);
 }
 /**
  * \brief Resets the bays and doors to neutral position
 **/
 void closeDoor() {
-    ev3_motor_rotate(a_motor, (-ev3_motor_get_counts(a_motor)), 30, true);
-    ev3_motor_rotate(d_motor, (-ev3_motor_get_counts(d_motor)), 30, true);
-    while (abs(0-ev3_motor_get_counts(a_motor)) > 20 && abs(0-ev3_motor_get_counts(d_motor))) {}
+    ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 30, true);
+}
+/**
+ * \brief raiSes the DoOr
+**/
+void raiseDoor() {
+    ev3_motor_set_power(a_motor, 50);
+    tslp_tsk(1000);
+    ev3_motor_set_power(a_motor, 0);
+}
+/**
+ * \brief maKes tHE dOoR go doWn
+**/
+void lowerDoor() {
+    ev3_motor_rotate(a_motor, -ev3_motor_get_counts(a_motor), 10, true);
 }
 /**
  * \brief Returns the color (NONE, RED, GREEN, BLUE, WALL) of the selected sensor (1 or 4)
@@ -401,6 +415,72 @@ void detectRoadCars(){
     }
 }
 /**
+ * \brief Detects and writes down values of all 6 cars on the road
+**/
+void collectRoadCars(){
+    char msg[100];
+    rgb_raw_t rgb45;
+    int red = 2;
+    int green = 2;
+    int blue = 2;
+    rgb45.r = 100;
+    rgb45.g = 100;
+    rgb45.b = 100;
+    int cardetected = NONE;
+    bool_t val4;
+    //for(int i = 0;i < 3;i++){
+        raiseDoor();
+        waitforButton();
+        drive(16,20,0);
+        waitforButton();
+        openDoor(LEFT);
+        waitforButton();
+        lowerDoor();
+        waitforButton();
+        openDoor(CENTER);
+        waitforButton();
+        raiseDoor();
+        waitforButton();
+        drive(12,20,0);
+        waitforButton();
+        openDoor(RIGHT);
+        waitforButton();
+        lowerDoor();
+        waitforButton();
+        openDoor(CENTER);
+        waitforButton();
+        val4 = 0;
+        
+        val4 = val4 + ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb45);
+        //assert(val4);
+        while (val4 < 2) {
+            tslp_tsk(100);
+            val4 = val4 + ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb45);
+            sprintf(msg, "%d %d %d       %d    ",rgb45.r,rgb45.g,rgb45.b,val4);
+            ev3_lcd_draw_string(msg, 10*0, 15*val4);
+        }
+        if(rgb45.r > 55){
+            cardetected = RED;
+        }
+        else if(rgb45.b > 55){
+            cardetected = BLUE;
+        }
+        else{
+            cardetected = GREEN;
+        }
+        waitforButton();
+    //}
+    if(red == 1){
+        roadcarPositions[5] = RED;
+    }
+    if(green == 1){
+        roadcarPositions[5] = GREEN;
+    }
+    if(blue == 1){
+        roadcarPositions[5] = BLUE;
+    }
+}
+/**
  * \brief Returns whether or not we have a car of __ type in our bay 
  * \param cartype Type of car to look for [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
 **/
@@ -499,7 +579,7 @@ void deliverCar(int parkingspot, int car) {
  * \exception Opening door to CENTER will open LEFT location as well
 **/
 void deliver(int bay, int location, int battery) {
-    openDoor(bay, location);
+    openDoor(location);
     tslp_tsk(50);
     drive(16, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
@@ -521,7 +601,7 @@ void deliver(int bay, int location, int battery) {
  * \exception PURPLE is not 1000 in this function
 **/
 void collect(int bay) {
-    openDoor(bay, CENTER);
+    openDoor(CENTER);
     tslp_tsk(10);
     drive(16, 5, 0);
     tslp_tsk(10);
