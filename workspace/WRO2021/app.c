@@ -432,24 +432,22 @@ void detectRoadCars(){
  * \brief Collects 3 cars
  * \exception Robot must be placed in front of the cars
  * \exception Door must be set to the \b LEFT position before running
+ * \exception Robot will be facing backwards at end
 **/
 void collectRoadCars(){
     drive(15.5,10,0);
-    waitforButton();
-    ev3_motor_rotate(d_motor, -460, 50, true);
-    waitforButton();
+    ev3_motor_rotate(d_motor, -510, 50, true);
     raiseDoor();
-    waitforButton();
     drive(11.5,10,0);
-    ev3_motor_rotate(d_motor, -460, 50, true);
-    waitforButton();
+    ev3_motor_rotate(d_motor, -440, 50, true);
     lowerDoor();
-    waitforButton();
-    ev3_motor_rotate(d_motor, 460, 50, true);
-    waitforButton();
+    ev3_motor_rotate(d_motor, 600, 50, true);
     raiseDoor();
-    drive(11.5,10,0);
-    resetDoor();
+    drive(7,10,0);
+    closeDoors();
+    lowerDoor();
+    drive(2, -10, 0);
+    waitforButton();
 }
 /**
  * \brief Returns whether or not we have a car of __ type in our bay 
