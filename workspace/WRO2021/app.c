@@ -436,7 +436,9 @@ void detectRoadCars(){
 **/
 void collectRoadCars(){
     drive(15.5,10,0);
-    ev3_motor_rotate(d_motor, -510, 50, true);
+    waitforButton();
+    ev3_motor_rotate(d_motor, -460, 50, true);
+    waitforButton();
     raiseDoor();
     drive(11.5,10,0);
     ev3_motor_rotate(d_motor, -440, 50, true);
