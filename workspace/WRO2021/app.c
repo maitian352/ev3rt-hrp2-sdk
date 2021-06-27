@@ -90,15 +90,44 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
+                // SET 0
+                // ev3_motor_reset_counts(left_motor);
+                // ev3_motor_reset_counts(right_motor);
+                // moveDoor(LEFT);
+                // motorSteer(20, -100);
+                // while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <160) {tslp_tsk(5);}
+                // motorSteer(5, -100);
+                // while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
+                // while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
+                // ev3_motor_steer(left_motor, right_motor, 0, 0);
+                // tslp_tsk(20);
+                // waitforButton();
+                // collectRoadCars(0);
+
+                // SET 1
+                ev3_motor_reset_counts(left_motor);
+                ev3_motor_reset_counts(right_motor);
                 moveDoor(LEFT);
+                turn(LEFT);
+                turn(LEFT);
                 motorSteer(20, -100);
-                tslp_tsk(500);
+                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <160) {tslp_tsk(5);}
                 motorSteer(5, -100);
                 while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
                 while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
                 ev3_motor_steer(left_motor, right_motor, 0, 0);
+                // motorSteer(20, 100);
+                // while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <180) {tslp_tsk(5);}
+                // motorSteer(5, 100);
+                // while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {tslp_tsk(5);}
+                // while (ev3_color_sensor_get_reflect(color_sensor3) > 32) {tslp_tsk(5);}
+                // ev3_motor_steer(left_motor, right_motor, 0, 0);
+                tslp_tsk(50);
                 waitforButton();
-        collectRoadCars();
+                drive(48, 10, 0);
+                waitforButton();
+                collectRoadCars(1);
+
     //PID(200,30,CENTER,CENTER,0,1);
     //driveOutBase();
     //PID(48,30,RIGHT,CENTER,3, 2);
@@ -430,15 +459,14 @@ void detectRoadCars(){
 }
 /**
  * \brief Collects 3 cars
+ * \param set Set 0 or set 1 where set 0 is the first 3 cars and set 1 is the last 3 cars 
  * \exception Robot must be placed in front of the cars
  * \exception Door must be set to the \b LEFT position before running
  * \exception Robot will be facing backwards at end
 **/
-void collectRoadCars(){
+void collectRoadCars(int set){
     drive(15.5,10,0);
-    waitforButton();
     ev3_motor_rotate(d_motor, -460, 50, true);
-    waitforButton();
     raiseDoor();
     drive(11.5,10,0);
     ev3_motor_rotate(d_motor, -440, 50, true);
@@ -447,9 +475,13 @@ void collectRoadCars(){
     raiseDoor();
     drive(7,10,0);
     closeDoors();
+    if (set == 1) {
+        drive(2, 10, 100);
+    }
     lowerDoor();
     drive(2, -10, 0);
     waitforButton();
+    // turn
 }
 /**
  * \brief Returns whether or not we have a car of __ type in our bay 
