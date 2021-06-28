@@ -90,42 +90,7 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-                // SET 0
-                // ev3_motor_reset_counts(left_motor);
-                // ev3_motor_reset_counts(right_motor);
-                // moveDoor(LEFT);
-                // motorSteer(20, -100);
-                // while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <160) {tslp_tsk(5);}
-                // motorSteer(5, -100);
-                // while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
-                // while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
-                // ev3_motor_steer(left_motor, right_motor, 0, 0);
-                // tslp_tsk(20);
-                // waitforButton();
-                // collectRoadCars(0);
 
-                // SET 1
-                ev3_motor_reset_counts(left_motor);
-                ev3_motor_reset_counts(right_motor);
-                moveDoor(LEFT);
-                turn(LEFT);
-                turn(LEFT);
-                motorSteer(20, -100);
-                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <160) {tslp_tsk(5);}
-                motorSteer(5, -100);
-                while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
-                while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
-                ev3_motor_steer(left_motor, right_motor, 0, 0);
-                // motorSteer(20, 100);
-                // while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <180) {tslp_tsk(5);}
-                // motorSteer(5, 100);
-                // while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {tslp_tsk(5);}
-                // while (ev3_color_sensor_get_reflect(color_sensor3) > 32) {tslp_tsk(5);}
-                // ev3_motor_steer(left_motor, right_motor, 0, 0);
-                tslp_tsk(50);
-                waitforButton();
-                drive(48, 10, 0);
-                waitforButton();
                 collectRoadCars(1);
 
     //PID(200,30,CENTER,CENTER,0,1);
@@ -309,7 +274,7 @@ void resetDoor() {
  * \exception Does not reset the doors
 **/
 void raiseDoor() {
-    ev3_motor_set_power(a_motor, 50);
+    ev3_motor_set_power(a_motor, 100);
     tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
 }
@@ -459,29 +424,69 @@ void detectRoadCars(){
 }
 /**
  * \brief Collects 3 cars
- * \param set Set 0 or set 1 where set 0 is the first 3 cars and set 1 is the last 3 cars 
- * \exception Robot must be placed in front of the cars
- * \exception Door must be set to the \b LEFT position before running
- * \exception Robot will be facing backwards at end
+ * \param set Set 0 or set 1 where set 0 is the first 3 cars and set 1 is the last 3 cars.
+ * \exception Set 0 must start at the intersection facing towards the parking garage.
+ * \exception Set 1 must start at the intersection facing away from the parking garage.
 **/
 void collectRoadCars(int set){
-    drive(15.5,10,0);
-    ev3_motor_rotate(d_motor, -460, 50, true);
-    raiseDoor();
-    drive(11.5,10,0);
-    ev3_motor_rotate(d_motor, -440, 50, true);
-    lowerDoor();
-    ev3_motor_rotate(d_motor, 600, 50, true);
-    raiseDoor();
-    drive(7,10,0);
-    closeDoors();
-    if (set == 1) {
-        drive(2, 10, 100);
+    switch (set)
+    {
+    case 0:
+        ev3_motor_reset_counts(left_motor);
+        ev3_motor_reset_counts(right_motor);
+        moveDoor(LEFT);
+        motorSteer(20, -100);
+        while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <160) {tslp_tsk(5);}
+        motorSteer(5, -100);
+        while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
+        while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
+        ev3_motor_steer(left_motor, right_motor, 0, 0);
+        tslp_tsk(20);
+        drive(15.5,10,0);
+        ev3_motor_rotate(d_motor, -460, 50, true);
+        raiseDoor();
+        drive(11.5,10,0);
+        ev3_motor_rotate(d_motor, -440, 50, true);
+        lowerDoor();
+        ev3_motor_rotate(d_motor, 600, 50, true);
+        raiseDoor();
+        drive(7,10,0);
+        closeDoors();
+        lowerDoor();
+        drive(2, -10, 0);
+        break;
+    case 1:
+        turn(LEFT);
+        turn(LEFT);
+        moveDoor(LEFT);
+        ev3_motor_reset_counts(left_motor);
+        ev3_motor_reset_counts(right_motor);
+        tslp_tsk(20);
+        motorSteer(20, -100);
+        while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <160) {tslp_tsk(5);}
+        motorSteer(5, -100);
+        while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
+        while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
+        ev3_motor_steer(left_motor, right_motor, 0, 0);
+        moveDoor(RIGHT);
+        drive(40, 20, 0);
+        tslp_tsk(50);
+        drive(6.5,10,0);
+        ev3_motor_rotate(d_motor, 500, 50, true);
+        raiseDoor();
+        drive(10,10,0);
+        ev3_motor_rotate(d_motor, 440, 50, true);
+        lowerDoor();
+        ev3_motor_rotate(d_motor, -640, 50, true);
+        raiseDoor();
+        ev3_motor_rotate(left_motor, -440, 10, true);
+        closeDoors();
+        lowerDoor();
+        break;
+    default:
+        exit(127);
+        break;
     }
-    lowerDoor();
-    drive(2, -10, 0);
-    waitforButton();
-    // turn
 }
 /**
  * \brief Returns whether or not we have a car of __ type in our bay 
@@ -640,7 +645,7 @@ void motorSteer(int power, int curve) {
 void drive(float distance, int power, int curve) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
-    tslp_tsk(50);
+    tslp_tsk(20);
     float wheelDistance = (-ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.141592653 * 8.1) / 360);
     while (abs(wheelDistance) < distance) {
         wheelDistance = (-ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.141592653 * 8.1) / 360);
@@ -738,16 +743,23 @@ void PID(float distance, int power, int turn1, int turn_sensor, int readCar, int
 void turn(int direction) {
     switch (direction) {
         case LEFT:
+            ev3_motor_reset_counts(left_motor);
+            ev3_motor_reset_counts(right_motor);
+            tslp_tsk(20);
             motorSteer(20, -100);
-            tslp_tsk(500);
+            while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(5, -100);
             while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
             while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
             ev3_motor_steer(left_motor, right_motor, 0, 0);
+            tslp_tsk(20);
             break;
         case RIGHT:
+            ev3_motor_reset_counts(left_motor);
+            ev3_motor_reset_counts(right_motor);
+            tslp_tsk(20);
             motorSteer(20, 65);
-            tslp_tsk(500);
+            while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(5, 65);
             while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
             while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {}
@@ -886,3 +898,16 @@ void test() {
         turn(LEFT);
     }
 }
+
+/*
+AAAAAAAAAAAAAAAAAA I am a Steve I must find the diamonds and build an house.
+Wowowowowowowow I am building an house.
+Wowowowowowowow I have found the diamond YES.
+Yay I have found the diamond and build an house.
+...
+Haha I am a crapper I will explode the diamond and an house.
+Ohno.
+Explosion sounds and pixelated explosions Boom Ha Muahaha.
+...
+Oh no me house and diamond I am dead.
+*/
