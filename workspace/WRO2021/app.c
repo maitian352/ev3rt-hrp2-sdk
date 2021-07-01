@@ -90,14 +90,11 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-
-                collectRoadCars(1);
-
     //PID(200,30,CENTER,CENTER,0,1);
     //driveOutBase();
     //PID(48,30,RIGHT,CENTER,3, 2);
     //runAll();
-    //test();
+    test();
 }
 
 /**
@@ -658,7 +655,7 @@ void drive(float distance, int power, int curve) {
  * \brief Drives robot following a line at a selected power for a distance, turning at the end if needed, and reading cars
  * \param distance The absolute distance in centimeters calculated as average between two motors
  * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
- * \param turn Turn selection where CENTER means no turn [LEFT, CENTER, RIGHT]
+ * \param turn1 Turn selection where CENTER means no turn [LEFT, CENTER, RIGHT]
  * \param turn_sensor Sensors used to detect line where CENTER means both sensors and NONE is no line detection [NONE, LEFT, CENTER, RIGHT]
  * \param readCar The parking spot that the robot will detect where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11, NONE]
  * \param side The side to detect the car. 1 is left and 2 is right.
@@ -673,10 +670,10 @@ void PID(float distance, int power, int turn1, int turn_sensor, int readCar, int
     float lasterror = 0, integral = 0;
     while (wheelDistance < distance) {
         wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
-        //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-        float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
+        float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+        // float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
         integral = error + integral * 0.5;
-        float curve = 0.13 * error + 0 * integral + 0.05 * (error - lasterror);
+        float curve = 0.1 * error + 0.01 * integral + 0.05 * (error - lasterror);
         motorSteer(power,curve);
         lasterror = error;
         tslp_tsk(1);
@@ -888,15 +885,7 @@ void test() {
     }*/
     // //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     //doParkingSpot(3);
-    while (true) {
-        turn(LEFT);
-        waitforButton();
-        turn(RIGHT);
-        waitforButton();
-        turn(RIGHT);
-        waitforButton();
-        turn(LEFT);
-    }
+    PID(10000000, 40, CENTER, CENTER, NONE, NONE);
 }
 
 /*
