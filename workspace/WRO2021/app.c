@@ -90,6 +90,8 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
+    deliverCarsToYellow();
+    /*
                 moveDoor(LEFT);
                 motorSteer(20, -100);
                 tslp_tsk(500);
@@ -103,7 +105,7 @@ void main_task(intptr_t unused) {
     //driveOutBase();
     //PID(48,30,RIGHT,CENTER,3, 2);
     //runAll();
-    //test();
+    //test();*/
 }
 
 /**
@@ -256,6 +258,18 @@ void runAll(){
         PID(62,30,LEFT,CENTER,2,1);
     }
     PID(34,30,LEFT,CENTER,2,1);
+}
+/**
+ * \brief Drives out of base and collects batteries
+**/
+void deliverCarsToYellow(){
+    PID(7,20,RIGHT,RIGHT,-1,1);
+    PID(30,40,NONE,NONE,-1,1);
+    waitforButton();
+    PID(29,20,NONE,NONE,-1,1);
+    ev3_motor_rotate(left_motor,210,20,false);
+    ev3_motor_rotate(right_motor,210,20,true);
+    drive(15,20,0);
 }
 
 /**
@@ -691,7 +705,7 @@ void PID(float distance, int power, int turn1, int turn_sensor, int readCar, int
         // turn
         if(doturn == true){
             tslp_tsk(100);
-            drive(11, 15, 0);
+            drive(14, 15, 0);
             tslp_tsk(100);
             turn(turn1);
             tslp_tsk(100);
@@ -714,9 +728,9 @@ void turn(int direction) {
             ev3_motor_steer(left_motor, right_motor, 0, 0);
             break;
         case RIGHT:
-            motorSteer(20, 65);
+            motorSteer(20, 100);
             tslp_tsk(500);
-            motorSteer(5, 65);
+            motorSteer(5, 100);
             while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
             while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {}
             ev3_motor_steer(left_motor, right_motor, 0, 0);
