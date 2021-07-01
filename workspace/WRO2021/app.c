@@ -270,10 +270,10 @@ void deliverCarsToYellow(){
     PID(30,40,NONE,NONE,-1,1);
     waitforButton();
     if(searchforcar(BLUEB) != -1){
-        PID(23 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
+        PID(17 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
     }
     else if(searchforcar(GREENB) != -1){
-        PID(23 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
+        PID(17 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
     }
     ev3_motor_rotate(left_motor,230,20,false);
     ev3_motor_rotate(right_motor,230,20,true);
@@ -282,10 +282,10 @@ void deliverCarsToYellow(){
     ev3_motor_rotate(left_motor,230,20,false);
     ev3_motor_rotate(right_motor,230,20,true);
     if(searchforcar(BLUEB) != -1){
-        PID(23 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
+        PID(17 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
     }
     else if(searchforcar(GREENB) != -1){
-        PID(23 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
+        PID(17 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
     }
 }
 
