@@ -30,7 +30,7 @@ int doorLocations[3] = {
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayCars[3] = {
-    NONE, BATTERYx2, BATTERYx2
+    NONE, BLUEB, NONE
 };
 /**
  * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
@@ -269,10 +269,24 @@ void deliverCarsToYellow(){
     PID(7,20,RIGHT,RIGHT,-1,1);
     PID(30,40,NONE,NONE,-1,1);
     waitforButton();
-    PID(29,20,NONE,NONE,-1,1);
-    ev3_motor_rotate(left_motor,210,20,false);
-    ev3_motor_rotate(right_motor,210,20,true);
+    if(searchforcar(BLUEB) != -1){
+        PID(23 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
+    }
+    else if(searchforcar(GREENB) != -1){
+        PID(23 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
+    }
+    ev3_motor_rotate(left_motor,230,20,false);
+    ev3_motor_rotate(right_motor,230,20,true);
     drive(15,20,0);
+    drive(15,-20,0);
+    ev3_motor_rotate(left_motor,230,20,false);
+    ev3_motor_rotate(right_motor,230,20,true);
+    if(searchforcar(BLUEB) != -1){
+        PID(23 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
+    }
+    else if(searchforcar(GREENB) != -1){
+        PID(23 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
+    }
 }
 
 /**
@@ -513,7 +527,7 @@ void collectRoadCars(int set){
 }
 /**
  * \brief Returns whether or not we have a car of __ type in our bay 
- * \param cartype Type of car to look for [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
+ * \param cartype Type of thingy to look for [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
 **/
 int searchforcar(int cartype) {
     if(bayCars[0] == cartype){
