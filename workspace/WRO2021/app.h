@@ -22,6 +22,7 @@ void init();
 void driveOutBase();
 void runAll();
 int readcar(int sensor, int parkingspot);
+void deliverCarsToYellow();
 void detectRoadCars();
 void collectRoadCars(int set);
 void moveDoor(int door);
