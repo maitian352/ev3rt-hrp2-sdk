@@ -108,7 +108,7 @@ void main_task(intptr_t unused) {
     //driveOutBase();
     //PID(48,30,RIGHT,CENTER,3, 2);
     //runAll();
-    test();*/
+    //test();*/
 }
 
 /**
@@ -267,25 +267,25 @@ void runAll(){
 **/
 void deliverCarsToYellow(){
     PID(7,20,RIGHT,RIGHT,-1,1);
-    PID(30,40,NONE,NONE,-1,1);
+    PID(30,20,NONE,NONE,-1,1);
     waitforButton();
     if(searchforcar(BLUEB) != -1){
-        PID(17 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
+        PID(28 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
     }
     else if(searchforcar(GREENB) != -1){
-        PID(17 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
+        PID(28 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
     }
     ev3_motor_rotate(left_motor,230,20,false);
     ev3_motor_rotate(right_motor,230,20,true);
     drive(15,20,0);
-    drive(15,-20,0);
-    ev3_motor_rotate(left_motor,230,20,false);
-    ev3_motor_rotate(right_motor,230,20,true);
+    drive(-15,-20,0);
+    ev3_motor_rotate(left_motor,200,20,false);
+    ev3_motor_rotate(right_motor,200,20,true);
     if(searchforcar(BLUEB) != -1){
-        PID(17 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
+        PID(28 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
     }
     else if(searchforcar(GREENB) != -1){
-        PID(17 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
+        PID(28 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
     }
 }
 
@@ -377,15 +377,15 @@ int readcar(int sensor, int parkingspot) {
     assert(val1);
     val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
     assert(val1);
-    if(rgb1.r > 43 && rgb1.g > 30 && rgb1.b > 15){
-        //cardetected = WALL;
+    if(rgb1.r > 100 && rgb1.g > 60){
+        cardetected = WALL;
     }
     else if(rgb1.r < 5 && rgb1.g < 5 && rgb1.b < 5){
-        //cardetected = NONE;
+        cardetected = NONE;
     }
     else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED){
         if(rgb1.b > 18){
-            //cardetected = BLUE;
+            cardetected = BLUE;
         }
         else{
             //cardetected = GREEN;
@@ -695,7 +695,7 @@ void drive(float distance, int power, int curve) {
  * \brief Drives robot following a line at a selected power for a distance, turning at the end if needed, and reading cars
  * \param distance The absolute distance in centimeters calculated as average between two motors
  * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
- * \param turn1 Turn selection where CENTER means no turn [LEFT, CENTER, RIGHT]
+ * \param turn Turn selection where CENTER means no turn [LEFT, CENTER, RIGHT]
  * \param turn_sensor Sensors used to detect line where CENTER means both sensors and NONE is no line detection [NONE, LEFT, CENTER, RIGHT]
  * \param readCar The parking spot that the robot will detect where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11, NONE]
  * \param side The side to detect the car. 1 is left and 2 is right.
@@ -710,10 +710,10 @@ void PID(float distance, int power, int turn1, int turn_sensor, int readCar, int
     float lasterror = 0, integral = 0;
     while (wheelDistance < distance) {
         wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
-        float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-        // float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
+        //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+        float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
         integral = error + integral * 0.5;
-        float curve = 0.1 * error + 0.01 * integral + 0.05 * (error - lasterror);
+        float curve = 0.13 * error + 0 * integral + 0.05 * (error - lasterror);
         motorSteer(power,curve);
         lasterror = error;
         tslp_tsk(1);
@@ -928,8 +928,18 @@ void test() {
     }*/
     // //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     //doParkingSpot(3);
-    PID(10000000, 40, CENTER, CENTER, NONE, NONE);
+    while (true) {
+        turn(LEFT);
+        waitforButton();
+        turn(RIGHT);
+        waitforButton();
+        turn(RIGHT);
+        waitforButton();
+        turn(LEFT);
+    }
 }
+
+void alignWithWall(){
 
 /*
 AAAAAAAAAAAAAAAAAA I am a Steve I must find the diamonds and build an house.
@@ -942,4 +952,8 @@ Ohno.
 Explosion sounds and pixelated explosions Boom Ha Muahaha.
 ...
 Oh no me house and diamond I am dead.
+
+Haha plot twist I am sp.
 */
+
+}
