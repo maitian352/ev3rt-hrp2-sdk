@@ -342,34 +342,34 @@ int readcar(int sensor, int parkingspot) {
     assert(val4);
     tslp_tsk(5);
     int cardetected = NONE;
-    if(rgb4.r > 43 && rgb4.g > 30 && rgb4.b > 15){
+    if(rgb4.r > 100 && rgb4.g > 60){
         cardetected = WALL;
     }
     else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
         cardetected = NONE;
     }
     else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED){
-        if(rgb4.b > 13){
+        if(rgb4.b > 40){
             cardetected = BLUE;
         }
         else{
-            cardetected = GREEN;
+            //cardetected = GREEN;
         }
     }
     else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == GREEN){
-        if(rgb4.r > 12){
-            cardetected = RED;
+        if(rgb4.r > 30){
+            //cardetected = RED;
         }
         else{
-            cardetected = BLUE;
+            //cardetected = BLUE;
         }
     }
     else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == BLUE){
-        if(rgb4.r > 12){
-            cardetected = RED;
+        if(rgb4.r > 30){
+            //cardetected = RED;
         }
         else{
-            cardetected = GREEN;
+            //cardetected = GREEN;
         }
     }
     rgb_raw_t rgb1;
@@ -384,7 +384,7 @@ int readcar(int sensor, int parkingspot) {
         cardetected = NONE;
     }
     else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED){
-        if(rgb1.b > 18){
+        if(rgb1.b > 40){
             cardetected = BLUE;
         }
         else{
@@ -392,7 +392,7 @@ int readcar(int sensor, int parkingspot) {
         }
     }
     else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == GREEN){
-        if(rgb1.r > 9){
+        if(rgb1.r > 30){
             //cardetected = RED;
         }
         else{
@@ -400,7 +400,7 @@ int readcar(int sensor, int parkingspot) {
         }
     }
     else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == BLUE){
-        if(rgb1.r > 10){
+        if(rgb1.r > 30){
             //cardetected = RED;
         }
         else{
