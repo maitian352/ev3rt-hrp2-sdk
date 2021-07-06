@@ -39,7 +39,7 @@ void collect(int bay);
 void motorSteer(int power, int curve);
 void drive(float distance, int power, int curve);
 void PID(float distance, int power, int turn_dir, int turn_sensor, int readCarLeft, int readCarright, int pidA);
-void turn(int direction, int slow);
+void turn(int direction);
 void displayvalues();
 void waitforButton();
 void button_clicked_handler(intptr_t button);

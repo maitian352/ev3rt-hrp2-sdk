@@ -304,14 +304,14 @@ void deliverCarsToYellow(){
  * \exception Cannot back up or make turns without running "closeDoors()"
 **/
 void moveDoor(int door) {
-    ev3_motor_rotate(d_motor, doorLocations[door]-ev3_motor_get_counts(d_motor), 50, true);
+    ev3_motor_rotate(d_motor, doorLocations[door]-ev3_motor_get_counts(d_motor), 100, true);
 }
 /**
  * \brief Resets the to neutral position
  * \exception Cannot back up or make turns without running "closeDoors()"
 **/
 void resetDoor() {
-    ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, true);
+    ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 100, true);
 }
 /**
  * \brief Raises the doors
@@ -359,7 +359,7 @@ void lowerSensors() {
  * \exception \b DOES \b NOT \b GUARANTEE \b THAT \b CARS \b WILL \b NOT \b LEAVE \b BAYS
 **/
 void closeDoors() {
-    ev3_motor_rotate(d_motor, 660-ev3_motor_get_counts(d_motor), 50, true);
+    ev3_motor_rotate(d_motor, 660-ev3_motor_get_counts(d_motor), 100, true);
 }
 /**
  * \brief Returns the color (NONE, RED, GREEN, BLUE, WALL) of the selected sensor (1 or 4)
@@ -849,73 +849,107 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
 /**
  * \brief Turns robot 90 degrees following lines
  * \param direction Turn direction [LEFT, RIGHT]
- * \param inverted To undo the previous turn, where inverted LEFT undoes a RIGHT turn [true, false]
+ * \param offsetSensors Whether to offset the sensors (to be used when there are contents in the bay) [true, false]
  */
-void turn(int direction, int slow) {
+void turn(int direction) {
     switch (direction) {
         case LEFT:
-            if(slow == true){
-                ev3_motor_reset_counts(left_motor);
-                ev3_motor_reset_counts(right_motor);
-                tslp_tsk(20);
-                motorSteer(5, -100);
-                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
-                motorSteer(5, -100);
-                //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
-                while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {}
-                while (ev3_color_sensor_get_reflect(color_sensor2) > 20) {}
-                while (ev3_color_sensor_get_reflect(color_sensor2) < 35) {}
-                ev3_motor_steer(left_motor, right_motor, 0, 0);
-                tslp_tsk(20);
-            }
-            else{
-                ev3_motor_reset_counts(left_motor);
-                ev3_motor_reset_counts(right_motor);
-                tslp_tsk(20);
-                motorSteer(20, -100);
-                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
-                motorSteer(5, -100);
-                //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
-                while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {}
-                while (ev3_color_sensor_get_reflect(color_sensor2) > 20) {}
-                while (ev3_color_sensor_get_reflect(color_sensor2) < 35) {}
-                ev3_motor_steer(left_motor, right_motor, 0, 0);
-                tslp_tsk(20);
-            }
+            ev3_motor_rotate(d_motor, 200-ev3_motor_get_counts(d_motor), 100, false);
+            ev3_motor_reset_counts(left_motor);
+            ev3_motor_reset_counts(right_motor);
+            tslp_tsk(200);
+            motorSteer(15, -100);
+            while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+            motorSteer(5, -100);
+            while (ev3_color_sensor_get_reflect(color_sensor2) < 50) {}
+            while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {}
+            ev3_motor_steer(left_motor, right_motor, 0, 0);
+            resetDoor();
             break;
         case RIGHT:
-            if(slow == true){
-                ev3_motor_reset_counts(left_motor);
-                ev3_motor_reset_counts(right_motor);
-                tslp_tsk(20);
-                motorSteer(5, 100);
-                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
-                motorSteer(5, 100);
-                //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
-                while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {}
-                while (ev3_color_sensor_get_reflect(color_sensor3) > 25) {}
-                while (ev3_color_sensor_get_reflect(color_sensor3) < 35) {}
-                ev3_motor_steer(left_motor, right_motor, 0, 0);
-            }
-            else{
-                ev3_motor_reset_counts(left_motor);
-                ev3_motor_reset_counts(right_motor);
-                tslp_tsk(20);
-                motorSteer(20, 100);
-                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
-                motorSteer(5, 100);
-                //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
-                while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {}
-                while (ev3_color_sensor_get_reflect(color_sensor3) > 25) {}
-                while (ev3_color_sensor_get_reflect(color_sensor3) < 35) {}
-                ev3_motor_steer(left_motor, right_motor, 0, 0);
-            }
+            ev3_motor_rotate(d_motor, -200-ev3_motor_get_counts(d_motor), 100, false);
+            ev3_motor_reset_counts(left_motor);
+            ev3_motor_reset_counts(right_motor);
+            tslp_tsk(200);
+            motorSteer(15, 100);
+            while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+            motorSteer(5, 100);
+            while (ev3_color_sensor_get_reflect(color_sensor3) < 50) {}
+            while (ev3_color_sensor_get_reflect(color_sensor3) > 35) {}
+            ev3_motor_steer(left_motor, right_motor, 0, 0);
+            resetDoor();
             break;
         default:
             exit(127);
             break;
     }
 }
+// void turn(int direction, int slow) {
+//     switch (direction) {
+//         case LEFT:
+//             if(slow == true){
+//                 ev3_motor_reset_counts(left_motor);
+//                 ev3_motor_reset_counts(right_motor);
+//                 tslp_tsk(20);
+//                 motorSteer(5, -100);
+//                 while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+//                 motorSteer(5, -100);
+//                 //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
+//                 while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {}
+//                 while (ev3_color_sensor_get_reflect(color_sensor2) > 20) {}
+//                 while (ev3_color_sensor_get_reflect(color_sensor2) < 35) {}
+//                 ev3_motor_steer(left_motor, right_motor, 0, 0);
+//                 tslp_tsk(20);
+//             }
+//             else{
+//                 ev3_motor_reset_counts(left_motor);
+//                 ev3_motor_reset_counts(right_motor);
+//                 tslp_tsk(20);
+//                 motorSteer(20, -100);
+//                 while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+//                 motorSteer(5, -100);
+//                 //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
+//                 while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {}
+//                 while (ev3_color_sensor_get_reflect(color_sensor2) > 20) {}
+//                 while (ev3_color_sensor_get_reflect(color_sensor2) < 35) {}
+//                 ev3_motor_steer(left_motor, right_motor, 0, 0);
+//                 tslp_tsk(20);
+//             }
+//             break;
+//         case RIGHT:
+//             if(slow == true){
+//                 ev3_motor_reset_counts(left_motor);
+//                 ev3_motor_reset_counts(right_motor);
+//                 tslp_tsk(20);
+//                 motorSteer(5, 100);
+//                 while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+//                 motorSteer(5, 100);
+//                 //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
+//                 while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {}
+//                 while (ev3_color_sensor_get_reflect(color_sensor3) > 25) {}
+//                 while (ev3_color_sensor_get_reflect(color_sensor3) < 35) {}
+//                 ev3_motor_steer(left_motor, right_motor, 0, 0);
+//             }
+//             else{
+//                 ev3_motor_reset_counts(left_motor);
+//                 ev3_motor_reset_counts(right_motor);
+//                 tslp_tsk(20);
+//                 motorSteer(20, 100);
+//                 while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+//                 motorSteer(5, 100);
+//                 //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
+//                 while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {}
+//                 while (ev3_color_sensor_get_reflect(color_sensor3) > 25) {}
+//                 while (ev3_color_sensor_get_reflect(color_sensor3) < 35) {}
+//                 ev3_motor_steer(left_motor, right_motor, 0, 0);
+//             }
+//             break;
+//         default:
+//             exit(127);
+//             break;
+//     }
+// }
+
 
 /**
  * \brief Displays sensor values of drive motors and color sensors on the EV3 LCD screen
@@ -1005,26 +1039,20 @@ void waitforButton() {
 void test() {
     //detectRoadCars();
     //waitforButton();
-    // while (ev3_color_sensor_get_reflect(color_sensor2) > 10 && ev3_color_sensor_get_reflect(color_sensor3) > 10) {
-    //     motorSteer(10,0);
-    //     tslp_tsk(10);
-    // }
-    // ev3_motor_steer(left_motor, right_motor, 0, 0);
-    // tslp_tsk(100);
-    // drive(11.8, 10, 0);
-    // tslp_tsk(100);
-    // motorSteer(-20, 65);
-    // tslp_tsk(800);
-    // motorSteer(-5, 65);
-    // while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
-    // while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
-    // ev3_motor_steer(left_motor, right_motor, 0, 0);
     //PID(70, 30, RIGHT, CENTER, 7, 1);
     //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     // PID(70, 30, RIGHT, CENTER, 3, RIGHT);
-    PID(35, 40, NONE, CENTER, NONE, NONE, true);
-    // waitforButton();
-    runAll();
+
+    // PID(35, 40, NONE, CENTER, NONE, NONE, true);
+    // // waitforButton();
+    // runAll();
+    turn(LEFT);
+    waitforButton();
+    turn(RIGHT);
+    waitforButton();
+    turn(LEFT);
+    waitforButton();
+    turn(RIGHT);
     //turn(RIGHT,false);
     //waitforButton();
     //turn(LEFT,false);
