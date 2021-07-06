@@ -20,17 +20,19 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
  * \exception Bay LEFT cannot be delivered to Location RIGHT, and Bay RIGHT cannot be delivered to Location LEFT
  * \exception Opening door to CENTER may open LEFT location as well
 **/
-int doorLocations[3] = {
+int doorLocations[5] = {
     430,
-    PURPLE,
-    -430
+    0,
+    -430,
+    -85,
+    85,
 };
 /**
  * \brief Stores the current item in the bays [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayCars[3] = {
-    NONE, BLUEB, NONE
+    NONE, BATTERYx2, BATTERYx2
 };
 /**
  * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
@@ -90,25 +92,10 @@ int mapPositions[3][4] = {
 
 void main_task(intptr_t unused) {
     init();
-    deliverCarsToYellow();
-    /*
-                moveDoor(LEFT);
-                motorSteer(20, -100);
-                tslp_tsk(500);
-                motorSteer(5, -100);
-                while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
-                while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
-                ev3_motor_steer(left_motor, right_motor, 0, 0);
-                waitforButton();
-        collectRoadCars();
-
-                collectRoadCars(1);
-
-    //PID(200,30,CENTER,CENTER,0,1);
     //driveOutBase();
-    //PID(48,30,RIGHT,CENTER,3, 2);
-    //runAll();
-    //test();*/
+    // runAll();
+    test();
+
 }
 
 /**
@@ -125,10 +112,10 @@ void init() {
     ev3_motor_config(d_motor, MEDIUM_MOTOR);
     
     // Configure sensors
-    //ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
+    ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
     ev3_sensor_config(color_sensor2, COLOR_SENSOR);
     ev3_sensor_config(color_sensor3, COLOR_SENSOR);
-    //ev3_sensor_config(color_sensor4, HT_NXT_COLOR_SENSOR);
+    ev3_sensor_config(color_sensor4, HT_NXT_COLOR_SENSOR);
     
     // Set up sensors
     //ev3_color_sensor_get_reflect(color_sensor2);
@@ -143,11 +130,12 @@ void init() {
     // Configure brick
     ev3_lcd_set_font(EV3_FONT_MEDIUM);
 
-    // reset bays
-    ev3_motor_set_power(d_motor, 50);
+    // reset doors and sensors
+    ev3_motor_set_power(a_motor, 100);
+    ev3_motor_set_power(d_motor, 100);
     tslp_tsk(2000);
-    ev3_motor_set_power(d_motor, 0);
-    ev3_motor_set_power(d_motor, 0);
+    ev3_motor_stop(a_motor, false);
+    ev3_motor_stop(d_motor, false);
     tslp_tsk(500);
     ev3_motor_rotate(d_motor, -820, 20, true);
     ev3_motor_reset_counts(d_motor);
@@ -167,82 +155,102 @@ void init() {
  * \brief Drives out of base and collects batteries
 **/
 void driveOutBase(){
-    ev3_motor_rotate(a_motor, 420, 80, false);
-    ev3_motor_rotate(d_motor, 540, 80, false);
-    drive(25,20,5);
-    drive(5,10,5);
-    tslp_tsk(50);
-    ev3_motor_rotate(d_motor, 460, -50, true);
-    drive(3,10,5);
-    tslp_tsk(50);
-    ev3_motor_rotate(d_motor, 460, 50, true);
-    drive(1.2,10,5);
-    tslp_tsk(50);
-    ev3_motor_rotate(d_motor, 460, -50, true);
-    drive(6.5,10,5);
-    tslp_tsk(50);
-    ev3_motor_rotate(a_motor, 420, -50, true);
-    ev3_motor_rotate(d_motor, 80, -50, true);
-    tslp_tsk(50);
+    ev3_motor_rotate(d_motor, 300, 80, false);
+    drive(14,20,5);
+    drive(4,10,0);
+    tslp_tsk(100);
+    ev3_motor_rotate(d_motor, 300, -50, true);
+    drive(1.3,10,0);
+    tslp_tsk(100);
+    ev3_motor_rotate(d_motor, 300, 50, true);
+    drive(2.05,10,0);
+    tslp_tsk(100);
+    ev3_motor_rotate(d_motor, 300, -50, true);
+    drive(1.3,10,0);
+    tslp_tsk(100);
+    ev3_motor_rotate(d_motor, 300, 50, true);
+    drive(2.05,10,0);
+    tslp_tsk(100);
+    ev3_motor_rotate(d_motor, 780, -50, true);
+    drive(1.3,10,0);
+    tslp_tsk(100);
+    ev3_motor_rotate(d_motor, 780, 50, true);
+    drive(2.1,10,0);
+    tslp_tsk(100);
+    ev3_motor_rotate(d_motor, 780, -50, true);
+    drive(1.6,10,0);
+    tslp_tsk(100);
+    ev3_motor_rotate(d_motor, 780, 50, true);
+    tslp_tsk(100);
     bayCars[CENTER] = BATTERYx2;
     bayCars[RIGHT] = BATTERYx2;
+    resetDoor();
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
-    motorSteer(10,-100);
-    tslp_tsk(800);
-    motorSteer(0, 100);
-    tslp_tsk(50);
-    drive(16, 15, 0);
+    ev3_motor_rotate(right_motor, 180, 20, true);
+    waitforButton();
+    tslp_tsk(100);
+    drive(18, 15, 0);
+    waitforButton();
     motorSteer(10, 0);
-    while (ev3_color_sensor_get_reflect(color_sensor3 > 20)) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) > 25) {tslp_tsk(5);}
     motorSteer(0, 0);
-    tslp_tsk(50);
-    drive(7, 10, 0);
-    tslp_tsk(50);
+    waitforButton();
+    tslp_tsk(100);
+    drive(11, 10, 0);
+    tslp_tsk(100);
+    waitforButton();
     motorSteer(10, 100);
-    tslp_tsk(500);
+    tslp_tsk(200);
     motorSteer(5, 100);
-    while (ev3_color_sensor_get_reflect(color_sensor3) < 50) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {tslp_tsk(5);}
     while (ev3_color_sensor_get_reflect(color_sensor3) > 20) {tslp_tsk(5);}
-    while (ev3_color_sensor_get_reflect(color_sensor3) < 25) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {tslp_tsk(5);}
     motorSteer(0,0);
+    waitforButton();
+    PID(5, 10, CENTER, CENTER, -1,-1,false);
 }
 /**
  * \brief Runs all things (Maitian put proper description)
 **/
 void runAll(){
     for(int i = 3;i >= 0;i--){
+        //readcar(i + 4, i);
+        readcar(i +4,i);
+        waitforButton();
         if(mapcarPositions[0][i] == WALL){
-
+            drive(100, -100, 100);
         }
         else{
-            //doParkingSpot(i);
+            turn(RIGHT,false);
+            doParkingSpot(i);
+            turn(LEFT,true);
         }
         //drive(9, 10, 0);
         //turn(LEFT);
         //drive(11, 10, 0);
         //turn(LEFT);
         //drive(1, 10, 0);
-        waitforButton();
-        turn(LEFT);
-        turn(LEFT);
         if(mapcarPositions[1][i] == WALL){
 
         }
         else{
+            turn(LEFT,true);
             doParkingSpot(i + 4);
+            turn(RIGHT,true);
         }
         drive(11, 10, 0);
         if(i == 0){
-            turn(LEFT);
+            turn(LEFT,true);
         }
         else{
-            turn(RIGHT);
-            PID(30,30,LEFT,CENTER,2,1);
+            turn(RIGHT,true);
+            PID(30,30,LEFT,CENTER,2,1,false);
         }
     }
     if(mapcarPositions[1][0] == NONE){
-        PID(0,30,CENTER,CENTER,2,1);
+        PID(0,30,CENTER,CENTER,2,1,false);
         for(int i = 0;i < 4;i++){
             if(mapcarPositions[2][i] == NONE){
 
@@ -250,30 +258,30 @@ void runAll(){
             else{
                 doParkingSpot(i + 8);
             }
-            turn(LEFT);
-            PID(30,30,RIGHT,CENTER,-1,1);
+            turn(LEFT,true);
+            PID(30,30,RIGHT,CENTER,-1,1,false);
         }
     }
     else if(mapcarPositions[1][1] == NONE){
-        PID(30,30,LEFT,CENTER,2,1);
+        PID(30,30,LEFT,CENTER,2,1,false);
     }
     else if(mapcarPositions[1][2] == NONE){
-        PID(62,30,LEFT,CENTER,2,1);
+        PID(62,30,LEFT,CENTER,2,1,false);
     }
-    PID(34,30,LEFT,CENTER,2,1);
+    PID(34,30,LEFT,CENTER,2,1,false);
 }
 /**
  * \brief Drives out of base and collects batteries
 **/
 void deliverCarsToYellow(){
-    PID(7,20,RIGHT,RIGHT,-1,1);
-    PID(30,20,NONE,NONE,-1,1);
+    PID(7,20,RIGHT,RIGHT,-1,1,false);
+    PID(30,20,NONE,NONE,-1,1,false);
     waitforButton();
     if(searchforcar(BLUEB) != -1){
-        PID(28 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
+        PID(28 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1,false);
     }
     else if(searchforcar(GREENB) != -1){
-        PID(28 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
+        PID(28 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1,false);
     }
     ev3_motor_rotate(left_motor,230,20,false);
     ev3_motor_rotate(right_motor,230,20,true);
@@ -282,10 +290,10 @@ void deliverCarsToYellow(){
     ev3_motor_rotate(left_motor,200,20,false);
     ev3_motor_rotate(right_motor,200,20,true);
     if(searchforcar(BLUEB) != -1){
-        PID(28 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1);
+        PID(28 + 6 * searchforcar(BLUEB),20,NONE,NONE,-1,1,false);
     }
     else if(searchforcar(GREENB) != -1){
-        PID(28 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1);
+        PID(28 + 6 * searchforcar(GREENB),20,NONE,NONE,-1,1,false);
     }
 }
 
@@ -307,20 +315,43 @@ void resetDoor() {
 }
 /**
  * \brief Raises the doors
+ * \exception Will lower the sensors
  * \exception Will open all bays and cannot back up or make turns without running "closeDoors()"
  * \exception Does not reset the doors
 **/
 void raiseDoor() {
-    ev3_motor_set_power(a_motor, 100);
+    ev3_motor_set_power(a_motor, -20);
     tslp_tsk(1000);
-    ev3_motor_set_power(a_motor, 0);
+    ev3_motor_stop(a_motor, false);
 }
 /**
  * \brief Lowers the doors
+ * \exception Will raise the sensors
  * \exception Does not reset the doors
 **/
 void lowerDoor() {
-    ev3_motor_rotate(a_motor, -ev3_motor_get_counts(a_motor), 10, true);
+    ev3_motor_set_power(a_motor, 20);
+    tslp_tsk(1000);
+    ev3_motor_stop(a_motor, false);
+}
+/**
+ * \brief Lowers the sensors
+ * \exception Will raise the doors
+**/
+void raiseSensors() {
+    ev3_motor_set_power(a_motor, 20);
+    tslp_tsk(1000);
+    ev3_motor_stop(a_motor, false);
+}
+/**
+ * \brief Raises the sensors
+ * \exception Will lower the doors
+ * \exception Will open all bays and cannot back up or make turns without running "raiseSensors()"
+**/
+void lowerSensors() {
+    ev3_motor_set_power(a_motor, -20);
+    tslp_tsk(1000);
+    ev3_motor_stop(a_motor, false);
 }
 /**
  * \brief Closes all bays
@@ -332,85 +363,100 @@ void closeDoors() {
 }
 /**
  * \brief Returns the color (NONE, RED, GREEN, BLUE, WALL) of the selected sensor (1 or 4)
- * \param Sensor [color_sensor1, color_sensor4]
+ * \param sensor sensor [1, 4]
+ * \param parkingspotleft The id of the parkingspot [0-11] (NONE for nothing)
+ * \param parkingspotright The id of the parkingspot [0-11] (NONE for nothing)
 **/
-int readcar(int sensor, int parkingspot) {
-    rgb_raw_t rgb4;
-    bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-    assert(val4);
-    val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
-    assert(val4);
-    tslp_tsk(5);
-    int cardetected = NONE;
-    if(rgb4.r > 100 && rgb4.g > 60){
-        cardetected = WALL;
+void readcar( int parkingspotleft, int parkingspotright) {
+    lowerSensors();
+    if (parkingspotleft != NONE) {
+        char msg[100];
+        rgb_raw_t rgb1;
+        bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
+        assert(val1);
+        val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
+        assert(val1);
+        tslp_tsk(5);
+        int cardetected = NONE;
+        if(rgb1.r > 100 && rgb1.g > 60){
+            cardetected = WALL;
+        }
+        else if(rgb1.r < 5 && rgb1.g < 5 && rgb1.b < 5){
+            cardetected = NONE;
+        }
+        else if(mapPositions[(int)floor(parkingspotleft / 4)][parkingspotleft % 4] == RED){
+            if(rgb1.b > 40){
+                cardetected = BLUE;
+            }
+            else{
+                cardetected = GREEN;
+            }
+        }
+        else if(mapPositions[(int)floor(parkingspotleft / 4)][parkingspotleft % 4] == GREEN){
+            if(rgb1.r > 30){
+                cardetected = RED;
+            }
+            else{
+                cardetected = BLUE;
+            }
+        }
+        else if(mapPositions[(int)floor(parkingspotleft / 4)][parkingspotleft % 4] == BLUE){
+            if(rgb1.r > 30){
+                cardetected = RED;
+            }
+            else{
+                cardetected = GREEN;
+            }
+        }
+        mapcarPositions[(int)floor(parkingspotleft / 4)][parkingspotleft % 4] = cardetected;
+        sprintf(msg, "Left: %d", cardetected);
+        ev3_lcd_draw_string(msg, 10*4, 15*2.5);
     }
-    else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
-        cardetected = NONE;
+    if (parkingspotright != NONE) {
+        char msg[100];
+        rgb_raw_t rgb4;
+        bool_t val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+        assert(val4);
+        val4 = ht_nxt_color_sensor_measure_rgb(color_sensor4, &rgb4);
+        assert(val4);
+        tslp_tsk(5);
+        int cardetected = NONE;
+        if(rgb4.r > 100 && rgb4.g > 60){
+            cardetected = WALL;
+        }
+        else if(rgb4.r < 5 && rgb4.g < 5 && rgb4.b < 5){
+            cardetected = NONE;
+        }
+        else if(mapPositions[(int)floor(parkingspotright / 4)][parkingspotright % 4] == RED){
+            if(rgb4.b > 40){
+                cardetected = BLUE;
+            }
+            else{
+                cardetected = GREEN;
+            }
+        }
+        else if(mapPositions[(int)floor(parkingspotright / 4)][parkingspotright % 4] == GREEN){
+            if(rgb4.r > 30){
+                cardetected = RED;
+            }
+            else{
+                cardetected = BLUE;
+            }
+        }
+        else if(mapPositions[(int)floor(parkingspotright / 4)][parkingspotright % 4] == BLUE){
+            if(rgb4.r > 30){
+                cardetected = RED;
+            }
+            else{
+                cardetected = GREEN;
+            }
+        }
+        mapcarPositions[(int)floor(parkingspotright / 4)][parkingspotright % 4] = cardetected;
+        sprintf(msg, "Right: %d", cardetected);
+        ev3_lcd_draw_string(msg, 10*0, 15*4);
+        tslp_tsk(500);
     }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED){
-        if(rgb4.b > 40){
-            cardetected = BLUE;
-        }
-        else{
-            //cardetected = GREEN;
-        }
-    }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == GREEN){
-        if(rgb4.r > 30){
-            //cardetected = RED;
-        }
-        else{
-            //cardetected = BLUE;
-        }
-    }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == BLUE){
-        if(rgb4.r > 30){
-            //cardetected = RED;
-        }
-        else{
-            //cardetected = GREEN;
-        }
-    }
-    rgb_raw_t rgb1;
-    bool_t val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
-    assert(val1);
-    val1 = ht_nxt_color_sensor_measure_rgb(color_sensor1, &rgb1);
-    assert(val1);
-    if(rgb1.r > 100 && rgb1.g > 60){
-        cardetected = WALL;
-    }
-    else if(rgb1.r < 5 && rgb1.g < 5 && rgb1.b < 5){
-        cardetected = NONE;
-    }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED){
-        if(rgb1.b > 40){
-            cardetected = BLUE;
-        }
-        else{
-            //cardetected = GREEN;
-        }
-    }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == GREEN){
-        if(rgb1.r > 30){
-            //cardetected = RED;
-        }
-        else{
-            //cardetected = BLUE;
-        }
-    }
-    else if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == BLUE){
-        if(rgb1.r > 30){
-            //cardetected = RED;
-        }
-        else{
-            //cardetected = GREEN;
-        }
-    }
-    char msg[100];
-    sprintf(msg, "%d %d %d   hi",rgb4.r,rgb4.g,rgb4.b);
-    ev3_lcd_draw_string(msg, 10*0, 15*6);
-    return cardetected;
+    raiseSensors();
 }
 /**
  * \brief Detects and writes down values of all 6 cars on the road
@@ -493,8 +539,8 @@ void collectRoadCars(int set){
         drive(2, -10, 0);
         break;
     case 1:
-        turn(LEFT);
-        turn(LEFT);
+        turn(LEFT,false);
+        turn(LEFT,false);
         moveDoor(LEFT);
         ev3_motor_reset_counts(left_motor);
         ev3_motor_reset_counts(right_motor);
@@ -565,6 +611,7 @@ void doParkingSpot(int parkingspot) {
             deliverCar(parkingspot,mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4]);
         }
     }
+    resetDoor();
 }
 /**
  * \brief Battery module for doParkingSpot
@@ -572,12 +619,12 @@ void doParkingSpot(int parkingspot) {
 **/
 void deliverBattery(int parkingspot) {
     if(searchforcar(BATTERY) != -1){
-        deliver(searchforcar(BATTERY),RIGHT,true);
+        deliver(searchforcar(BATTERY),LEFT,true);
         batteryPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = BATTERY;
         bayCars[searchforcar(BATTERY)] = NONE;
     }
     else if(searchforcar(BATTERYx2) != -1){
-        deliver(searchforcar(BATTERYx2),RIGHT,true);
+        deliver(searchforcar(BATTERYx2),LEFT,true);
         batteryPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = BATTERY;
         bayCars[searchforcar(BATTERYx2)] = NONE;
     }
@@ -646,13 +693,17 @@ void deliver(int bay, int location, int battery) {
  * \exception PURPLE is not 1000 in this function
 **/
 void collect(int bay) {
-    moveDoor(CENTER);
+    drive(5, 5, 0);
+    moveDoor(LEFT);
     tslp_tsk(10);
-    drive(16, 5, 0);
+    drive(5, 5, 0);
     tslp_tsk(10);
-    resetDoor();
+    moveDoor(LEFTFULL);
     tslp_tsk(10);
-    drive(16, -10, 0);
+    drive(8, 5, 0);
+    closeDoors();
+    tslp_tsk(10);
+    drive(18, -10, 0);
 }
 /**
  * \brief Starts motors at selected power and curve
@@ -661,12 +712,12 @@ void collect(int bay) {
 **/
 void motorSteer(int power, int curve) {
     if(curve == 0){
-        ev3_motor_set_power(right_motor,power);
         ev3_motor_set_power(left_motor,-power);
+        ev3_motor_set_power(right_motor,power);
     }
     else if(curve < 0){
-        ev3_motor_set_power(right_motor,power);
         ev3_motor_set_power(left_motor,-power - curve * power / 50);
+        ev3_motor_set_power(right_motor,power);
     }
     else{
         ev3_motor_set_power(right_motor,power - curve * power / 50);
@@ -695,79 +746,102 @@ void drive(float distance, int power, int curve) {
  * \brief Drives robot following a line at a selected power for a distance, turning at the end if needed, and reading cars
  * \param distance The absolute distance in centimeters calculated as average between two motors
  * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
- * \param turn Turn selection where CENTER means no turn [LEFT, CENTER, RIGHT]
- * \param turn_sensor Sensors used to detect line where CENTER means both sensors and NONE is no line detection [NONE, LEFT, CENTER, RIGHT]
- * \param readCar The parking spot that the robot will detect where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11, NONE]
- * \param side The side to detect the car. 1 is left and 2 is right.
- * \exception \b turn and \b readCar do not apply when \b turn_sensor is NONE
- * \exception If readCar is -1, it will not read
+ * \param turn_dir Turn selection where NONE means no turn [LEFT, NONE, RIGHT]
+ * \param line_detect Sensors used to detect line where CENTER means both sensors and NONE is no line detection [NONE, LEFT, CENTER, RIGHT]
+ * \param readCarLeft The parking spot that the robot will detect where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions. NONE means no readcar [0-11, NONE]
+ * \param readCarRight The parking spot that the robot will detect where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions. NONE means no readcar [0-11, NONE]
+ * \param pidA To run another PID after detecting line [true, false]
+ * \exception \b turn and \b readCar do not apply when \b line_detect is NONE
 **/
-void PID(float distance, int power, int turn1, int turn_sensor, int readCar, int side) {
+void PID(float distance, int power, int turn_dir, int line_detect, int readCarLeft, int readCarRight, int pidA) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     // line follow
     float wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.141592653 * 8.1) / 360);
-    float lasterror = 0, integral = 0;
+    float error = 0, lasterror = 0, integral = 0;
     while (wheelDistance < distance) {
         wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
-        //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-        float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
+        error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+        // float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
         integral = error + integral * 0.5;
-        float curve = 0.13 * error + 0 * integral + 0.05 * (error - lasterror);
+        float curve = 0.1 * error + 0.01 * integral + 1 * (error - lasterror);
         motorSteer(power,curve);
         lasterror = error;
         tslp_tsk(1);
     }
-    ev3_motor_steer(left_motor, right_motor, 0, 0);
-    if (turn_sensor != NONE) {
+    if (line_detect == NONE) {
+        ev3_motor_steer(left_motor, right_motor, 0, 0);
+    } else {
         // detect line
         int sansar1;
         int sansar2;
-        if (turn_sensor == LEFT) {
+        if (line_detect == LEFT) {
             sansar1 = color_sensor2;
             sansar2 = color_sensor2;
-        } else if (turn_sensor == RIGHT) {
+        } else if (line_detect == RIGHT) {
             sansar1 = color_sensor3;
             sansar2 = color_sensor3;
-        } else if (turn_sensor == CENTER) {
+        } else if (line_detect == CENTER) {
             sansar1 = color_sensor2;
             sansar2 = color_sensor3;
         } else {
             exit(127);
         }
         tslp_tsk(100);
+        error = 0, lasterror = 0;
         while (ev3_color_sensor_get_reflect(sansar1) > 10 || ev3_color_sensor_get_reflect(sansar2) > 10) {
-            wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
-            //float error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
-            float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
-            integral = error + integral * 0.5;
-            float curve = 0.13 * error + 0 * integral + 0.05 * (error - lasterror);
+            error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+            // float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
+            float curve = 0.2 * error + 2 * (error - lasterror);
             motorSteer(10,curve);
             lasterror = error;
             tslp_tsk(1);
         }
-        ev3_motor_steer(left_motor, right_motor, 0, 0);
-        // detect cars
-        tslp_tsk(1000);
-        int doturn = true;
-        if(readCar != -1){
-            char msg[100];
-            mapcarPositions[(int)floor(readCar / 4)][readCar % 4] = readcar(side,readCar);
-            sprintf(msg, "%d", mapcarPositions[(int)floor(readCar / 4)][readCar % 4]);
-            ev3_lcd_draw_string(msg, 10*0, 15*4);
-            if(mapcarPositions[(int)floor(readCar / 4)][readCar % 4] == WALL){
-                doturn = false;
+            ev3_motor_steer(left_motor, right_motor, 0, 0);
+        if (pidA) {
+            ev3_motor_reset_counts(left_motor);
+            ev3_motor_reset_counts(right_motor);
+            tslp_tsk(100);
+            error = 0, lasterror = 0, wheelDistance = 0;
+            while (wheelDistance < 12.5) {
+                wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
+                error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
+                // float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
+                float curve = 0.2 * error + 5 * (error - lasterror);
+                motorSteer(15,curve);
+                lasterror = error;
+                tslp_tsk(1);
             }
-            if(bayCars[0] == NONE && bayCars[1] == NONE && bayCars[2] == NONE){
-                doturn = false;
+            ev3_motor_steer(left_motor, right_motor, 0, 0);
+            // drive(12, 15, 0);
+        } else {
+            drive(12, 15, 0);
+        }
+        // detect cars
+        int doturn = true;
+        if(readCarLeft != NONE || readCarRight != NONE){
+            readcar(readCarLeft, readCarRight);
+            if (turn_dir == LEFT) {
+                if(mapcarPositions[(int)floor(readCarLeft / 4)][readCarLeft % 4] == WALL){
+                    doturn = false;
+                }
+                if(bayCars[0] == NONE && bayCars[1] == NONE && bayCars[2] == NONE){
+                    doturn = false;
+                }
+            }
+            if (turn_dir == RIGHT) {
+                if(mapcarPositions[(int)floor(readCarRight / 4)][readCarRight % 4] == WALL){
+                    doturn = false;
+                }
+                if(bayCars[0] == NONE && bayCars[1] == NONE && bayCars[2] == NONE){
+                    doturn = false;
+                }
             }
         }
         // turn
-        if(doturn == true){
+        if(doturn == true && turn_dir != NONE){
             tslp_tsk(100);
-            drive(14, 15, 0);
-            tslp_tsk(100);
-            turn(turn1);
+            turn(turn_dir,false);
             tslp_tsk(100);
         }
     }
@@ -777,33 +851,65 @@ void PID(float distance, int power, int turn1, int turn_sensor, int readCar, int
  * \param direction Turn direction [LEFT, RIGHT]
  * \param inverted To undo the previous turn, where inverted LEFT undoes a RIGHT turn [true, false]
  */
-void turn(int direction) {
+void turn(int direction, int slow) {
     switch (direction) {
         case LEFT:
-            ev3_motor_reset_counts(left_motor);
-            ev3_motor_reset_counts(right_motor);
-            tslp_tsk(20);
-            motorSteer(20, -100);
-            while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
-            motorSteer(5, -100);
-            while (ev3_color_sensor_get_reflect(color_sensor2) > 15) {}
-            while (ev3_color_sensor_get_reflect(color_sensor2) < 20) {}
-            ev3_motor_steer(left_motor, right_motor, 0, 0);
-            tslp_tsk(20);
+            if(slow == true){
+                ev3_motor_reset_counts(left_motor);
+                ev3_motor_reset_counts(right_motor);
+                tslp_tsk(20);
+                motorSteer(5, -100);
+                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+                motorSteer(5, -100);
+                //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
+                while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {}
+                while (ev3_color_sensor_get_reflect(color_sensor2) > 20) {}
+                while (ev3_color_sensor_get_reflect(color_sensor2) < 35) {}
+                ev3_motor_steer(left_motor, right_motor, 0, 0);
+                tslp_tsk(20);
+            }
+            else{
+                ev3_motor_reset_counts(left_motor);
+                ev3_motor_reset_counts(right_motor);
+                tslp_tsk(20);
+                motorSteer(20, -100);
+                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+                motorSteer(5, -100);
+                //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
+                while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {}
+                while (ev3_color_sensor_get_reflect(color_sensor2) > 20) {}
+                while (ev3_color_sensor_get_reflect(color_sensor2) < 35) {}
+                ev3_motor_steer(left_motor, right_motor, 0, 0);
+                tslp_tsk(20);
+            }
             break;
         case RIGHT:
-            motorSteer(20, 100);
-            tslp_tsk(500);
-            motorSteer(5, 100);
-            //ev3_motor_reset_counts(left_motor);
-            //ev3_motor_reset_counts(right_motor);
-            //tslp_tsk(20);
-            //motorSteer(20, 65);
-            //while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
-            //motorSteer(5, 65);
-            while (ev3_color_sensor_get_reflect(color_sensor3) > 15) {}
-            while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {}
-            ev3_motor_steer(left_motor, right_motor, 0, 0);
+            if(slow == true){
+                ev3_motor_reset_counts(left_motor);
+                ev3_motor_reset_counts(right_motor);
+                tslp_tsk(20);
+                motorSteer(5, 100);
+                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+                motorSteer(5, 100);
+                //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
+                while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {}
+                while (ev3_color_sensor_get_reflect(color_sensor3) > 25) {}
+                while (ev3_color_sensor_get_reflect(color_sensor3) < 35) {}
+                ev3_motor_steer(left_motor, right_motor, 0, 0);
+            }
+            else{
+                ev3_motor_reset_counts(left_motor);
+                ev3_motor_reset_counts(right_motor);
+                tslp_tsk(20);
+                motorSteer(20, 100);
+                while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
+                motorSteer(5, 100);
+                //ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 50, false);
+                while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {}
+                while (ev3_color_sensor_get_reflect(color_sensor3) > 25) {}
+                while (ev3_color_sensor_get_reflect(color_sensor3) < 35) {}
+                ev3_motor_steer(left_motor, right_motor, 0, 0);
+            }
             break;
         default:
             exit(127);
@@ -887,7 +993,7 @@ void button_clicked_handler(intptr_t button) {
  * \brief Pauses a thread until the CENTER button is pressed on the EV3
 **/
 void waitforButton() {
-    ev3_led_set_color(LED_OFF);
+    ev3_led_set_color(LED_ORANGE);
     while (!ev3_button_is_pressed(ENTER_BUTTON)) {}
     ev3_led_set_color(LED_GREEN);
     while (ev3_button_is_pressed(ENTER_BUTTON)) {}
@@ -916,44 +1022,30 @@ void test() {
     //PID(70, 30, RIGHT, CENTER, 7, 1);
     //PID(0, 30, CENTER, CENTER, 3, RIGHT);
     // PID(70, 30, RIGHT, CENTER, 3, RIGHT);
-    /*
-    while(true){
-        //waitforButton();
-        tslp_tsk(100);
-        int color = readcar(2,3);
-        char msg[100];
-        
-        sprintf(msg, "%d   ", color);
-        ev3_lcd_draw_string(msg, 10*0, 15*4);
-    }*/
-    // //PID(0, 30, CENTER, CENTER, 3, RIGHT);
-    //doParkingSpot(3);
-    while (true) {
-        turn(LEFT);
-        waitforButton();
-        turn(RIGHT);
-        waitforButton();
-        turn(RIGHT);
-        waitforButton();
-        turn(LEFT);
-    }
+    PID(35, 40, NONE, CENTER, NONE, NONE, true);
+    // waitforButton();
+    runAll();
+    //turn(RIGHT,false);
+    //waitforButton();
+    //turn(LEFT,false);
 }
 
-void alignWithWall(){
+void alignWithWall() {
+    ev3_motor_set_power(a_motor,1000);
+    /*
+    AAAAAAAAAAAAAAAAAA I am a Steve I must find the diamonds and build an house.
+    Wowowowowowowow I am building an house.
+    Wowowowowowowow I have found the diamond YES.
+    Yay I have found the diamond and build an house.
+    ...
+    Haha I am a crapper I will explode the diamond and an house.
+    Ohno.
+    Explosion sounds and pixelated explosions Boom Ha Muahaha.
+    ...
+    Oh no me house and diamond I am dead.
 
-/*
-AAAAAAAAAAAAAAAAAA I am a Steve I must find the diamonds and build an house.
-Wowowowowowowow I am building an house.
-Wowowowowowowow I have found the diamond YES.
-Yay I have found the diamond and build an house.
-...
-Haha I am a crapper I will explode the diamond and an house.
-Ohno.
-Explosion sounds and pixelated explosions Boom Ha Muahaha.
-...
-Oh no me house and diamond I am dead.
+    Haha plot twist I am sp.
 
-Haha plot twist I am sp.
-*/
-
+    DISCONNECTED
+    */
 }

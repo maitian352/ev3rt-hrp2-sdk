@@ -14,6 +14,8 @@
 #define LEFT 0
 #define CENTER 1
 #define RIGHT 2
+#define LEFTFULL 3
+#define RIGHTFULL 4
 
 #define PURPLE 1000
 #define F 100
@@ -21,7 +23,7 @@
 void init();
 void driveOutBase();
 void runAll();
-int readcar(int sensor, int parkingspot);
+void readcar(int parkingspotleft, int parkingspotright);
 void deliverCarsToYellow();
 void detectRoadCars();
 void collectRoadCars(int set);
@@ -36,8 +38,8 @@ void deliver(int bay, int location, int battery);
 void collect(int bay);
 void motorSteer(int power, int curve);
 void drive(float distance, int power, int curve);
-void PID(float distance, int power, int turn, int turn_sensor, int readCar, int side);
-void turn(int direction);
+void PID(float distance, int power, int turn_dir, int turn_sensor, int readCarLeft, int readCarright, int pidA);
+void turn(int direction, int slow);
 void displayvalues();
 void waitforButton();
 void button_clicked_handler(intptr_t button);
