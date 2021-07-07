@@ -15,7 +15,8 @@
 #define CENTER 1
 #define RIGHT 2
 #define LEFTFULL 3
-#define RIGHTFULL 4
+#define RIGHTFULL 5
+#define CENTERFULL 4
 
 #define PURPLE 1000
 #define F 100
