@@ -135,7 +135,7 @@ void init() {
     ev3_motor_set_power(a_motor, 100);
     ev3_motor_set_power(d_motor, 100);
     tslp_tsk(2000);
-    ev3_motor_stop(a_motor, false);
+    ev3_motor_set_power(a_motor, 0);
     ev3_motor_stop(d_motor, false);
     tslp_tsk(500);
     ev3_motor_rotate(d_motor, -820, 20, true);
@@ -320,9 +320,9 @@ void resetDoor() {
  * \exception Does not reset the doors
 **/
 void raiseDoor() {
-    ev3_motor_set_power(a_motor, -100);
+    ev3_motor_set_power(a_motor, -50);
     tslp_tsk(1000);
-    ev3_motor_stop(a_motor, false);
+    ev3_motor_set_power(a_motor, 0);
 }
 /**
  * \brief Lowers the doors
@@ -330,18 +330,18 @@ void raiseDoor() {
  * \exception Does not reset the doors
 **/
 void lowerDoor() {
-    ev3_motor_set_power(a_motor, 20);
+    ev3_motor_set_power(a_motor, 50);
     tslp_tsk(1000);
-    ev3_motor_stop(a_motor, false);
+    ev3_motor_set_power(a_motor, 0);
 }
 /**
  * \brief Lowers the sensors
  * \exception Will raise the doors
 **/
 void raiseSensors() {
-    ev3_motor_set_power(a_motor, 20);
+    ev3_motor_set_power(a_motor, 50);
     tslp_tsk(1000);
-    ev3_motor_stop(a_motor, false);
+    ev3_motor_set_power(a_motor, 0);
 }
 /**
  * \brief Raises the sensors
@@ -349,9 +349,9 @@ void raiseSensors() {
  * \exception Will open all bays and cannot back up or make turns without running "raiseSensors()"
 **/
 void lowerSensors() {
-    ev3_motor_set_power(a_motor, -100);
+    ev3_motor_set_power(a_motor, -50);
     tslp_tsk(1000);
-    ev3_motor_stop(a_motor, false);
+    ev3_motor_set_power(a_motor, 0);
 }
 /**
  * \brief Closes all bays
@@ -880,7 +880,7 @@ void turn(int direction) {
             while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(10, -100);
             while (ev3_color_sensor_get_reflect(color_sensor2) < 50) {tslp_tsk(5);}
-            while (ev3_color_sensor_get_reflect(color_sensor2) > 30) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor2) > 50) {tslp_tsk(5);}
             ev3_motor_steer(left_motor, right_motor, 0, 0);
             resetDoor();
             break;
@@ -893,7 +893,7 @@ void turn(int direction) {
             while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(10, 100);
             while (ev3_color_sensor_get_reflect(color_sensor3) < 50) {tslp_tsk(5);}
-            while (ev3_color_sensor_get_reflect(color_sensor3) > 30) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor3) > 50) {tslp_tsk(5);}
             ev3_motor_steer(left_motor, right_motor, 0, 0);
             resetDoor();
             break;
