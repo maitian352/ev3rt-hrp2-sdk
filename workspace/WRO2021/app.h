@@ -18,6 +18,7 @@
 #define RIGHTFULL 5
 #define CENTERFULL 4
 
+#define PURPLE 1000
 #define F 100
 
 void init();
