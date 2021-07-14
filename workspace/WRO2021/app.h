@@ -22,7 +22,7 @@
 #define F 100
 
 void init();
-void driveOutBase();
+void collectBatteries();
 void runAll();
 void readcar(int parkingspotleft, int parkingspotright);
 void deliverCarsToYellow();
@@ -30,7 +30,7 @@ void detectRoadCars();
 void collectRoadCars(int set);
 void moveDoor(int door);
 void resetDoor();
-int searchforcar(int cartype);
+int searchforcar(int cartype, int direction);
 void doParkingSpot(int parkingspot);
 void deliverBattery(int parkingspot);
 void collectCar(int parkingspot);
