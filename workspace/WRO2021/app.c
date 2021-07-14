@@ -14,16 +14,15 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
 // define variables
 /**
  * \brief Stores locations for doors
- * \param location End location for door (LEFT, CENTER, RIGHT, LEFTFULL, CENTERFULL, RIGHTFULL) [0-4]
+ * \param location End location for door (LEFT, CENTER, RIGHT, LEFTFULL, CENTERFULLLEFT, CENTERFULLRIGHT, RIGHTFULL) [0-4]
  * \exception FULL variants of locations are only for collecting and do not gaurentee that all other doors are closed
 **/
 int doorLocations[6] = {
-    520,
+    760,
     0,
-    -520,
-    0,
-    520,
-    0,
+    -760,
+    220,
+    -220,
 };
 /**
  * \brief Stores the current item in the bays [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
@@ -88,6 +87,7 @@ int mapPositions[3][4] = {
     },
 };
 
+// main task
 void main_task(intptr_t unused) {
     init();
     test();
@@ -96,6 +96,7 @@ void main_task(intptr_t unused) {
 
 }
 
+// init
 /**
  * \brief Initializes the robot
 **/
@@ -103,12 +104,12 @@ void init() {
     ev3_led_set_color(LED_ORANGE);
 
     // Register button handlers
-    ev3_lcd_draw_string("MAKIN butons...", 0, 9);
+    ev3_lcd_draw_string("Registering buttons...", 0, 9);
     ev3_button_set_on_clicked(BACK_BUTTON, button_clicked_handler, BACK_BUTTON);
     tslp_tsk(62);
     
     // Configure motors
-    ev3_lcd_draw_string("Figuring murtars...", 0, 18);
+    ev3_lcd_draw_string("Configuring motors...", 0, 18);
     ev3_motor_config(left_motor, MEDIUM_MOTOR);
     ev3_motor_config(right_motor, MEDIUM_MOTOR);
     ev3_motor_config(a_motor, MEDIUM_MOTOR);
@@ -116,7 +117,7 @@ void init() {
     tslp_tsk(184);
     
     // Configure sensors
-    ev3_lcd_draw_string("Figuring sunsurs...", 0, 27);
+    ev3_lcd_draw_string("Configuring Sensors...", 0, 27);
     ev3_sensor_config(color_sensor1, HT_NXT_COLOR_SENSOR);
     ev3_sensor_config(color_sensor2, COLOR_SENSOR);
     ev3_sensor_config(color_sensor3, COLOR_SENSOR);
@@ -124,7 +125,7 @@ void init() {
     tslp_tsk(149);
     
     // Set up sensors
-    ev3_lcd_draw_string("Ializing sunsurs...", 0, 36);
+    ev3_lcd_draw_string("Initializing sensors...", 0, 36);
     ev3_color_sensor_get_reflect(color_sensor2);
     ev3_color_sensor_get_reflect(color_sensor3);
     rgb_raw_t rgb1;
@@ -135,20 +136,20 @@ void init() {
     assert(val4);
 
     // Configure brick
-    ev3_lcd_draw_string("Figuring beem...", 0, 45);
+    ev3_lcd_draw_string("Configuring brick...", 0, 45);
     tslp_tsk(20);
 
     ev3_led_set_color(LED_OFF);
 
     // reset doors and sensors
-    ev3_lcd_draw_string("Rasating murtars...", 0, 54);
+    ev3_lcd_draw_string("Resetting motors...", 0, 54);
     ev3_motor_set_power(a_motor, 10);
     ev3_motor_set_power(d_motor, 100);
     tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
     ev3_motor_stop(d_motor, false);
     tslp_tsk(500);
-    ev3_motor_rotate(d_motor, -1030, 20, true);
+    ev3_motor_rotate(d_motor, -800, 20, true);
     ev3_motor_reset_counts(d_motor);
     ev3_motor_reset_counts(a_motor);
 
@@ -156,7 +157,7 @@ void init() {
 
     // wait for button press
     ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
-    ev3_lcd_draw_string("Press OK to two", 14, 45);
+    ev3_lcd_draw_string("Press OK to run", 14, 45);
     ev3_led_set_color(LED_GREEN);
     ev3_lcd_fill_rect(77, 87, 24, 20, EV3_LCD_BLACK);
     ev3_lcd_fill_rect(79, 89, 20, 1, EV3_LCD_WHITE);
@@ -166,6 +167,7 @@ void init() {
     ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
 }
 
+// main functions
 /**
  * \brief Drives out of base and collects batteries
 **/
@@ -336,6 +338,7 @@ void deliverCarsToYellow(){
     }
 }
 
+// door functions
 /**
  * \brief Moves the selected door number to the center
  * \param door Which door that is moved to the center [LEFT, RIGHT]
@@ -390,6 +393,8 @@ void lowerSensors() {
     tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
 }
+
+// submodules
 /**
  * \brief Reads and records the color of parkingspots
  * \param sensor sensor [1, 4]
@@ -681,12 +686,12 @@ void deliverBattery(int parkingspot) {
     }
     else{
         if(searchforcar(BATTERY,LEFT) != NONE){
-            deliver(searchforcar(BATTERY,LEFT),CENTERFULL,true);
+            deliver(searchforcar(BATTERY,LEFT),CENTERFULLLEFT,true);
             batteryPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = BATTERY;
             bayCars[searchforcar(BATTERY,LEFT)] = NONE;
         }
         else if(searchforcar(BATTERYx2,LEFT) != NONE){
-            deliver(searchforcar(BATTERYx2,LEFT),CENTERFULL,true);
+            deliver(searchforcar(BATTERYx2,LEFT),CENTERFULLLEFT,true);
             batteryPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = BATTERY;
             bayCars[searchforcar(BATTERYx2,LEFT)] = BATTERY;
         }
@@ -759,6 +764,8 @@ void collect(int bay) {
     resetDoor();
     drive(20, -10, 0);
 }
+
+// drive functions
 /**
  * \brief Starts motors at selected power and curve
  * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
@@ -939,32 +946,30 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
 void turn(int direction) {
     switch (direction) {
         case LEFT:
-            ev3_motor_rotate(d_motor, 200-ev3_motor_get_counts(d_motor), 100, false);
             ev3_motor_reset_counts(left_motor);
             ev3_motor_reset_counts(right_motor);
-            tslp_tsk(200);
+            tslp_tsk(500);
             motorSteer(20, -100);
-            while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 160) {tslp_tsk(5);}
+            while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(10, -100);
-            while (ev3_color_sensor_get_reflect(color_sensor2) < 50) {tslp_tsk(5);}
-            while (ev3_color_sensor_get_reflect(color_sensor2) > 40) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor2) < 30) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor2) >= 10) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor2) < 15) {tslp_tsk(5);}
             ev3_motor_stop(left_motor, true);
             ev3_motor_stop(right_motor, true);
-            resetDoor();
             break;
         case RIGHT:
-            ev3_motor_rotate(d_motor, -200-ev3_motor_get_counts(d_motor), 100, false);
             ev3_motor_reset_counts(left_motor);
             ev3_motor_reset_counts(right_motor);
-            tslp_tsk(200);
+            tslp_tsk(500);
             motorSteer(20, 100);
-            while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 160) {tslp_tsk(5);}
+            while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(10, 100);
-            while (ev3_color_sensor_get_reflect(color_sensor3) < 50) {tslp_tsk(5);}
-            while (ev3_color_sensor_get_reflect(color_sensor3) > 40) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor3) < 30) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor3) >= 10) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor3) < 15) {tslp_tsk(5);}
             ev3_motor_stop(left_motor, true);
             ev3_motor_stop(right_motor, true);
-            resetDoor();
             break;
         default:
             exit(127);
@@ -972,6 +977,7 @@ void turn(int direction) {
     }
 }
 
+// debug
 /**
  * \brief Displays sensor values of drive motors and color sensors on the EV3 LCD screen
 **/
@@ -1027,6 +1033,7 @@ void displayvalues() {
     ev3_lcd_draw_string(msg, 10*7, 15*7.5);
 }
 
+// buttons
 /**
  * \brief Handles buttons
 **/
@@ -1054,6 +1061,7 @@ void waitforButton() {
     while (ev3_button_is_pressed(ENTER_BUTTON)) {}
 }
 
+// test
 /**
  * \brief Test program
 **/
@@ -1065,20 +1073,31 @@ void test() {
 
     //collectBatteries();
     // runAll();
-    openDoor(LEFT);
-    waitforButton();
-    openDoor(CENTER);
-    waitforButton();
-    openDoor(RIGHT);
-    waitforButton();
-    openDoor(LEFTFULL);
-    waitforButton();
-    openDoor(CENTERFULL);
-    waitforButton();
-    openDoor(RIGHTFULL);
-    waitforButton();
 
-    //ev3_motor_rotate(a_motor, 50,-10,true);
+    // moveDoor(LEFT);
+    // waitforButton();
+    // moveDoor(CENTER);
+    // waitforButton();
+    // moveDoor(RIGHT);
+    // waitforButton();
+    // moveDoor(LEFTFULL);
+    // waitforButton();
+    // moveDoor(CENTERFULLLEFT);
+    // waitforButton();
+    // moveDoor(CENTERFULLRIGHT);
+    // waitforButton();
+    // moveDoor(RIGHTFULL);
+    // waitforButton();
+    // resetDoor();
+
+    // while (true) {
+    //     turn(LEFT);
+    //     waitforButton();
+    // }
+    while (true) {
+        turn(RIGHT);
+        waitforButton();
+    }
 
     // drive(10, 10, 0);
     // waitforButton();
@@ -1109,11 +1128,11 @@ void test() {
     //         waitforButton();
     //         drive(15,i,0);
     //         waitforButton();
-//     //     }
-//     // }
-// asdfasdf
-//     // motorSteer(40,0);
-//     // tslp_tsk(1000);
+    //     }
+    // }
+
+    // motorSteer(40,0);
+    // tslp_tsk(1000);
     // ev3_motor_steer(left_motor,right_motor,0,0);
     // waitforButton();
     // motorSteer(40,0);
@@ -1135,8 +1154,11 @@ void test() {
 //      // // //    // drive(1000, 30, 10);
 }
 
+// what
+/**
+ * \brief Does things
+**/
 void alignWithWall() {
-    ev3_motor_set_power(a_motor,1000);
     /*
     AAAAAAAAAAAAAAAAAA I am a Steve I must find the diamonds and build an house.
     Wowowowowowowow I am building an house.

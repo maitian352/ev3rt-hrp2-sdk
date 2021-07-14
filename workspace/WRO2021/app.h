@@ -15,21 +15,29 @@
 #define CENTER 1
 #define RIGHT 2
 #define LEFTFULL 3
-#define RIGHTFULL 5
-#define CENTERFULL 4
+#define CENTERFULLLEFT 0
+#define CENTERFULLRIGHT 2
+#define RIGHTFULL 4
 
 #define PURPLE 1000
 #define F 100
 
 void init();
+
 void collectBatteries();
 void runAll();
-void readcar(int parkingspotleft, int parkingspotright);
 void deliverCarsToYellow();
-void detectRoadCars();
-void collectRoadCars(int set);
+
 void moveDoor(int door);
 void resetDoor();
+void raiseDoor();
+void lowerDoor();
+void raiseSensors();
+void lowerSensors();
+
+void readcar(int parkingspotleft, int parkingspotright);
+void detectRoadCars();
+void collectRoadCars(int set);
 int searchforcar(int cartype, int direction);
 void doParkingSpot(int parkingspot);
 void deliverBattery(int parkingspot);
@@ -37,14 +45,20 @@ void collectCar(int parkingspot);
 void deliverCar(int parkingspot, int car);
 void deliver(int bay, int location, int battery);
 void collect(int bay);
+
 void motorSteer(int power, int curve);
 void drive(float distance, int power, int curve);
 void PID(float distance, int power, int turn_dir, int turn_sensor, int readCarLeft, int readCarright, int pidA);
 void turn(int direction);
+
 void displayvalues();
-void waitforButton();
+
 void button_clicked_handler(intptr_t button);
+void waitforButton();
+
 void test();
+
+void alignWithWall();
 
 extern void	main_task(intptr_t exinf);
 #endif /* TOPPERS_MACRO_ONLY */
