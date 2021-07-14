@@ -23,10 +23,10 @@
 #define F 100
 
 void init();
-
 void collectBatteries();
 void runAll();
 void deliverCarsToYellow();
+void end();
 
 void moveDoor(int door);
 void resetDoor();

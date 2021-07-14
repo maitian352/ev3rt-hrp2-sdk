@@ -93,10 +93,10 @@ void main_task(intptr_t unused) {
     test();
     //collectBatteries();
     // runAll();
-
+    end();
 }
 
-// init
+// main functions
 /**
  * \brief Initializes the robot
 **/
@@ -145,7 +145,7 @@ void init() {
     ev3_lcd_draw_string("Resetting motors...", 0, 54);
     ev3_motor_set_power(a_motor, 10);
     ev3_motor_set_power(d_motor, 100);
-    tslp_tsk(1000);
+    tslp_tsk(1500);
     ev3_motor_set_power(a_motor, 0);
     ev3_motor_stop(d_motor, false);
     tslp_tsk(500);
@@ -166,37 +166,34 @@ void init() {
     while (ev3_button_is_pressed(ENTER_BUTTON));
     ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
 }
-
-// main functions
 /**
  * \brief Drives out of base and collects batteries
 **/
 void collectBatteries(){
-    ev3_motor_rotate(d_motor, 220, 80, false);
     drive(18.2,10,5);
     tslp_tsk(100);
-    ev3_motor_rotate(d_motor, 300, -50, true);
-    drive(3.6,10,5);
+    moveDoor(RIGHTFULL);
+    drive(4,10,5);
     tslp_tsk(100);
-    ev3_motor_rotate(d_motor, 300, 50, true);
+    moveDoor(CENTER);
     drive(2.9,10,5);
     tslp_tsk(100);
-    ev3_motor_rotate(d_motor, 300, -50, true);
-    drive(3.6,10,5);
+    moveDoor(RIGHTFULL);
+    drive(4,10,5);
     tslp_tsk(100);
-    ev3_motor_rotate(d_motor, 300, 50, true);
+    moveDoor(CENTER);
     drive(2.9,10,5);
     tslp_tsk(100);
-    ev3_motor_rotate(d_motor, 780, -50, true);
-    drive(3.6,10,5);
+    moveDoor(RIGHT);
+    drive(4,10,5);
     tslp_tsk(100);
-    ev3_motor_rotate(d_motor, 780, 50, true);
+    moveDoor(CENTER);
     drive(2.9,10,5);
     tslp_tsk(100);
-    ev3_motor_rotate(d_motor, 780, -50, true);
-    drive(4,10,2);
+    moveDoor(RIGHT);
+    drive(4.2,10,2);
     tslp_tsk(100);
-    ev3_motor_rotate(d_motor, 780, 50, true);
+    moveDoor(CENTER);
     tslp_tsk(100);
     bayCars[CENTER] = BATTERYx2;
     bayCars[RIGHT] = BATTERYx2;
@@ -220,7 +217,7 @@ void collectBatteries(){
     while (ev3_color_sensor_get_reflect(color_sensor3) > 20) {tslp_tsk(5);}
     while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {tslp_tsk(5);}
     motorSteer(0,0);
-    PID(30, 30, CENTER, CENTER, NONE, NONE, true);
+    PID(30, 30, NONE, CENTER, NONE, NONE, true);
 }
 /**
  * \brief Runs all things (Maitian put proper description)
@@ -336,6 +333,19 @@ void deliverCarsToYellow(){
     else if(searchforcar(GREENB,LEFT) != -1){
         PID(28 + 6 * searchforcar(GREENB,LEFT),20,NONE,NONE,-1,1,false);
     }
+}
+/**
+ * \brief End function
+**/
+void end() {
+    ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
+    ev3_motor_stop(left_motor, false);
+    ev3_motor_stop(right_motor, false);
+    ev3_motor_stop(a_motor, false);
+    ev3_motor_stop(d_motor, false);
+    ev3_led_set_color(LED_GREEN);
+    ev3_lcd_draw_string("Program  Ended", 20, 60);
+    exit(0);
 }
 
 // door functions
@@ -725,7 +735,7 @@ void collectCar(int parkingspot) {
 **/
 void deliverCar(int parkingspot, int car) {
     if(searchforcar(car,LEFT) != -1){
-        deliver(searchforcar(car,LEFT),CENTER,false);
+        deliver(searchforcar(car,LEFT),searchforcar(car,LEFT) + 3,false);
         mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = car;
         bayCars[searchforcar(car,LEFT)] = NONE;
     }
@@ -740,14 +750,17 @@ void deliver(int bay, int location, int battery) {
     moveDoor(location);
     drive(18, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
-        drive(5.25, -10, 0);
+        drive(6.25, -10, 0);
+        drive(2, 10, 0);
         resetDoor();
         drive(14.75, -10, 0);
+        drive(1.75, 10, 0);
         moveDoor(location);
         drive(3, 10, 0);
         resetDoor();
     } else {
-        drive(18, -10, 0);
+        drive(19, -10, 0);
+        drive(1, 10, 0);
     }
     resetDoor();
 }
@@ -762,7 +775,8 @@ void collect(int bay) {
     moveDoor(bay + 3);
     drive(9, 10, 0);
     resetDoor();
-    drive(20, -10, 0);
+    drive(21, -10, 0);
+    drive(1, 10, 0);
 }
 
 // drive functions
@@ -1047,7 +1061,7 @@ void button_clicked_handler(intptr_t button) {
             ev3_motor_stop(d_motor, false);
             ev3_led_set_color(LED_RED);
             ev3_lcd_draw_string("Program  Stopped", 10, 60);
-        exit(0);
+            exit(0);
         break;
     }
 }
@@ -1068,11 +1082,11 @@ void waitforButton() {
 void test() {
     // PID(49, 40, NONE, CENTER, NONE, NONE, true);
     // waitforButton();
-    //runAll();
+    // runAll();
     //deliverCarsToYellow();
 
     //collectBatteries();
-    // runAll();
+    runAll();
 
     // moveDoor(LEFT);
     // waitforButton();
@@ -1094,10 +1108,10 @@ void test() {
     //     turn(LEFT);
     //     waitforButton();
     // }
-    while (true) {
-        turn(RIGHT);
-        waitforButton();
-    }
+    // while (true) {
+    //     turn(RIGHT);
+    //     waitforButton();
+    // }
 
     // drive(10, 10, 0);
     // waitforButton();
