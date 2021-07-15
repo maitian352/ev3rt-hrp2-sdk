@@ -364,6 +364,24 @@ void resetDoor() {
     ev3_motor_rotate(d_motor, -ev3_motor_get_counts(d_motor), 100, true);
 }
 /**
+ * \brief Closes all bays
+ * \param side The side the door sticks out [LEFT, RIGHT]
+**/
+void closeDoors(int side) {
+    switch (side)
+    {
+    case LEFT:
+        ev3_motor_rotate(d_motor, 520-ev3_motor_get_counts(d_motor), 100, true);
+        break;
+    case RIGHT:
+        ev3_motor_rotate(d_motor, -520-ev3_motor_get_counts(d_motor), 100, true);
+        break;
+    default:
+        exit(127);
+        break;
+    }
+}
+/**
  * \brief Raises the doors
  * \exception Will lower the sensors
  * \exception Will open all bays and cannot back up or make turns without running "resetDoor()"
@@ -752,17 +770,21 @@ void deliver(int bay, int location, int battery) {
     if (battery && bayCars[bay] == BATTERYx2) {
         drive(6.25, -10, 0);
         drive(2, 10, 0);
-        resetDoor();
-        drive(14.75, -10, 0);
+        if(bay == CENTER){
+            closeDoors(LEFT);
+        }
+        else{
+            closeDoors(RIGHT);
+        }
+        drive(16.75, -10, 0);
         drive(1.75, 10, 0);
         moveDoor(location);
         drive(3, 10, 0);
-        resetDoor();
     } else {
         drive(19, -10, 0);
         drive(1, 10, 0);
     }
-    resetDoor();
+    closeDoors(LEFT);
 }
 /**
  * \brief Collects a car
