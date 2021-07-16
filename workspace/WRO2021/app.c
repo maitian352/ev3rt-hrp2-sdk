@@ -138,7 +138,29 @@ void init() {
 
     // Configure brick
     ev3_lcd_draw_string("Configuring brick...", 0, 45);
-    tslp_tsk(20);
+    if (ev3_battery_voltage_mV() < 7500) {
+        ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
+        ev3_motor_stop(left_motor, false);
+        ev3_motor_stop(right_motor, false);
+        ev3_motor_stop(a_motor, false);
+        ev3_motor_stop(d_motor, false);
+        ev3_led_set_color(LED_RED);
+        ev3_lcd_set_font(EV3_FONT_MEDIUM);
+        ev3_lcd_draw_string("! LOW  BATTERY !", 10, 60);
+        ev3_speaker_play_tone(2093, 500);
+        tslp_tsk(500);
+        ev3_speaker_play_tone(1046, 500);
+        tslp_tsk(500);
+        ev3_speaker_play_tone(2093, 500);
+        tslp_tsk(500);
+        ev3_speaker_play_tone(1046, 500);
+        tslp_tsk(500);
+        ev3_speaker_play_tone(2093, 500);
+        tslp_tsk(500);
+        ev3_speaker_play_tone(1046, 500);
+        exit(1);
+    }
+    tslp_tsk(13);
 
     ev3_led_set_color(LED_OFF);
 
@@ -150,7 +172,7 @@ void init() {
     ev3_motor_set_power(a_motor, 0);
     ev3_motor_stop(d_motor, false);
     tslp_tsk(500);
-    ev3_motor_rotate(d_motor, -800, 20, true);
+    ev3_motor_rotate(d_motor, -810, 20, true);
     ev3_motor_reset_counts(d_motor);
     ev3_motor_reset_counts(a_motor);
 
@@ -333,23 +355,23 @@ void runAll(){
             }
             else if(mapcarPositions[2][i] == NONE){
                 if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
-                    turn(RIGHT);
-                    doParkingSpot(i + 8);
                     turn(LEFT);
+                    doParkingSpot(i + 8);
+                    turn(RIGHT);
                 }
                 else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
-                    turn(RIGHT);
-                    doParkingSpot(i + 8);
                     turn(LEFT);
+                    doParkingSpot(i + 8);
+                    turn(RIGHT);
                 }
             }
             else if(mapcarPositions[2][i] == mapPositions[2][i]){
                 
             }
             else if(searchforcar(NONE,LEFT) != NONE){
-                turn(RIGHT);
-                doParkingSpot(i + 8);
                 turn(LEFT);
+                doParkingSpot(i + 8);
+                turn(RIGHT);
             }
             if(i == 0){
                 turn(LEFT);
@@ -386,7 +408,7 @@ void runAll(){
                 doParkingSpot(i + 8);
                 turn(LEFT);
             }
-            if(i == 0){
+            if(i == 3){
                 PID(42, 30, LEFT, LEFT, NONE, NONE, false);
             }
             else{
@@ -477,7 +499,7 @@ void closeDoors(int side) {
 **/
 void raiseDoor() {
     ev3_motor_set_power(a_motor, -30);
-    tslp_tsk(1000);
+    tslp_tsk(750);
     ev3_motor_set_power(a_motor, 0);
 }
 /**
@@ -487,7 +509,7 @@ void raiseDoor() {
 **/
 void lowerDoor() {
     ev3_motor_set_power(a_motor, 30);
-    tslp_tsk(1000);
+    tslp_tsk(750);
     ev3_motor_set_power(a_motor, 0);
 }
 /**
@@ -496,7 +518,7 @@ void lowerDoor() {
 **/
 void raiseSensors() {
     ev3_motor_set_power(a_motor, 30);
-    tslp_tsk(1000);
+    tslp_tsk(750);
     ev3_motor_set_power(a_motor, 0);
 }
 /**
@@ -506,7 +528,7 @@ void raiseSensors() {
 **/
 void lowerSensors() {
     ev3_motor_set_power(a_motor, -30);
-    tslp_tsk(1000);
+    tslp_tsk(750);
     ev3_motor_set_power(a_motor, 0);
 }
 
@@ -531,14 +553,14 @@ void readcar( int parkingspotleft, int parkingspotright) {
         }
         tslp_tsk(5);
         int cardetected = NONE;
-        if(rgb1.r > 50 && rgb1.g > 40){
+        if(rgb1.r > 50 && rgb1.g > 50){
             cardetected = WALL;
         }
         else if(rgb1.r < 7 && rgb1.g < 7 && rgb1.b < 7){
             cardetected = NONE;
         }
         else if(mapPositions[(int)floor(parkingspotleft / 4)][parkingspotleft % 4] == RED){
-            if(rgb1.b > 40){
+            if(rgb1.b > 30){
                 cardetected = BLUE;
             }
             else{
@@ -562,7 +584,7 @@ void readcar( int parkingspotleft, int parkingspotright) {
             }
         }
         mapcarPositions[(int)floor(parkingspotleft / 4)][parkingspotleft % 4] = cardetected;
-        sprintf(msg, "Left: %d", cardetected);
+        sprintf(msg, "Left: %d %d %d %d", cardetected,rgb1.r,rgb1.g,rgb1.b);
         ev3_lcd_draw_string(msg, 10*4, 15*2.5);
     }
     if (parkingspotright != NONE) {
@@ -579,14 +601,14 @@ void readcar( int parkingspotleft, int parkingspotright) {
         assert(val4);
         tslp_tsk(5);
         int cardetected = NONE;
-        if(rgb4.r > 50 && rgb4.g > 40){
+        if(rgb4.r > 50 && rgb4.g > 50){
             cardetected = WALL;
         }
         else if(rgb4.r < 7 && rgb4.g < 7 && rgb4.b < 7){
             cardetected = NONE;
         }
         else if(mapPositions[(int)floor(parkingspotright / 4)][parkingspotright % 4] == RED){
-            if(rgb4.b > 40){
+            if(rgb4.b > 30){
                 cardetected = BLUE;
             }
             else{
@@ -855,18 +877,18 @@ void deliver(int bay, int location, int battery) {
     moveDoor(location);
     drive(18, 10, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
-        drive(6.25, -10, 0);
+        drive(6.5, -10, 0);
         drive(2, 10, 0);
-        if(bay == CENTER){
-            closeDoors(LEFT);
+        if(bay == RIGHT){
+            closeDoors(RIGHT);
         }
         else{
-            closeDoors(RIGHT);
+            closeDoors(LEFT);
         }
         drive(16.75, -10, 0);
         drive(1.75, 10, 0);
         moveDoor(location);
-        drive(3, 10, 0);
+        drive(2, 10, 0);
     } else {
         drive(19, -10, 0);
         drive(1, 10, 0);
@@ -970,7 +992,7 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
     float error = 0, lasterror = 0, integral = 0;
     float targetdistance = distance;
     if (line_detect != NONE) {
-        targetdistance = distance-14;
+        targetdistance = distance-15;
     }
     while (wheelDistance < targetdistance) {
         wheelDistance = (-ev3_motor_get_counts(left_motor) / 2 + ev3_motor_get_counts(right_motor) / 2) * ((3.141592653 * 8.1) / 360);
@@ -1018,7 +1040,7 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
             ev3_motor_reset_counts(right_motor);
             tslp_tsk(100);
             error = 0, lasterror = 0, wheelDistance = 0;
-            while (wheelDistance < 13.2) {
+            while (wheelDistance < 13.5) {
                 wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
                 error = ev3_color_sensor_get_reflect(color_sensor2) - ev3_color_sensor_get_reflect(color_sensor3);
                 // float error = 50 - ev3_color_sensor_get_reflect(color_sensor3);
@@ -1030,7 +1052,7 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
             ev3_motor_stop(left_motor, true);
             ev3_motor_stop(right_motor, true);
         } else {
-            drive(13, 15, 0);
+            drive(13.5, 15, 0);
         }
         // detect cars
         int doturn = true;
@@ -1076,7 +1098,7 @@ void turn(int direction) {
             while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(10, -100);
             while (ev3_color_sensor_get_reflect(color_sensor2) < 30) {tslp_tsk(5);}
-            while (ev3_color_sensor_get_reflect(color_sensor2) >= 10) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor2) >= 15) {tslp_tsk(5);}
             while (ev3_color_sensor_get_reflect(color_sensor2) < 15) {tslp_tsk(5);}
             ev3_motor_stop(left_motor, true);
             ev3_motor_stop(right_motor, true);
@@ -1089,7 +1111,7 @@ void turn(int direction) {
             while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(10, 100);
             while (ev3_color_sensor_get_reflect(color_sensor3) < 30) {tslp_tsk(5);}
-            while (ev3_color_sensor_get_reflect(color_sensor3) >= 10) {tslp_tsk(5);}
+            while (ev3_color_sensor_get_reflect(color_sensor3) >= 15) {tslp_tsk(5);}
             while (ev3_color_sensor_get_reflect(color_sensor3) < 15) {tslp_tsk(5);}
             ev3_motor_stop(left_motor, true);
             ev3_motor_stop(right_motor, true);
@@ -1195,6 +1217,7 @@ void test() {
     //deliverCarsToYellow();
 
     //collectBatteries();
+    PID(45, 30, NONE, CENTER, NONE, NONE, true);
     runAll();
 
     // moveDoor(LEFT);
