@@ -22,6 +22,7 @@ int doorLocations[6] = {
     0,
     -760,
     220,
+    0,
     -220,
 };
 /**
@@ -224,8 +225,7 @@ void collectBatteries(){
 **/
 void runAll(){
     for(int i = 3;i >= 0;i--){
-        //readcar(i + 4, i);
-        readcar(i + 4,i);
+        readcar(i+4, i);
         if(mapcarPositions[0][i] == WALL){
             
         }
@@ -249,7 +249,6 @@ void runAll(){
             doParkingSpot(i);
             turn(LEFT);
         }
-
         if(mapcarPositions[1][i] == WALL){
             
         }
@@ -273,40 +272,129 @@ void runAll(){
             doParkingSpot(i + 4);
             turn(RIGHT);
         }
-        
-        // }
-        // else{
-        //     turn(LEFT);
-        //     doParkingSpot(i + 4);
-        //     turn(RIGHT);
-        // }
         if(i == 0){
             turn(LEFT);
         }
         else{
-            PID(25,30,NONE,CENTER,NONE,NONE,false);
+            PID(25,25,NONE,CENTER,NONE, NONE,true);
         }
     }
-    if(mapcarPositions[1][0] == NONE){
-        PID(0,30,CENTER,CENTER,2,1,false);
-        for(int i = 0;i < 4;i++){
-            if(mapcarPositions[2][i] == NONE){
-
+    int direction = 0;
+    if(mapcarPositions[1][0] == BLUE && batteryPositions[1][0] == NONE){
+        moveDoor(searchforcar(NONE, LEFT));
+        drive(10, 10, 0);
+        moveDoor(searchforcar(NONE, LEFT) + 3);
+        drive(9, 10, 0);
+        resetDoor();
+        PID(24, 25, LEFT, CENTER, NONE, NONE, true);
+    }
+    else if(mapcarPositions[1][1] == GREEN && batteryPositions[1][1] == NONE){
+        turn(LEFT);
+        PID(25,30,RIGHT,CENTER,NONE,NONE,true);
+        moveDoor(searchforcar(NONE, LEFT));
+        drive(10, 10, 0);
+        moveDoor(searchforcar(NONE, LEFT) + 3);
+        drive(9, 10, 0);
+        resetDoor();
+        PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+        PID(25, 30, LEFT, CENTER, NONE, NONE, true);
+        turn(LEFT);
+    }
+    else if(mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE){
+        direction = 1;
+        turn(LEFT);
+        PID(58,30,RIGHT,CENTER,NONE,NONE,true);
+        drive(20, 20, 0);
+        PID(24, 30, LEFT, CENTER, NONE, NONE, true);
+        PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+        turn(RIGHT);
+    } else if (mapcarPositions[1][3] == GREEN && batteryPositions[1][3] == NONE) {
+        direction = 1;
+        turn(LEFT);
+        PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
+        moveDoor(searchforcar(NONE, LEFT));
+        drive(10, 10, 0);
+        moveDoor(searchforcar(NONE, LEFT) + 3);
+        drive(9, 10, 0);
+        resetDoor();
+        PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+    } else {
+        direction = 1;
+        turn(LEFT);
+        PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
+        PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
+        PID(44, 30, NONE, CENTER, NONE, NONE, true);
+    }
+    if (direction == 1) {
+        for (int i = 3; i >= 0; i--) {
+            readcar(i+8, NONE);
+            if(mapcarPositions[2][i] == WALL){
+                
+            }
+            else if(mapcarPositions[2][i] == NONE){
+                if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
+                    turn(RIGHT);
+                    doParkingSpot(i + 8);
+                    turn(LEFT);
+                }
+                else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
+                    turn(RIGHT);
+                    doParkingSpot(i + 8);
+                    turn(LEFT);
+                }
+            }
+            else if(mapcarPositions[2][i] == mapPositions[2][i]){
+                
+            }
+            else if(searchforcar(NONE,LEFT) != NONE){
+                turn(RIGHT);
+                doParkingSpot(i + 8);
+                turn(LEFT);
+            }
+            if(i == 0){
+                turn(LEFT);
+                turn(LEFT);
+                PID(134, 35,LEFT, LEFT, NONE, NONE, false);
             }
             else{
-                doParkingSpot(i + 8);
+                PID(25,25,NONE,CENTER,NONE,NONE,true);
             }
-            turn(LEFT);
-            PID(30,30,RIGHT,CENTER,-1,1,false);
+        }
+    } else {
+        for (int i = 0; i <= 3; i++) {
+            readcar(NONE, i+8);
+            if(mapcarPositions[2][i] == WALL){
+                
+            }
+            else if(mapcarPositions[2][i] == NONE){
+                if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
+                    turn(RIGHT);
+                    doParkingSpot(i + 8);
+                    turn(LEFT);
+                }
+                else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
+                    turn(RIGHT);
+                    doParkingSpot(i + 8);
+                    turn(LEFT);
+                }
+            }
+            else if(mapcarPositions[2][i] == mapPositions[2][i]){
+                
+            }
+            else if(searchforcar(NONE,LEFT) != NONE){
+                turn(RIGHT);
+                doParkingSpot(i + 8);
+                turn(LEFT);
+            }
+            if(i == 0){
+                PID(42, 30, LEFT, LEFT, NONE, NONE, false);
+            }
+            else{
+                PID(25,25,NONE,CENTER,NONE,NONE,true);
+            }
         }
     }
-    else if(mapcarPositions[1][1] == NONE){
-        PID(30,30,LEFT,CENTER,2,1,false);
-    }
-    else if(mapcarPositions[1][2] == NONE){
-        PID(62,30,LEFT,CENTER,2,1,false);
-    }
-    PID(26,20,LEFT,CENTER,2,1,false);
+    PID(44, 30, RIGHT, CENTER, NONE, NONE, false);
 }
 /**
  * \brief Delivers two cars to yellow areas
@@ -431,7 +519,6 @@ void lowerSensors() {
 **/
 void readcar( int parkingspotleft, int parkingspotright) {
     lowerSensors();
-    tslp_tsk(500);
     if (parkingspotleft != NONE) {
         char msg[100];
         rgb_raw_t rgb1;
@@ -444,14 +531,14 @@ void readcar( int parkingspotleft, int parkingspotright) {
         }
         tslp_tsk(5);
         int cardetected = NONE;
-        if(rgb1.r > 50 && rgb1.g > 50){
+        if(rgb1.r > 50 && rgb1.g > 40){
             cardetected = WALL;
         }
         else if(rgb1.r < 7 && rgb1.g < 7 && rgb1.b < 7){
             cardetected = NONE;
         }
         else if(mapPositions[(int)floor(parkingspotleft / 4)][parkingspotleft % 4] == RED){
-            if(rgb1.b > 30){
+            if(rgb1.b > 40){
                 cardetected = BLUE;
             }
             else{
@@ -459,7 +546,7 @@ void readcar( int parkingspotleft, int parkingspotright) {
             }
         }
         else if(mapPositions[(int)floor(parkingspotleft / 4)][parkingspotleft % 4] == GREEN){
-            if(rgb1.r > 50){
+            if(rgb1.r > 40){
                 cardetected = RED;
             }
             else{
@@ -467,7 +554,7 @@ void readcar( int parkingspotleft, int parkingspotright) {
             }
         }
         else if(mapPositions[(int)floor(parkingspotleft / 4)][parkingspotleft % 4] == BLUE){
-            if(rgb1.r > 50){
+            if(rgb1.r > 40){
                 cardetected = RED;
             }
             else{
@@ -492,14 +579,14 @@ void readcar( int parkingspotleft, int parkingspotright) {
         assert(val4);
         tslp_tsk(5);
         int cardetected = NONE;
-        if(rgb4.r > 50 && rgb4.g > 50){
+        if(rgb4.r > 50 && rgb4.g > 40){
             cardetected = WALL;
         }
         else if(rgb4.r < 7 && rgb4.g < 7 && rgb4.b < 7){
             cardetected = NONE;
         }
         else if(mapPositions[(int)floor(parkingspotright / 4)][parkingspotright % 4] == RED){
-            if(rgb4.b > 30){
+            if(rgb4.b > 40){
                 cardetected = BLUE;
             }
             else{
@@ -507,7 +594,7 @@ void readcar( int parkingspotleft, int parkingspotright) {
             }
         }
         else if(mapPositions[(int)floor(parkingspotright / 4)][parkingspotright % 4] == GREEN){
-            if(rgb4.r > 50){
+            if(rgb4.r > 40){
                 cardetected = RED;
             }
             else{
@@ -515,7 +602,7 @@ void readcar( int parkingspotleft, int parkingspotright) {
             }
         }
         else if(mapPositions[(int)floor(parkingspotright / 4)][parkingspotright % 4] == BLUE){
-            if(rgb4.r > 50){
+            if(rgb4.r > 40){
                 cardetected = RED;
             }
             else{
@@ -793,7 +880,7 @@ void deliver(int bay, int location, int battery) {
 **/
 void collect(int bay) {
     moveDoor(bay);
-    drive(11, 10, 0);
+    drive(10.5, 10, 0);
     moveDoor(bay + 3);
     drive(9, 10, 0);
     resetDoor();
@@ -984,7 +1071,7 @@ void turn(int direction) {
         case LEFT:
             ev3_motor_reset_counts(left_motor);
             ev3_motor_reset_counts(right_motor);
-            tslp_tsk(500);
+            tslp_tsk(200);
             motorSteer(20, -100);
             while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(10, -100);
@@ -997,7 +1084,7 @@ void turn(int direction) {
         case RIGHT:
             ev3_motor_reset_counts(left_motor);
             ev3_motor_reset_counts(right_motor);
-            tslp_tsk(500);
+            tslp_tsk(200);
             motorSteer(20, 100);
             while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 180) {tslp_tsk(5);}
             motorSteer(10, 100);
