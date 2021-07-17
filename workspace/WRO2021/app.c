@@ -14,7 +14,7 @@ const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 
 // define variables
 /**
  * \brief Stores locations for doors
- * \param location End location for door (LEFT, CENTER, RIGHT, LEFTFULL, CENTERFULLLEFT, CENTERFULLRIGHT, RIGHTFULL) [0-4]
+ * \param location End location for door (LEFT, CENTER, RIGHT, LEFTFULL, CENTERFULLLEFT, CENTERFULLRIGHT, RIGHTFULL) [0-5]
  * \exception FULL variants of locations are only for collecting and do not gaurentee that all other doors are closed
 **/
 int doorLocations[6] = {
@@ -87,13 +87,18 @@ int mapPositions[3][4] = {
         BLUE,GREEN,RED,RED
     },
 };
+/**
+ * \brief How do we do this?
+ * \param task 0 is the next task to do...
+**/
+int tasks[99] = {};
 
 // main task
 void main_task(intptr_t unused) {
     init();
     test();
     //collectBatteries();
-    // runAll();
+    // runParkingArea1();
     end();
 }
 
@@ -192,7 +197,7 @@ void init() {
 /**
  * \brief Drives out of base and collects batteries
 **/
-void collectBatteries(){
+void collectBatteries() {
     drive(18.2,10,5);
     tslp_tsk(100);
     moveDoor(RIGHTFULL);
@@ -243,9 +248,10 @@ void collectBatteries(){
     PID(30, 30, NONE, CENTER, NONE, NONE, true);
 }
 /**
- * \brief Runs all things (Maitian put proper description)
+ * \brief Does first run through of the parking area
 **/
-void runAll(){
+void runParkingArea1() {
+    // rows 0 and 1
     for(int i = 3;i >= 0;i--){
         readcar(i+4, i);
         if(mapcarPositions[0][i] == WALL){
@@ -295,12 +301,22 @@ void runAll(){
             turn(RIGHT);
         }
         if(i == 0){
-            turn(LEFT);
+            if (mapcarPositions[1][0] == WALL) {
+                turn(RIGHT);
+            } else {
+                turn(LEFT);
+            }
         }
         else{
             PID(25,25,NONE,CENTER,NONE, NONE,true);
         }
     }
+    // decision for row 2
+    // NOTE: also check if the robot has a green and blue car
+    if (searchforcar(BATTERY, LEFT) != NONE && searchforcar(BATTERYx2, LEFT) != NONE) {
+
+    }
+    // get to row 2
     int direction = 0;
     if(mapcarPositions[1][0] == BLUE && batteryPositions[1][0] == NONE){
         moveDoor(searchforcar(NONE, LEFT));
@@ -310,44 +326,48 @@ void runAll(){
         resetDoor();
         PID(24, 25, LEFT, CENTER, NONE, NONE, true);
     }
-    else if(mapcarPositions[1][1] == GREEN && batteryPositions[1][1] == NONE){
-        turn(LEFT);
-        PID(25,30,RIGHT,CENTER,NONE,NONE,true);
-        moveDoor(searchforcar(NONE, LEFT));
-        drive(10, 10, 0);
-        moveDoor(searchforcar(NONE, LEFT) + 3);
-        drive(9, 10, 0);
-        resetDoor();
-        PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
-        PID(25, 30, LEFT, CENTER, NONE, NONE, true);
-        turn(LEFT);
-    }
-    else if(mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE){
-        direction = 1;
-        turn(LEFT);
-        PID(58,30,RIGHT,CENTER,NONE,NONE,true);
-        drive(20, 20, 0);
-        PID(24, 30, LEFT, CENTER, NONE, NONE, true);
-        PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
-        turn(RIGHT);
-    } else if (mapcarPositions[1][3] == GREEN && batteryPositions[1][3] == NONE) {
-        direction = 1;
-        turn(LEFT);
-        PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
-        moveDoor(searchforcar(NONE, LEFT));
-        drive(10, 10, 0);
-        moveDoor(searchforcar(NONE, LEFT) + 3);
-        drive(9, 10, 0);
-        resetDoor();
-        PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
-    } else {
-        direction = 1;
-        turn(LEFT);
-        PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
-        PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
-        PID(44, 30, NONE, CENTER, NONE, NONE, true);
+    else {
+        if (mapcarPositions[1][0] == WALL) {
+            turn(RIGHT);
+        } else {
+            turn(LEFT);
+        }
+        if(mapcarPositions[1][1] == GREEN && batteryPositions[1][1] == NONE){
+            PID(25,30,RIGHT,CENTER,NONE,NONE,true);
+            moveDoor(searchforcar(NONE, LEFT));
+            drive(10, 10, 0);
+            moveDoor(searchforcar(NONE, LEFT) + 3);
+            drive(9, 10, 0);
+            resetDoor();
+            PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+            PID(25, 30, LEFT, CENTER, NONE, NONE, true);
+            turn(LEFT);
+        }
+        else if(mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE){
+            direction = 1;
+            PID(58,30,RIGHT,CENTER,NONE,NONE,true);
+            drive(20, 20, 0);
+            PID(24, 30, LEFT, CENTER, NONE, NONE, true);
+            PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+            turn(RIGHT);
+        } else if (mapcarPositions[1][3] == GREEN && batteryPositions[1][3] == NONE) {
+            direction = 1;
+            PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
+            moveDoor(searchforcar(NONE, LEFT));
+            drive(10, 10, 0);
+            moveDoor(searchforcar(NONE, LEFT) + 3);
+            drive(9, 10, 0);
+            resetDoor();
+            PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+        } else {
+            direction = 1;
+            PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
+            PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
+            PID(44, 30, NONE, CENTER, NONE, NONE, true);
+        }
     }
     if (direction == 1) {
+        // row 2 from 11
         for (int i = 3; i >= 0; i--) {
             readcar(i+8, NONE);
             if(mapcarPositions[2][i] == WALL){
@@ -383,6 +403,7 @@ void runAll(){
             }
         }
     } else {
+        // row 2 from 8
         for (int i = 0; i <= 3; i++) {
             readcar(NONE, i+8);
             if(mapcarPositions[2][i] == WALL){
@@ -421,29 +442,24 @@ void runAll(){
 /**
  * \brief Delivers two cars to yellow areas
 **/
-void deliverCarsToYellow(){
-    PID(7,20,RIGHT,RIGHT,-1,1,false);
-    PID(30,20,NONE,NONE,-1,1,false);
+void deliverCarsToYellow() {
+    PID(48, 30, RIGHT, RIGHT, NONE, NONE, false);
+    PID(30,20,NONE,NONE,-1,NONE,false);
     waitforButton();
-    if(searchforcar(BLUEB,LEFT) != -1){
-        PID(28 + 6 * searchforcar(BLUEB,LEFT),20,NONE,NONE,-1,1,false);
-    }
-    else if(searchforcar(GREENB,LEFT) != -1){
-        PID(28 + 6 * searchforcar(GREENB,LEFT),20,NONE,NONE,-1,1,false);
-    }
     ev3_motor_rotate(left_motor,230,20,false);
     ev3_motor_rotate(right_motor,230,20,true);
-    drive(15,20,0);
-    drive(-15,-20,0);
+    deliver()
     ev3_motor_rotate(left_motor,200,20,false);
     ev3_motor_rotate(right_motor,200,20,true);
-    if(searchforcar(BLUEB,LEFT) != -1){
-        PID(28 + 6 * searchforcar(BLUEB,LEFT),20,NONE,NONE,-1,1,false);
-    }
-    else if(searchforcar(GREENB,LEFT) != -1){
-        PID(28 + 6 * searchforcar(GREENB,LEFT),20,NONE,NONE,-1,1,false);
-    }
+    PID(28,20,NONE,NONE,-1,1,false);
 }
+/**
+ * \brief Does second run through of the parking area
+**/
+void runParkingArea2() {
+    end();
+}
+
 /**
  * \brief End function
 **/
@@ -828,7 +844,12 @@ void deliverBattery(int parkingspot) {
             bayCars[searchforcar(BATTERY,LEFT)] = NONE;
         }
         else if(searchforcar(BATTERYx2,LEFT) != NONE){
-            deliver(searchforcar(BATTERYx2,LEFT),CENTERFULLLEFT,true);
+            if(searchforcar(BATTERYx2,LEFT) == CENTER){
+                deliver(searchforcar(BATTERYx2,LEFT),CENTERFULLLEFT,true);
+            }
+            else{
+                deliver(searchforcar(BATTERYx2,LEFT),RIGHTFULL,true);
+            }
             batteryPositions[(int)floor(parkingspot / 4)][parkingspot % 4] = BATTERY;
             bayCars[searchforcar(BATTERYx2,LEFT)] = BATTERY;
         }
@@ -869,13 +890,13 @@ void deliverCar(int parkingspot, int car) {
 }
 /**
  * \brief Delivers specified bay to a location
- * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT] ILLIGAL 666
+ * \param bay The bay number that is to be delivered [LEFT, CENTER, RIGHT]
  * \param location The location where the selected bay is to be delivered [LEFT, CENTER, RIGHT]
  * \param battery Deliver batteries or not [true, false]
 **/
 void deliver(int bay, int location, int battery) {
     moveDoor(location);
-    drive(18, 10, 0);
+    drive(18, 15, 0);
     if (battery && bayCars[bay] == BATTERYx2) {
         drive(6.5, -10, 0);
         drive(2, 10, 0);
@@ -885,12 +906,12 @@ void deliver(int bay, int location, int battery) {
         else{
             closeDoors(LEFT);
         }
-        drive(16.75, -10, 0);
+        drive(16.75, -15, 0);
         drive(1.75, 10, 0);
         moveDoor(location);
         drive(2, 10, 0);
     } else {
-        drive(19, -10, 0);
+        drive(19, -15, 0);
         drive(1, 10, 0);
     }
     closeDoors(LEFT);
@@ -902,11 +923,11 @@ void deliver(int bay, int location, int battery) {
 **/
 void collect(int bay) {
     moveDoor(bay);
-    drive(10.5, 10, 0);
+    drive(10, 10, 0);
     moveDoor(bay + 3);
     drive(9, 10, 0);
     resetDoor();
-    drive(21, -10, 0);
+    drive(20, -15, 0);
     drive(1, 10, 0);
 }
 
@@ -1213,12 +1234,13 @@ void waitforButton() {
 void test() {
     // PID(49, 40, NONE, CENTER, NONE, NONE, true);
     // waitforButton();
-    // runAll();
+    // runParkingArea1();
     //deliverCarsToYellow();
 
     //collectBatteries();
-    PID(45, 30, NONE, CENTER, NONE, NONE, true);
-    runAll();
+    // PID(45, 30, NONE, CENTER, NONE, NONE, true);
+    // runParkingArea1();
+    deliverCarsToYellow();
 
     // moveDoor(LEFT);
     // waitforButton();

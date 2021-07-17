@@ -26,8 +26,9 @@
 
 void init();
 void collectBatteries();
-void runAll();
+void runParkingArea1();
 void deliverCarsToYellow();
+void runParkingArea2();
 void end();
 
 void moveDoor(int door);
