@@ -28,6 +28,8 @@ void init();
 void collectBatteries();
 void runParkingArea1();
 void deliverCarsToYellow();
+void detectWaitingCars();
+void collectWaitingCars(int set);
 void runParkingArea2();
 void end();
 
@@ -39,8 +41,6 @@ void raiseSensors();
 void lowerSensors();
 
 void readcar(int parkingspotleft, int parkingspotright);
-void detectRoadCars();
-void collectRoadCars(int set);
 int searchforcar(int cartype, int direction);
 void doParkingSpot(int parkingspot);
 void deliverBattery(int parkingspot);
