@@ -10,6 +10,7 @@
 
 // define motors and sensors
 const int color_sensor1 = EV3_PORT_1, color_sensor2 = EV3_PORT_2, color_sensor3 = EV3_PORT_3, color_sensor4 = EV3_PORT_4, left_motor = EV3_PORT_B, right_motor = EV3_PORT_C, a_motor = EV3_PORT_A, d_motor = EV3_PORT_D;
+int finished = false;
 
 // define variables
 /**
@@ -494,15 +495,13 @@ void deliverCarsToYellow() {
     while (ev3_color_sensor_get_reflect(color_sensor2) < 30) {tslp_tsk(5);}
     while (ev3_color_sensor_get_reflect(color_sensor2) >= 15) {tslp_tsk(5);}
     while (ev3_color_sensor_get_reflect(color_sensor2) < 15) {tslp_tsk(5);}
-    ev3_motor_stop(left_motor, true);
-    ev3_motor_stop(right_motor, true);
+    motorSteer(0, 0);
     tslp_tsk(1000);
     motorSteer(10, 100);
     while (ev3_color_sensor_get_reflect(color_sensor3) < 30) {tslp_tsk(5);}
     while (ev3_color_sensor_get_reflect(color_sensor3) >= 15) {tslp_tsk(5);}
     while (ev3_color_sensor_get_reflect(color_sensor3) < 15) {tslp_tsk(5);}
-    ev3_motor_stop(left_motor, true);
-    ev3_motor_stop(right_motor, true);
+    motorSteer(0, 0);
 }
 /**
  * \brief Detects and writes down values of all 6 cars on the road
@@ -555,8 +554,8 @@ void detectWaitingCars(){
             }
         }
         ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
-        sprintf(msg, "%d %d %d",rgb1.r,rgb1.g,rgb1.b);
-        ev3_lcd_draw_string(msg, 10*4, 15*2.5);
+        // sprintf(msg, "%d %d %d",rgb1.r,rgb1.g,rgb1.b);
+        // ev3_lcd_draw_string(msg, 10*4, 15*2.5);
         roadcarPositions[i] = cardetected;
         raiseSensors();
         if(i != 0){
@@ -572,77 +571,70 @@ void detectWaitingCars(){
     if(blue == 1){
         roadcarPositions[5] = BLUE;
     }
-    sprintf(msg, "0: %d", roadcarPositions[0]);
-    ev3_lcd_draw_string(msg, 0, 15*0);
-    sprintf(msg, "1: %d", roadcarPositions[1]);
-    ev3_lcd_draw_string(msg, 0, 15*1);
-    sprintf(msg, "2: %d", roadcarPositions[2]);
-    ev3_lcd_draw_string(msg, 0, 15*2);
-    sprintf(msg, "3: %d", roadcarPositions[3]);
-    ev3_lcd_draw_string(msg, 0, 15*3);
-    sprintf(msg, "4: %d", roadcarPositions[4]);
-    ev3_lcd_draw_string(msg, 0, 15*4);
-    sprintf(msg, "5: %d", roadcarPositions[5]);
-    ev3_lcd_draw_string(msg, 0, 15*5);
-    waitforButton();
-    PID(16, 25, LEFT, LEFT, NONE, NONE, false);
-    PID(20, 25, NONE, RIGHT, NONE, NONE, true);
+    // sprintf(msg, "0: %d", roadcarPositions[0]);
+    // ev3_lcd_draw_string(msg, 0, 15*0);
+    // sprintf(msg, "1: %d", roadcarPositions[1]);
+    // ev3_lcd_draw_string(msg, 0, 15*1);
+    // sprintf(msg, "2: %d", roadcarPositions[2]);
+    // ev3_lcd_draw_string(msg, 0, 15*2);
+    // sprintf(msg, "3: %d", roadcarPositions[3]);
+    // ev3_lcd_draw_string(msg, 0, 15*3);
+    // sprintf(msg, "4: %d", roadcarPositions[4]);
+    // ev3_lcd_draw_string(msg, 0, 15*4);
+    // sprintf(msg, "5: %d", roadcarPositions[5]);
+    // ev3_lcd_draw_string(msg, 0, 15*5);
+    PID(16, 25, NONE, LEFT, NONE, NONE, false);
 }
 /**
  * \brief Collects 3 cars
  * \param set Set 0 or set 1 where set 0 is the first 3 cars and set 1 is the last 3 cars.
- * \exception Set 0 must start at the intersection facing towards the parking garage.
- * \exception Set 1 must start at the intersection facing away from the parking garage.
+ * \exception Set 0 must start at the end of deliverCarsToYellow
+ * \exception Set 1 must start somewhere
 **/
 void collectWaitingCars(int set){
     switch (set)
     {
     case 0:
-        ev3_motor_reset_counts(left_motor);
-        ev3_motor_reset_counts(right_motor);
-        ev3_motor_rotate(d_motor, 740-ev3_motor_get_counts(d_motor), 100, true);
-        motorSteer(20, -100);
-        while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <160) {tslp_tsk(5);}
-        motorSteer(10, -100);
-        while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
-        // while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
-        ev3_motor_stop(left_motor, true);
-        ev3_motor_stop(right_motor, true);
-        tslp_tsk(20);
-        drive(15.5,10,0);
-        ev3_motor_rotate(d_motor, -460, 50, true);
+        drive(17, 20, 0);
+        ev3_motor_rotate(left_motor,220,20,false);
+        ev3_motor_rotate(right_motor,220,20,true);
+        drive(3, 15, 0);
+        motorSteer(10, 0);
+        while (ev3_color_sensor_get_reflect(color_sensor2) > 10 || ev3_color_sensor_get_reflect(color_sensor3) > 10) {tslp_tsk(5);}
+        motorSteer(0, 0);
+        drive(12.5, 10, 0);
+        turn(LEFT);
+        // drive(8, -20, 0);
+        // PID(20, 20, NONE, CENTER, NONE, NONE, false);
+        motorSteer(10, 0);
+        while (ev3_color_sensor_get_reflect(color_sensor2) > 10 || ev3_color_sensor_get_reflect(color_sensor3) > 10) {tslp_tsk(5);}
+        motorSteer(0, 0);
+        // drive(1, 10, 0);
+        // drive(1, -10, 0);
+        moveDoor(LEFT);
+        drive(30,10,0);
+        moveDoor(LEFTFULL);
         raiseDoor();
-        drive(11.5,10,0);
-        ev3_motor_rotate(d_motor, -440, 50, true);
+        drive(10,10,0);
+        moveDoor(RIGHT);
         lowerDoor();
-        ev3_motor_rotate(d_motor, 600, 50, true);
+        moveDoor(RIGHTFULL);
         raiseDoor();
         drive(7,10,0);
         resetDoor();
         lowerDoor();
         drive(2, -10, 0);
+        bayCars[LEFT] = roadcarPositions[1];
+        bayCars[CENTER] = roadcarPositions[0];
+        bayCars[RIGHT] = roadcarPositions[2];
         break;
     case 1:
-        turn(LEFT);
-        turn(LEFT);
-        ev3_motor_rotate(d_motor, 740-ev3_motor_get_counts(d_motor), 100, true);
-        ev3_motor_reset_counts(left_motor);
-        ev3_motor_reset_counts(right_motor);
-        tslp_tsk(20);
-        motorSteer(20, -100);
-        while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <160) {tslp_tsk(5);}
-        motorSteer(5, -100);
-        while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
-        while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
-        ev3_motor_stop(left_motor, true);
-        ev3_motor_stop(right_motor, true);
         moveDoor(RIGHT);
-        drive(40, 20, 0);
-        tslp_tsk(50);
+        drive(40, 30, 0);
         drive(6.5,10,0);
         ev3_motor_rotate(d_motor, 500, 50, true);
         raiseDoor();
-        drive(10,10,0);
+        drive(10.5,10,0);
         ev3_motor_rotate(d_motor, 440, 50, true);
         lowerDoor();
         ev3_motor_rotate(d_motor, -640, 50, true);
@@ -662,7 +654,6 @@ void collectWaitingCars(int set){
 void runParkingArea2() {
     end();
 }
-
 /**
  * \brief End function
 **/
@@ -672,6 +663,7 @@ void end() {
     ev3_motor_stop(right_motor, false);
     ev3_motor_stop(a_motor, false);
     ev3_motor_stop(d_motor, false);
+    finished = true;
     ev3_led_set_color(LED_GREEN);
     ev3_lcd_draw_string("Program  Ended", 20, 60);
     exit(0);
@@ -1023,19 +1015,24 @@ void collect(int bay) {
 // drive functions
 /**
  * \brief Starts motors at selected power and curve
- * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
+ * \param power Power of the motors as a percent, where negative means backwards, and 0 will stop the motors [-100-100]
  * \param curve Curve ratio of motors as a percent, where negative means left, and 0 means straight [-100-100]
 **/
 void motorSteer(int power, int curve) {
-    float left_power = -power;
-    float right_power = power;
-    if(curve < 0) {
-        left_power = -power-(curve*power/50);
-    } else if (curve > 0) {
-        right_power= power-(curve*power/50);
+    if (power == 0) {
+        ev3_motor_stop(left_motor, true);
+        ev3_motor_stop(right_motor, true);
+    } else {
+        float left_power = -power;
+        float right_power = power;
+        if(curve < 0) {
+            left_power = -power-(curve*power/50);
+        } else if (curve > 0) {
+            right_power= power-(curve*power/50);
+        }
+        ev3_motor_set_power(left_motor, left_power);
+        ev3_motor_set_power(right_motor, right_power);
     }
-    ev3_motor_set_power(right_motor, right_power);
-    ev3_motor_set_power(left_motor, left_power);
 }
 /**
  * \brief Drives robot at selected power and curve for a distance
@@ -1077,8 +1074,7 @@ void drive(float distance, int power, int curve) {
         lasterror = error;
         tslp_tsk(2);
     }
-    ev3_motor_stop(left_motor, true);
-    ev3_motor_stop(right_motor, true);
+    motorSteer(0, 0);
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
     tslp_tsk(200);
@@ -1116,8 +1112,7 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
         tslp_tsk(2);
     }
     if (line_detect == NONE) {
-        ev3_motor_stop(left_motor, true);
-        ev3_motor_stop(right_motor, true);
+        motorSteer(0, 0);
     } else {
         // detect line
         int sansar1;
@@ -1143,8 +1138,7 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
             lasterror = error;
             tslp_tsk(2);
         }
-        ev3_motor_stop(left_motor, true);
-        ev3_motor_stop(right_motor, true);
+        motorSteer(0, 0);
         if (pidA) {
             ev3_motor_reset_counts(left_motor);
             ev3_motor_reset_counts(right_motor);
@@ -1159,8 +1153,7 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
                 lasterror = error;
                 tslp_tsk(2);
             }
-            ev3_motor_stop(left_motor, true);
-            ev3_motor_stop(right_motor, true);
+            motorSteer(0, 0);
         } else {
             drive(13.5, 15, 0);
         }
@@ -1210,8 +1203,7 @@ void turn(int direction) {
             while (ev3_color_sensor_get_reflect(color_sensor2) < 30) {tslp_tsk(5);}
             while (ev3_color_sensor_get_reflect(color_sensor2) >= 15) {tslp_tsk(5);}
             while (ev3_color_sensor_get_reflect(color_sensor2) < 15) {tslp_tsk(5);}
-            ev3_motor_stop(left_motor, true);
-            ev3_motor_stop(right_motor, true);
+            motorSteer(0, 0);
             break;
         case RIGHT:
             motorSteer(20, 100);
@@ -1220,8 +1212,7 @@ void turn(int direction) {
             while (ev3_color_sensor_get_reflect(color_sensor3) < 30) {tslp_tsk(5);}
             while (ev3_color_sensor_get_reflect(color_sensor3) >= 15) {tslp_tsk(5);}
             while (ev3_color_sensor_get_reflect(color_sensor3) < 15) {tslp_tsk(5);}
-            ev3_motor_stop(left_motor, true);
-            ev3_motor_stop(right_motor, true);
+            motorSteer(0, 0);
             break;
         default:
             exit(127);
@@ -1293,6 +1284,7 @@ void displayvalues() {
 void button_clicked_handler(intptr_t button) {
     switch(button) {
     case BACK_BUTTON:
+        if (!finished) {
             ev3_lcd_fill_rect(0, 0, 178, 128, EV3_LCD_WHITE);
             ev3_motor_stop(left_motor, false);
             ev3_motor_stop(right_motor, false);
@@ -1301,6 +1293,7 @@ void button_clicked_handler(intptr_t button) {
             ev3_led_set_color(LED_RED);
             ev3_lcd_draw_string("Program  Stopped", 10, 60);
             exit(0);
+        }
         break;
     }
 }
@@ -1319,11 +1312,6 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
-    // PID(49, 40, NONE, CENTER, NONE, NONE, true);
-    // waitforButton();
-    // runParkingArea1();
-    //deliverCarsToYellow();
-
     //collectBatteries();
     // runParkingArea1();
     // deliverCarsToYellow();
