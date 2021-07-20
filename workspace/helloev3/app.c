@@ -122,6 +122,20 @@ const CliMenuEntry* select_menu_entry(const CliMenu *cm, int offset_x, int offse
 
 
 void main_task(intptr_t unused) {
+
+// AAAAAAAAAAA MODIFIED!!!!!!!!!
+	const int htsensorleft = EV3_PORT_1, colorsensorleft = EV3_PORT_2, colorsensorright = EV3_PORT_3, htsensorright = EV3_PORT_4, left_motor = EV3_PORT_B, right_motor = EV3_PORT_C, sensormotor = EV3_PORT_A, doormotor = EV3_PORT_D;
+
+	ev3_motor_config(left_motor, MEDIUM_MOTOR);
+	ev3_motor_config(right_motor, MEDIUM_MOTOR);
+	ev3_motor_config(sensormotor, LARGE_MOTOR);
+	ev3_motor_config(doormotor, MEDIUM_MOTOR);
+	ev3_sensor_config(htsensorleft, HT_NXT_COLOR_SENSOR);
+	ev3_sensor_config(htsensorright, HT_NXT_COLOR_SENSOR);
+	ev3_sensor_config(colorsensorleft, COLOR_SENSOR);
+	ev3_sensor_config(colorsensorright, COLOR_SENSOR);
+   	// motors[TNUM_MOTOR_PORT] = {LARGE_MOTOR, MEDIUM_MOTOR, MEDIUM_MOTOR, MEDIUM_MOTOR};
+   	// sensors[TNUM_SENSOR_PORT] = {HT_NXT_COLOR_SENSOR, COLOR_SENSOR, COLOR_SENSOR, HT_NXT_COLOR_SENSOR};
 	/**
 	 * TODO: test file operations
 	 */
@@ -172,6 +186,7 @@ void main_task(intptr_t unused) {
 		}
 	}
 
+	
 
 //    // Register button handlers
 //    ev3_set_on_button_clicked(BACK_BUTTON, button_clicked_handler, BACK_BUTTON);
