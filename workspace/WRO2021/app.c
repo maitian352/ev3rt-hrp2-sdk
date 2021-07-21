@@ -98,11 +98,11 @@ int tasks[99] = {};
 void main_task(intptr_t unused) {
     init();
     test();
-    //collectBatteries();
+    // collectBatteries();
     // runParkingArea1();
-    deliverCarsToYellow();
-    detectWaitingCars();
-    collectWaitingCars(0);
+    // deliverCarsToYellow();
+    // detectWaitingCars();
+    // collectWaitingCars(0);
     end();
 }
 
@@ -202,7 +202,7 @@ void init() {
  * \brief Drives out of base and collects batteries
 **/
 void collectBatteries() {
-    drive(18.2,10,5);
+    drive(18.1,10,20);
     tslp_tsk(100);
     moveDoor(RIGHTFULL);
     drive(4,10,5);
@@ -264,18 +264,18 @@ void runParkingArea1() {
         else if(mapcarPositions[0][i] == NONE){
             if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[0][i] != RED){
                 turn(RIGHT);
-                doParkingSpot(i);
+                doParkingSpot(i, false);
                 turn(LEFT);
             }
             else if(searchforcar(mapPositions[0][i],LEFT) != NONE){
                 turn(RIGHT);
-                doParkingSpot(i);
+                doParkingSpot(i, false);
                 turn(LEFT);
             }
         }
         else if(searchforcar(NONE,LEFT) != NONE){
             turn(RIGHT);
-            doParkingSpot(i);
+            doParkingSpot(i, false);
             turn(LEFT);
         }
         if(mapcarPositions[1][i] == WALL){
@@ -284,18 +284,18 @@ void runParkingArea1() {
         else if(mapcarPositions[1][i] == NONE){
             if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[1][i] != RED){
                 turn(LEFT);
-                doParkingSpot(i + 4);
+                doParkingSpot(i + 4, false);
                 turn(RIGHT);
             }
             else if(searchforcar(mapPositions[1][i],LEFT) != NONE){
                 turn(LEFT);
-                doParkingSpot(i + 4);
+                doParkingSpot(i + 4, false);
                 turn(RIGHT);
             }
         }
         else if(searchforcar(NONE,LEFT) != NONE){
             turn(LEFT);
-            doParkingSpot(i + 4);
+            doParkingSpot(i + 4, false);
             turn(RIGHT);
         }
         if(i == 0){
@@ -372,18 +372,18 @@ void runParkingArea1() {
                 else if(mapcarPositions[2][i] == NONE){
                     if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
                         turn(LEFT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, false);
                         turn(RIGHT);
                     }
                     else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
                         turn(LEFT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, false);
                         turn(RIGHT);
                     }
                 }
                 else if(searchforcar(NONE,LEFT) != NONE){
                     turn(LEFT);
-                    doParkingSpot(i + 8);
+                    doParkingSpot(i + 8, false);
                     turn(RIGHT);
                 }
                 if(i == 0){
@@ -405,18 +405,18 @@ void runParkingArea1() {
                 else if(mapcarPositions[2][i] == NONE){
                     if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
                         turn(RIGHT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, false);
                         turn(LEFT);
                     }
                     else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
                         turn(RIGHT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, false);
                         turn(LEFT);
                     }
                 }
                 else if(searchforcar(NONE,LEFT) != NONE){
                     turn(RIGHT);
-                    doParkingSpot(i + 8);
+                    doParkingSpot(i + 8, false);
                     turn(LEFT);
                 }
                 if(i == 3){
@@ -449,7 +449,7 @@ void runParkingArea2() {
         else if(mapcarPositions[0][i] == NONE){
             if(searchforcar(mapPositions[0][i],LEFT) != NONE && batteryPositions[0][i] == BATTERY){
                 turn(RIGHT);
-                doParkingSpot(i);
+                doParkingSpot(i, true);
                 turn(LEFT);
             }
         }
@@ -458,7 +458,7 @@ void runParkingArea2() {
         }
         else if(searchforcar(NONE,LEFT) != NONE){
             turn(RIGHT);
-            doParkingSpot(i);
+            doParkingSpot(i, true);
             turn(LEFT);
         }
         if(mapcarPositions[1][i] == WALL){
@@ -467,7 +467,7 @@ void runParkingArea2() {
         else if(mapcarPositions[1][i] == NONE){
             if(searchforcar(mapPositions[1][i],LEFT) != NONE){
                 turn(LEFT);
-                doParkingSpot(i + 4);
+                doParkingSpot(i + 4, true);
                 turn(RIGHT);
             }
         }
@@ -476,7 +476,7 @@ void runParkingArea2() {
         }
         else if(searchforcar(NONE,LEFT) != NONE){
             turn(LEFT);
-            doParkingSpot(i + 4);
+            doParkingSpot(i + 4, true);
             turn(RIGHT);
         }
         if(i == 0){
@@ -552,12 +552,12 @@ void runParkingArea2() {
                 else if(mapcarPositions[2][i] == NONE){
                     if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
                         turn(LEFT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, true);
                         turn(RIGHT);
                     }
                     else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
                         turn(LEFT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, true);
                         turn(RIGHT);
                     }
                 }
@@ -566,7 +566,7 @@ void runParkingArea2() {
                 }
                 else if(searchforcar(NONE,LEFT) != NONE){
                     turn(LEFT);
-                    doParkingSpot(i + 8);
+                    doParkingSpot(i + 8, true);
                     turn(RIGHT);
                 }
                 if(i == 0){
@@ -587,12 +587,12 @@ void runParkingArea2() {
                 else if(mapcarPositions[2][i] == NONE){
                     if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
                         turn(RIGHT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, true);
                         turn(LEFT);
                     }
                     else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
                         turn(RIGHT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, true);
                         turn(LEFT);
                     }
                 }
@@ -601,7 +601,7 @@ void runParkingArea2() {
                 }
                 else if(searchforcar(NONE,LEFT) != NONE){
                     turn(RIGHT);
-                    doParkingSpot(i + 8);
+                    doParkingSpot(i + 8, true);
                     turn(LEFT);
                 }
                 if(i == 3){
@@ -634,7 +634,7 @@ void runParkingArea3() {
         else if(mapcarPositions[0][i] == NONE){
             if(searchforcar(mapPositions[0][i],LEFT) != NONE && batteryPositions[0][i] == BATTERY){
                 turn(RIGHT);
-                doParkingSpot(i);
+                doParkingSpot(i, true);
                 turn(LEFT);
             }
         }
@@ -643,7 +643,7 @@ void runParkingArea3() {
         }
         else if(searchforcar(NONE,LEFT) != NONE){
             turn(RIGHT);
-            doParkingSpot(i);
+            doParkingSpot(i, true);
             turn(LEFT);
         }
         if(mapcarPositions[1][i] == WALL){
@@ -652,7 +652,7 @@ void runParkingArea3() {
         else if(mapcarPositions[1][i] == NONE){
             if(searchforcar(mapPositions[1][i],LEFT) != NONE){
                 turn(LEFT);
-                doParkingSpot(i + 4);
+                doParkingSpot(i + 4, true);
                 turn(RIGHT);
             }
         }
@@ -661,7 +661,7 @@ void runParkingArea3() {
         }
         else if(searchforcar(NONE,LEFT) != NONE){
             turn(LEFT);
-            doParkingSpot(i + 4);
+            doParkingSpot(i + 4, true);
             turn(RIGHT);
         }
         if(i == 0){
@@ -737,12 +737,12 @@ void runParkingArea3() {
                 else if(mapcarPositions[2][i] == NONE){
                     if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
                         turn(LEFT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, true);
                         turn(RIGHT);
                     }
                     else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
                         turn(LEFT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, true);
                         turn(RIGHT);
                     }
                 }
@@ -751,7 +751,7 @@ void runParkingArea3() {
                 }
                 else if(searchforcar(NONE,LEFT) != NONE){
                     turn(LEFT);
-                    doParkingSpot(i + 8);
+                    doParkingSpot(i + 8, true);
                     turn(RIGHT);
                 }
                 if(i == 0){
@@ -772,12 +772,12 @@ void runParkingArea3() {
                 else if(mapcarPositions[2][i] == NONE){
                     if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
                         turn(RIGHT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, true);
                         turn(LEFT);
                     }
                     else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
                         turn(RIGHT);
-                        doParkingSpot(i + 8);
+                        doParkingSpot(i + 8, true);
                         turn(LEFT);
                     }
                 }
@@ -786,7 +786,7 @@ void runParkingArea3() {
                 }
                 else if(searchforcar(NONE,LEFT) != NONE){
                     turn(RIGHT);
-                    doParkingSpot(i + 8);
+                    doParkingSpot(i + 8, true);
                     turn(LEFT);
                 }
                 if(i == 3){
@@ -1143,7 +1143,7 @@ void closeDoors(int side) {
 **/
 void raiseDoor() {
     ev3_motor_set_power(a_motor, -40);
-    tslp_tsk(750);
+    tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
 }
 /**
@@ -1172,7 +1172,7 @@ void raiseSensors() {
 **/
 void lowerSensors() {
     ev3_motor_set_power(a_motor, -40);
-    tslp_tsk(750);
+    tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
 }
 
@@ -1183,7 +1183,7 @@ void lowerSensors() {
  * \param parkingspotleft The id of the parkingspot [0-11] (NONE for nothing)
  * \param parkingspotright The id of the parkingspot [0-11] (NONE for nothing)
 **/
-void readcar( int parkingspotleft, int parkingspotright) {
+void readcar(int parkingspotleft, int parkingspotright) {
     lowerSensors();
     if (parkingspotleft != NONE) {
         // char msg[100];
@@ -1282,6 +1282,37 @@ void readcar( int parkingspotleft, int parkingspotright) {
     raiseSensors();
 }
 /**
+ * \brief Does a parkingspot
+ * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
+ * \param deliverGreenBlue Whether to deliver green or blue cars
+ * \exception Function name is bad
+**/
+void doParkingSpot(int parkingspot, int deliverGreenBlue) {
+    if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
+        if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] != RED){
+            deliverBattery(parkingspot);
+        }
+        if (mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED || deliverGreenBlue == true) {
+            deliverCar(parkingspot,mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4]);
+        }
+    }
+    else if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == WALL){
+
+    }
+    else{
+        collectCar(parkingspot);
+        if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
+            if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] != RED){
+                deliverBattery(parkingspot);
+            }
+            if (mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED || deliverGreenBlue == true) {
+                deliverCar(parkingspot,mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4]);
+            }
+        }
+    }
+    resetDoor();
+}
+/**
  * \brief Returns whether or not we have a car of __ type in our bay 
  * \param cartype Type of thingy to look for [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
 **/
@@ -1307,32 +1338,6 @@ int searchforcar(int cartype, int direction) {
         return 0;
     }
     return -1;
-}
-/**
- * \brief Does a parkingspot
- * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
- * \exception Function name is bad
-**/
-void doParkingSpot(int parkingspot) {
-    if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
-        if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] != RED){
-            deliverBattery(parkingspot);
-        }
-        deliverCar(parkingspot,mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4]);
-    }
-    else if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == WALL){
-
-    }
-    else{
-        collectCar(parkingspot);
-        if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
-            if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] != RED){
-                deliverBattery(parkingspot);
-            }
-            deliverCar(parkingspot,mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4]);
-        }
-    }
-    resetDoor();
 }
 /**
  * \brief Battery module for doParkingSpot
@@ -1474,43 +1479,55 @@ void motorSteer(int power, int curve) {
  * \param curve Curve ratio of motors as a percent, where negative means left, and 0 means straight [-100-100]
 **/
 void drive(float distance, int power, int curve) {
-    float ratioleft, ratioright;
-    if(curve == 0){
-        ratioleft = 1;
-        ratioright = 1;
-    }
-    else if(curve < 0){
-        ratioleft = -50/curve;
-        ratioright = 1;
-    }
-    else{
-        ratioleft = 1;
-        ratioright = 1+curve/20;
-    }
-    int backwards = 1;
-    if (power < 0) {
-        backwards = -1;
+    if (abs(curve) > 100) {
+        exit(127);
     }
     // ev3_motor_reset_counts(left_motor);
     // ev3_motor_reset_counts(right_motor);
-    int leftstartcounts = ev3_motor_get_counts(left_motor);
-    int rightstartcounts = ev3_motor_get_counts(right_motor);
-    float wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts)*ratioleft / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts)*ratioright / 2)) * ((3.1415926535 * 8.1) / 360);
-    float error = 0, lasterror = 0, integral = 0;
-    while (abs(wheelDistance) < distance) {
-        wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts)*ratioleft / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts)*ratioright / 2)) * ((3.1415926535 * 8.1) / 360);
-        error = ((ev3_motor_get_counts(left_motor)-leftstartcounts)*ratioleft+(ev3_motor_get_counts(right_motor)-rightstartcounts)*ratioright);
-        integral = error + integral * 0.5;
-        float curve = (1*error + 0.0*integral + 10*(error-lasterror)) * backwards;
-        motorSteer(power,curve);
-        // motorSteer(power,0);
-        lasterror = error;
-        tslp_tsk(2);
+    if (curve == 50) {
+        ev3_motor_rotate(left_motor, -distance / ((3.1415926535 * 8.1) / 360), power, true);
+    } else if (curve == -50) {
+        ev3_motor_rotate(right_motor, distance / ((3.1415926535 * 8.1) / 360), power, true);
+    } else {
+        int backwards = 1;
+        if (power < 0) {
+            backwards = -1;
+        }
+        float ratioleft = 1, ratioright = 1;
+        int leftstartcounts = ev3_motor_get_counts(left_motor);
+        int rightstartcounts = ev3_motor_get_counts(right_motor);
+        float wheelDistance = ((abs(ev3_motor_get_counts(left_motor)-leftstartcounts / 2)*ratioleft) + (abs(ev3_motor_get_counts(right_motor)-rightstartcounts / 2))*ratioright) * ((3.1415926535 * 8.1) / 360);
+        float error = 0, lasterror = 0, integral = 0;
+        if (curve == 0) {
+            // keep ratios
+        } else if (abs(curve) < 50) {
+            if(curve < 0){
+                ratioleft = 1+curve/25;
+            }
+            else{
+                ratioright = 1+curve/25;
+            }
+        } else {
+            if(curve < 0){
+                ratioleft = 1-curve/25;
+            }
+            else{
+                ratioright = 1-curve/25;
+            }
+        }
+        wheelDistance = ((abs(ev3_motor_get_counts(left_motor)-leftstartcounts / 2)*ratioleft) + (abs(ev3_motor_get_counts(right_motor)-rightstartcounts / 2))*ratioright) * ((3.1415926535 * 8.1) / 360);
+        while (abs(wheelDistance) < distance) {
+            wheelDistance = ((abs(ev3_motor_get_counts(left_motor)-leftstartcounts / 2)*ratioleft) + (abs(ev3_motor_get_counts(right_motor)-rightstartcounts / 2))*ratioright) * ((3.1415926535 * 8.1) / 360);
+            error = (-(ev3_motor_get_counts(left_motor)-leftstartcounts)/(ev3_motor_get_counts(right_motor)-rightstartcounts))+(ratioright/ratioleft);
+            integral = error + integral * 0.5;
+            float curve2 = (1*error + 0.0*integral + 10*(error-lasterror) + curve) * backwards;
+            motorSteer(power,curve2);
+            lasterror = error;
+            tslp_tsk(2);
+        }
+        motorSteer(0, 0);
     }
-    motorSteer(0, 0);
-    ev3_motor_reset_counts(left_motor);
-    ev3_motor_reset_counts(right_motor);
-    tslp_tsk(200);
+    tslp_tsk(100);
 }
 /**
  * \brief Drives robot following a line at a selected power for a distance, turning at the end if needed, and reading cars
@@ -1749,8 +1766,10 @@ void test() {
     // runParkingArea1();
     // deliverCarsToYellow();
     // detectWaitingCars();
-    collectWaitingCars(0);
-    runParkingArea2();
+    // collectWaitingCars(0);
+    // runParkingArea2();
+    // collectWaitingCars(1);
+    // runParkingArea3();
 
     // moveDoor(LEFT);
     // waitforButton();
@@ -1777,9 +1796,18 @@ void test() {
     //     waitforButton();
     // }
 
-    // drive(10, 10, 0);
-    // waitforButton();
-    // drive(10, 50, 0);
+    drive(50, 20, 0);
+    waitforButton();
+    drive(50, 20, 5);
+    waitforButton();
+    drive(50, 20, 25);
+    waitforButton();
+    drive(50, 20, 50);
+    waitforButton();
+    drive(50, 20, 75);
+    waitforButton();
+    drive(50, 20, 100);
+
 
     // while (true) {
     //     turn(RIGHT);
