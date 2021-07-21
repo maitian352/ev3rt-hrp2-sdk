@@ -54,7 +54,7 @@ void deliver(int bay, int location, int battery);
 void collect(int bay);
 
 void motorSteer(int power, int curve);
-void drive(float distance, int power, int curve);
+void drive(float distance, int power);
 void PID(float distance, int power, int turn_dir, int turn_sensor, int readCarLeft, int readCarright, int pidA);
 void turn(int direction);
 
