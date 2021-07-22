@@ -769,6 +769,205 @@ void runParkingArea3(){
             }
         }
     }
+    int currentCars[3] = {0,0,0};
+    for(int i = 0;i < 3;i++){
+        currentCars[bayCars[i]] += 1;
+    }
+    int side1[3] = {0,0,0};
+    int side2[3] = {0,0,0};
+    for(int i = 0;i < 3;i++){
+        if(i != -1){
+            if(red[i] > 7){
+                side2[RED] += 1;
+            }
+            else if(red[i] > 3){
+                side2[RED] += 1;
+                side1[RED] += 1;
+            }
+            else{
+                side1[RED] += 1;
+            }
+        }
+    }
+    for(int i = 0;i < 2;i++){
+        if(i != -1){
+            if(green[i] > 7){
+                side2[GREEN] += 1;
+            }
+            else if(green[i] > 3){
+                side2[GREEN] += 1;
+                side1[GREEN] += 1;
+            }
+            else{
+                side1[GREEN] += 1;
+            }
+        }
+    }
+    for(int i = 0;i < 2;i++){
+        if(i != -1){
+            if(blue[i] > 7){
+                side2[BLUE] += 1;
+            }
+            else if(blue[i] > 3){
+                side2[BLUE] += 1;
+                side1[BLUE] += 1;
+            }
+            else{
+                side1[BLUE] += 1;
+            }
+        }
+    }
+
+    int canDoSide1 = true;
+    for(int i = 0;i < 3;i++){
+        if(side1[i] < currentCars[i]){
+            canDoSide1 = false;
+        }
+    }
+    int canDoSide2 = true;
+    for(int i = 0;i < 3;i++){
+        if(side2[i] < currentCars[i]){
+            canDoSide2 = false;
+        }
+    }
+    if(canDoSide1){
+        int currentDelivers[3] = {-1,-1,-1};
+        int currentIndex = 0;
+        for(int i = 0;i < 3;i++){
+            if(i != -1){
+                if(currentIndex < 3){
+                    if(red[i] < 8){
+                        currentDelivers[currentIndex] = red[i];
+                        currentIndex += 1;
+                    }
+                }
+            }
+        }
+        for(int i = 0;i < 2;i++){
+            if(i != -1){
+                if(currentIndex < 3){
+                    if(green[i] < 8){
+                        currentDelivers[currentIndex] = green[i];
+                        currentIndex += 1;
+                    }
+                }
+            }
+        }
+        for(int i = 0;i < 2;i++){
+            if(i != -1){
+                if(currentIndex < 3){
+                    if(blue[i] < 8){
+                        currentDelivers[currentIndex] = blue[i];
+                        currentIndex += 1;
+                    }
+                }
+            }
+        }
+        for(int i = 3;i >= 0;i--){
+            if(bayCars[0] == NONE && bayCars[1] == NONE && bayCars[2] == NONE){
+                turn(LEFT);
+                turn(LEFT);
+                PID(27 * (4 - i) - 2,25,NONE,CENTER,NONE, NONE,true);
+                continue;
+            }
+            else{
+                for(int j = 0;j < 3;j++){
+                    if(currentDelivers[j] == i){
+                        turn(RIGHT);
+                        doParkingSpot(i, false, false, false);
+                        turn(LEFT);
+                    }
+                }
+                for(int j = 0;j < 3;j++){
+                    if(currentDelivers[j] == i + 4){
+                        turn(LEFT);
+                        doParkingSpot(i + 4, false, false, false);
+                        turn(RIGHT);
+                    }
+                }
+                if(i == 0){
+                    turn(LEFT);
+                    turn(LEFT);
+                    PID(27 * 4 - 2,25,NONE,CENTER,NONE, NONE,true);
+                }
+                else{
+                    PID(25,25,NONE,CENTER,NONE, NONE,true);
+                }
+            }
+        }
+    }
+    else if(canDoSide2){
+        int currentDelivers[3] = {-1,-1,-1};
+        int currentIndex = 0;
+        for(int i = 0;i < 3;i++){
+            if(i != -1){
+                if(currentIndex < 3){
+                    if(red[i] >= 4){
+                        currentDelivers[currentIndex] = red[i];
+                        currentIndex += 1;
+                    }
+                }
+            }
+        }
+        for(int i = 0;i < 2;i++){
+            if(i != -1){
+                if(currentIndex < 3){
+                    if(green[i] >= 4){
+                        currentDelivers[currentIndex] = green[i];
+                        currentIndex += 1;
+                    }
+                }
+            }
+        }
+        for(int i = 0;i < 2;i++){
+            if(i != -1){
+                if(currentIndex < 3){
+                    if(blue[i] >= 4){
+                        currentDelivers[currentIndex] = blue[i];
+                        currentIndex += 1;
+                    }
+                }
+            }
+        }
+        
+        turn(LEFT);
+        PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
+        PID(44, 30, NONE, CENTER, NONE, NONE, true);
+        for(int i = 3;i >= 0;i--){
+            if(bayCars[0] == NONE && bayCars[1] == NONE && bayCars[2] == NONE){
+                turn(LEFT);
+                turn(LEFT);
+                PID(27 * (4 - i) - 2 + 44,25,LEFT,LEFT,NONE, NONE,true);
+                PID(46, 30, RIGHT,CENTER, NONE, NONE, false);
+                continue;
+            }
+            else{
+                for(int j = 0;j < 3;j++){
+                    if(currentDelivers[j] == i){
+                        turn(RIGHT);
+                        doParkingSpot(i + 4, false, false, false);
+                        turn(LEFT);
+                    }
+                }
+                for(int j = 0;j < 3;j++){
+                    if(currentDelivers[j] == i + 4){
+                        turn(LEFT);
+                        doParkingSpot(i + 8, false, false, false);
+                        turn(RIGHT);
+                    }
+                }
+                if(i == 0){
+                    turn(LEFT);
+                    turn(LEFT);
+                    PID(27 * 4 - 2 + 44,25,LEFT,LEFT,NONE, NONE,true);
+                    PID(46, 30, RIGHT,CENTER, NONE, NONE, false);
+                }
+                else{
+                    PID(25,25,NONE,CENTER,NONE, NONE,true);
+                }
+            }
+        }
+    }
 }
 
 /**
