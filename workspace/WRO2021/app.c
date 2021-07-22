@@ -31,7 +31,7 @@ int doorLocations[6] = {
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayCars[3] = {
-    NONE, NONE, NONE
+    BLUE, GREEN, NONE
 };
 /**
  * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
@@ -101,10 +101,10 @@ int tasks[4] = {2,2,1,1};
 void main_task(intptr_t unused) {
     init();
     // test();
-    collectBatteries();
-    runParkingArea1();
-    deliverCarsToYellow();
-    detectWaitingCars();
+    // collectBatteries();
+    // runParkingArea1();
+    // deliverCarsToYellow();
+    // detectWaitingCars();
     collectWaitingCars(0);
     end();
 }
@@ -898,8 +898,8 @@ void collectWaitingCars(int set){
         ev3_motor_rotate(left_motor,220,20,flase);
         ev3_motor_rotate(right_motor,220,20,ture);
         drive(3, 20);
-        motorSteer(10, 0);
-        while (ev3_color_sensor_get_reflect(color_sensor2) > 10 || ev3_color_sensor_get_reflect(color_sensor3) > 10) {tslp_tsk(5);}
+        motorSteer(18, 0);
+        while (ev3_color_sensor_get_reflect(color_sensor2) > 15 || ev3_color_sensor_get_reflect(color_sensor3) > 15) {tslp_tsk(5);}
         motorSteer(0, 0);
         drive(13.5, 15);
         turn(LEFT);
@@ -1070,7 +1070,7 @@ void closeDoors(int side) {
  * \exception Does not reset the doors
 **/
 void raiseDoor() {
-    ev3_motor_set_power(a_motor, -40);
+    ev3_motor_set_power(a_motor, -30);
     tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
 }
@@ -1080,7 +1080,7 @@ void raiseDoor() {
  * \exception Does not reset the doors
 **/
 void lowerDoor() {
-    ev3_motor_set_power(a_motor, 40);
+    ev3_motor_set_power(a_motor, 50);
     tslp_tsk(750);
     ev3_motor_set_power(a_motor, 0);
 }
@@ -1089,7 +1089,7 @@ void lowerDoor() {
  * \exception Will raise the doors
 **/
 void raiseSensors() {
-    ev3_motor_set_power(a_motor, 40);
+    ev3_motor_set_power(a_motor, 50);
     tslp_tsk(750);
     ev3_motor_set_power(a_motor, 0);
 }
@@ -1099,7 +1099,7 @@ void raiseSensors() {
  * \exception Will open all bays and cannot back up or make turns without running "raiseSensors()"
 **/
 void lowerSensors() {
-    ev3_motor_set_power(a_motor, -40);
+    ev3_motor_set_power(a_motor, -30);
     tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
 }
@@ -1421,7 +1421,7 @@ void drive(float distance, int power) {
         wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts) / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts) / 2)) * ((3.1415926535 * 8.1) / 360);
         error = ((ev3_motor_get_counts(left_motor)-leftstartcounts)+(ev3_motor_get_counts(right_motor)-rightstartcounts));
         integral = error + integral * 0.5;
-        float curve2 = (2*error + 0.0*integral + 10*(error-lasterror)) * backwards;
+        float curve2 = (1*error + 0.0*integral + 10*(error-lasterror)) * backwards;
         motorSteer(power,curve2);
         lasterror = error;
         tslp_tsk(2);
