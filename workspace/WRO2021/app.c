@@ -95,7 +95,12 @@ int mapPositions[3][4] = {
  * \param 2 Red cars to collect
  * \param 3 Red cars to deliver
 **/
-int tasks[4] = {2,2,1,1};
+int tasks[4] = {
+    2,
+    2,
+    1,
+    1
+};
 
 // main task
 void main_task(intptr_t unused) {
@@ -267,18 +272,18 @@ void runParkingArea1() {
         else if(mapcarPositions[0][i] == NONE){
             if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[0][i] != RED && tasks[mapPositions[0][i]] != 0){
                 turn(RIGHT);
-                doParkingSpot(i, false, true);
+                doParkingSpot(i, false, true, true);
                 turn(LEFT);
             }
             else if(searchforcar(mapPositions[0][i],LEFT) != NONE){
                 turn(RIGHT);
-                doParkingSpot(i, false, true);
+                doParkingSpot(i, false, true, true);
                 turn(LEFT);
             }
         }
         else if(searchforcar(NONE,LEFT) != NONE){
             turn(RIGHT);
-            doParkingSpot(i, false, true);
+            doParkingSpot(i, false, true, true);
             turn(LEFT);
         }
         
@@ -288,13 +293,13 @@ void runParkingArea1() {
         else if(mapcarPositions[1][i] == NONE){
             if(searchforcar(mapPositions[1][i],LEFT) != NONE){
                 turn(LEFT);
-                doParkingSpot(i + 4, false, false);
+                doParkingSpot(i + 4, false, false, true);
                 turn(RIGHT);
             }
         }
         else if(searchforcar(NONE,LEFT) != NONE && mapPositions[1][i] != RED){
             turn(LEFT);
-            doParkingSpot(i + 4, false, false);
+            doParkingSpot(i + 4, false, false, true);
             turn(RIGHT);
         }
         
@@ -393,12 +398,12 @@ void runParkingArea1() {
             else if(mapcarPositions[2][i] == NONE){
                 if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED && tasks[mapPositions[2][i]] != 0){
                     turn(LEFT);
-                    doParkingSpot(i + 8, false, true);
+                    doParkingSpot(i + 8, false, true, true);
                     turn(RIGHT);
                 }
                 else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
                     turn(LEFT);
-                    doParkingSpot(i + 8, false, true);
+                    doParkingSpot(i + 8, false, true, true);
                     turn(RIGHT);
                 }
             }
@@ -407,7 +412,7 @@ void runParkingArea1() {
             }
             else if(searchforcar(NONE,LEFT) != NONE){
                 turn(LEFT);
-                doParkingSpot(i + 8, false, true);
+                doParkingSpot(i + 8, false, true, true);
                 turn(RIGHT);
             }
             if(mapcarPositions[1][i] == WALL){
@@ -416,18 +421,18 @@ void runParkingArea1() {
             else if(mapcarPositions[1][i] == NONE){
                 if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[1][i] != RED && tasks[mapPositions[1][i]] != 0){
                     turn(RIGHT);
-                    doParkingSpot(i+4, false, true);
+                    doParkingSpot(i+4, false, true, true);
                     turn(LEFT);
                 }
                 else if(searchforcar(mapPositions[1][i],LEFT) != NONE){
                     turn(RIGHT);
-                    doParkingSpot(i+4, false, true);
+                    doParkingSpot(i+4, false, true, true);
                     turn(LEFT);
                 }
             }
             else if(searchforcar(NONE,LEFT) != NONE && tasks[mapcarPositions[1][i] + 1]){
                 turn(RIGHT);
-                doParkingSpot(i+4, false, true);
+                doParkingSpot(i+4, false, true, true);
                 turn(LEFT);
             }
             if(i == 0){
@@ -449,12 +454,12 @@ void runParkingArea1() {
             else if(mapcarPositions[2][i] == NONE){
                 if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED && tasks[mapPositions[2][i]] != 0){
                     turn(RIGHT);
-                    doParkingSpot(i + 8, false, true);
+                    doParkingSpot(i + 8, false, true, true);
                     turn(LEFT);
                 }
                 else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
                     turn(RIGHT);
-                    doParkingSpot(i + 8, false, true);
+                    doParkingSpot(i + 8, false, true, true);
                     turn(LEFT);
                 }
             }
@@ -463,7 +468,7 @@ void runParkingArea1() {
             }
             else if(searchforcar(NONE,LEFT) != NONE){
                 turn(RIGHT);
-                doParkingSpot(i + 8, false, true);
+                doParkingSpot(i + 8, false, true, true);
                 turn(LEFT);
             }
             if(mapcarPositions[1][i] == WALL){
@@ -472,18 +477,18 @@ void runParkingArea1() {
             else if(mapcarPositions[1][i] == NONE){
                 if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[1][i] != RED && tasks[mapPositions[1][i]] != 0){
                     turn(LEFT);
-                    doParkingSpot(i+4, false, true);
+                    doParkingSpot(i+4, false, true, true);
                     turn(RIGHT);
                 }
                 else if(searchforcar(mapPositions[1][i],LEFT) != NONE){
                     turn(LEFT);
-                    doParkingSpot(i+4, false, true);
+                    doParkingSpot(i+4, false, true, true);
                     turn(RIGHT);
                 }
             }
             else if(searchforcar(NONE,LEFT) != NONE && tasks[mapcarPositions[1][i] + 1]){
                 turn(LEFT);
-                doParkingSpot(i+4, false, true);
+                doParkingSpot(i+4, false, true, true);
                 turn(RIGHT);
             }
             if(i == 3){
@@ -730,175 +735,6 @@ void runParkingArea2(){
         }
     }
 }
-/*
-void runParkingArea2() {
-    // rows 0 and 1
-    for(int i = 3;i >= 0;i--){
-        if(mapcarPositions[0][i] == WALL){
-            
-        }
-        else if(mapcarPositions[0][i] == NONE){
-            if(searchforcar(mapPositions[0][i],LEFT) != NONE && batteryPositions[0][i] == BATTERY){
-                turn(RIGHT);
-                doParkingSpot(i, true);
-                turn(LEFT);
-            }
-        }
-        else if(mapcarPositions[0][i] == mapPositions[0][i]){
-            
-        }
-        else if(searchforcar(NONE,LEFT) != NONE){
-            turn(RIGHT);
-            doParkingSpot(i, true);
-            turn(LEFT);
-        }
-        if(mapcarPositions[1][i] == WALL){
-            
-        }
-        else if(mapcarPositions[1][i] == NONE){
-            if(searchforcar(mapPositions[1][i],LEFT) != NONE){
-                turn(LEFT);
-                doParkingSpot(i + 4, true);
-                turn(RIGHT);
-            }
-        }
-        else if(mapcarPositions[1][i] == mapPositions[1][i]){
-            
-        }
-        else if(searchforcar(NONE,LEFT) != NONE){
-            turn(LEFT);
-            doParkingSpot(i + 4, true);
-            turn(RIGHT);
-        }
-        if(i == 0){
-            if (mapcarPositions[1][0] == WALL) {
-                turn(RIGHT);
-            } else {
-                turn(LEFT);
-            }
-        }
-        else{
-            PID(25,25,NONE,CENTER,NONE, NONE,true);
-        }
-    }
-    // decision for row 2
-    // NOTE: also check if the robot has a green and blue car
-    if (searchforcar(RED, LEFT) == NONE && searchforcar(GREEN, LEFT) == NONE && searchforcar(BLUE, LEFT) == NONE) {
-        // get to row 2
-        int direction = 0;
-        if(mapcarPositions[1][0] == NONE && batteryPositions[1][0] == NONE){
-            PID(46, 30, LEFT, CENTER, NONE, NONE, true);
-        }
-        else {
-            if (mapcarPositions[1][0] == WALL) {
-                turn(RIGHT);
-            } else {
-                turn(LEFT);
-            }
-            if(mapcarPositions[1][1] == NONE && batteryPositions[1][1] == NONE){
-                PID(25,30,RIGHT,CENTER,NONE,NONE,true);
-                PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
-                PID(25, 30, LEFT, CENTER, NONE, NONE, true);
-                turn(LEFT);
-            }
-            else if(mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE){
-                direction = 1;
-                PID(58,30,RIGHT,CENTER,NONE,NONE,true);
-                drive(20, 20);
-                PID(24, 30, LEFT, CENTER, NONE, NONE, true);
-                PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
-                turn(RIGHT);
-            } else if (mapcarPositions[1][3] == NONE && batteryPositions[1][3] == NONE) {
-                direction = 1;
-                PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
-                PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
-            } else {
-                direction = 1;
-                PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
-                PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
-                PID(44, 30, NONE, CENTER, NONE, NONE, true);
-            }
-        }
-        if (direction == 1) {
-            // row 2 from 11
-            for (int i = 3; i >= 0; i--) {
-                if(mapcarPositions[2][i] == WALL){
-                    
-                }
-                else if(mapcarPositions[2][i] == NONE){
-                    if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
-                        turn(LEFT);
-                        doParkingSpot(i + 8, true);
-                        turn(RIGHT);
-                    }
-                    else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
-                        turn(LEFT);
-                        doParkingSpot(i + 8, true);
-                        turn(RIGHT);
-                    }
-                }
-                else if(mapcarPositions[2][i] == mapPositions[2][i]){
-                    
-                }
-                else if(searchforcar(NONE,LEFT) != NONE){
-                    turn(LEFT);
-                    doParkingSpot(i + 8, true);
-                    turn(RIGHT);
-                }
-                if(i == 0){
-                    turn(LEFT);
-                    turn(LEFT);
-                    PID(134, 35,LEFT, LEFT, NONE, NONE, false);
-                }
-                else{
-                    PID(25,25,NONE,CENTER,NONE,NONE,true);
-                }
-            }
-        } else {
-            // row 2 from 8
-            for (int i = 0; i <= 3; i++) {
-                if(mapcarPositions[2][i] == WALL){
-                    
-                }
-                else if(mapcarPositions[2][i] == NONE){
-                    if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
-                        turn(RIGHT);
-                        doParkingSpot(i + 8, true);
-                        turn(LEFT);
-                    }
-                    else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
-                        turn(RIGHT);
-                        doParkingSpot(i + 8, true);
-                        turn(LEFT);
-                    }
-                }
-                else if(mapcarPositions[2][i] == mapPositions[2][i]){
-                    
-                }
-                else if(searchforcar(NONE,LEFT) != NONE){
-                    turn(RIGHT);
-                    doParkingSpot(i + 8, true);
-                    turn(LEFT);
-                }
-                if(i == 3){
-                    PID(42, 30, LEFT, LEFT, NONE, NONE, false);
-                }
-                else{
-                    PID(25,25,NONE,CENTER,NONE,NONE,true);
-                }
-            }
-        }
-        PID(44, 30, RIGHT, CENTER, NONE, NONE, false);
-    } else {
-        if (mapcarPositions[1][0] == WALL) {
-            turn(RIGHT);
-        } else {
-            turn(LEFT);
-        }
-        PID(134, 35, NONE, CENTER, NONE, NONE, true);
-    }
-}
-*/
 /**
  * \brief Does third run through of the parking area
 **/
