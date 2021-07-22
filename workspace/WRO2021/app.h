@@ -42,7 +42,7 @@ void raiseSensors();
 void lowerSensors();
 
 void readcar(int parkingspotleft, int parkingspotright);
-void doParkingSpot(int parkingspot, int deliverGreenBlue, int doBattery);
+void doParkingSpot(int parkingspot, int deliverGreenBlue, int doBattery, int collectCars);
 int searchforcar(int cartype, int direction);
 void deliverBattery(int parkingspot);
 void collectCar(int parkingspot);
