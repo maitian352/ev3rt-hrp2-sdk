@@ -159,17 +159,17 @@ void init() {
         ev3_led_set_color(LED_RED);
         ev3_lcd_set_font(EV3_FONT_MEDIUM);
         ev3_lcd_draw_string("! LOW  BATTERY !", 10, 60);
-        ev3_speaker_play_tone(2093, 500);
+        ev3_speaker_play_tone(1046, 500);
+        tslp_tsk(500);
+        ev3_speaker_play_tone(523, 500);
         tslp_tsk(500);
         ev3_speaker_play_tone(1046, 500);
         tslp_tsk(500);
-        ev3_speaker_play_tone(2093, 500);
+        ev3_speaker_play_tone(523, 500);
         tslp_tsk(500);
         ev3_speaker_play_tone(1046, 500);
         tslp_tsk(500);
-        ev3_speaker_play_tone(2093, 500);
-        tslp_tsk(500);
-        ev3_speaker_play_tone(1046, 500);
+        ev3_speaker_play_tone(523, 500);
         exit(1);
     }
     tslp_tsk(13);
@@ -897,8 +897,9 @@ void collectWaitingCars(int set){
         drive(18, 30);
         ev3_motor_rotate(left_motor,220,20,flase);
         ev3_motor_rotate(right_motor,220,20,ture);
-        drive(3, 20);
-        motorSteer(18, 0);
+        drive(5, 20);
+        waitforButton();
+        motorSteer(10, 0);
         while (ev3_color_sensor_get_reflect(color_sensor2) > 15 || ev3_color_sensor_get_reflect(color_sensor3) > 15) {tslp_tsk(5);}
         motorSteer(0, 0);
         drive(13.5, 15);
