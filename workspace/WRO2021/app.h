@@ -5,12 +5,9 @@
 #define RED 0
 #define GREEN 1
 #define BLUE 2
-#define WALL 8
-#define BATTERY 6
-#define BATTERYx2 7
-#define REDB 3
-#define GREENB 4
-#define BLUEB 5
+#define WALL 5
+#define BATTERY 3
+#define BATTERYx2 4
 #define LEFT 0
 #define CENTER 1
 #define RIGHT 2
@@ -45,9 +42,8 @@ void raiseSensors();
 void lowerSensors();
 
 void readcar(int parkingspotleft, int parkingspotright);
-void doParkingSpot(int parkingspot, int deliverGreenBlue);
+void doParkingSpot(int parkingspot, int deliverGreenBlue, int doBattery);
 int searchforcar(int cartype, int direction);
-void doParkingSpot(int parkingspot, int doBattery);
 void deliverBattery(int parkingspot);
 void collectCar(int parkingspot);
 void deliverCar(int parkingspot, int car);
