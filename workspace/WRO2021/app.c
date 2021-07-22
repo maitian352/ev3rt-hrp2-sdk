@@ -304,11 +304,7 @@ void runParkingArea1() {
         }
         
         if(i == 0){
-            if (mapcarPositions[1][0] == WALL) {
-                turn(RIGHT);
-            } else {
-                turn(LEFT);
-            }
+            turn(LEFT);
         }
         else{
             PID(25,25,NONE,CENTER,NONE, NONE,true);
@@ -321,92 +317,82 @@ void runParkingArea1() {
     }
     // get to row 2
     int direction = 0;
-    if(mapcarPositions[1][0] != WALL && mapcarPositions[1][0] != NONE && batteryPositions[1][0] == NONE && searchforcar(NONE, LEFT) != NONE) {
-        moveDoor(searchforcar(NONE, LEFT));
-        drive(10, 10);
-        moveDoor(searchforcar(NONE, LEFT) + 3);
-        drive(9, 10);
-        resetDoor();
-        PID(24, 30, LEFT, CENTER, NONE, NONE, true);
-    } else if (mapcarPositions[1][0] == NONE && batteryPositions[1][0] == NONE) {
-        PID(46, 30, LEFT, CENTER, NONE, NONE, true);
-    } else {
-        int position = 0;
-        if (mapcarPositions[1][0] == WALL) {
-            turn(RIGHT);
-        } else {
-            turn(LEFT);
-        }
-        if (searchforcar(NONE, LEFT) == NONE) {
-            if (mapcarPositions[1][1] == NONE && batteryPositions[1][1] == NONE) {
-                position = 1;
-            } else if (mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE) {
-                position = 2;
-                direction = 1;
-            } else if (mapcarPositions[1][3] == NONE && batteryPositions[1][3] == NONE) {
-                position = 3;
-                direction = 1;
-            } else {
-                position = 4;
-                direction = 1;
+    int driveThrough = false;
+    for(int i = 0;i <= 3;i++){
+        if(mapcarPositions[1][i] != WALL && mapcarPositions[1][i] != NONE && batteryPositions[1][i] == NONE && driveThrough == false){
+            if(i == 0){
+
             }
-        } else {
-            if (mapcarPositions[1][1] != WALL && batteryPositions[1][1] == NONE) {
-                position = 1;
-            } else if (mapcarPositions[1][2] != WALL && batteryPositions[1][2] == NONE) {
-                position = 2;
-                direction = 1;
-            } else if (mapcarPositions[1][3] != WALL && batteryPositions[1][3] == NONE) {
-                position = 3;
-                direction = 1;
-            } else {
-                position = 4;
-                direction = 1;
+            else{
+                turn(LEFT);
+                PID(i*27-2,30,RIGHT,CENTER,NONE,NONE,true);
             }
-        }
-        switch (position) {
-            case 1:
-                PID(25,30,RIGHT,CENTER,NONE,NONE,true);
-                if (mapcarPositions[1][1] != NONE) {
-                    moveDoor(searchforcar(NONE, LEFT));
-                    drive(10, 10);
-                    moveDoor(searchforcar(NONE, LEFT) + 3);
-                    drive(9, 10);
-                    resetDoor();
-                    PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
-                } else {
-                    PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
-                }
-                break;
-            case 2:
-                PID(58,30,RIGHT,CENTER,NONE,NONE,true);
-                drive(20, 20);
-                PID(24, 30, LEFT, CENTER, NONE, NONE, true);
-                PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+            moveDoor(searchforcar(NONE, LEFT));
+            drive(10, 10);
+            moveDoor(searchforcar(NONE, LEFT) + 3);
+            drive(9, 10);
+            resetDoor();
+            PID(24, 25, NONE, CENTER, NONE, NONE, true);
+            if(i == 0){
+                turn(LEFT);
+            }
+            else if(i == 1){
                 turn(RIGHT);
-                break;
-            case 3:
-                PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
-                if (mapcarPositions[1][3] != NONE) {
-                    moveDoor(searchforcar(NONE, LEFT));
-                    drive(10, 10);
-                    moveDoor(searchforcar(NONE, LEFT) + 3);
-                    drive(9, 10);
-                    resetDoor();
-                    PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
-                } else {
-                    PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
-                }
-                break;
-            case 4:
-                PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
-                PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
-                PID(44, 30, NONE, CENTER, NONE, NONE, true);
-                break;
-            default:
-                exit(127);
-                break;
+                PID(56,30,RIGHT,CENTER,NONE,NONE,true);
+                turn(LEFT);
+                turn(LEFT);
+            }
+            else if(i == 2){
+                direction = 1;
+                turn(LEFT);
+                PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+                turn(LEFT);
+                turn(LEFT);
+            }
+            else{
+                direction = 1;
+                turn(RIGHT);
+            }
+            driveThrough = true;
         }
+        if(mapcarPositions[1][i] == NONE && batteryPositions[1][i] == NONE && driveThrough == false){
+            if(i == 0){
+
+            }
+            else{
+                turn(LEFT);
+                PID(i*27-2,30,RIGHT,CENTER,NONE,NONE,true);
+            }
+            drive(20, 20);
+            PID(24, 25, NONE, CENTER, NONE, NONE, true);
+            if(i == 0){
+                turn(LEFT);
+            }
+            else if(i == 1){
+                turn(RIGHT);
+                PID(56,30,RIGHT,CENTER,NONE,NONE,true);
+                turn(LEFT);
+                turn(LEFT);
+            }
+            else if(i == 2){
+                direction = 1;
+                turn(LEFT);
+                PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+                turn(LEFT);
+                turn(LEFT);
+            }
+            else{
+                direction = 1;
+                turn(RIGHT);
+            }
+            driveThrough = true;
+        }
+    }
+    if(driveThrough == false){
+        direction = 1;
+        PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
+        PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
+        PID(44, 30, NONE, CENTER, NONE, NONE, true);
     }
     if (direction == 1) {
         // row 2 from 11
