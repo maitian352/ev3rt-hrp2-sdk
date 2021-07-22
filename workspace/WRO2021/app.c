@@ -106,10 +106,10 @@ int tasks[4] = {
 void main_task(intptr_t unused) {
     init();
     // test();
-    // collectBatteries();
-    // runParkingArea1();
-    // deliverCarsToYellow();
-    // detectWaitingCars();
+    collectBatteries();
+    runParkingArea1();
+    deliverCarsToYellow();
+    detectWaitingCars();
     collectWaitingCars(0);
     end();
 }
@@ -321,72 +321,71 @@ void runParkingArea1() {
     }
     // get to row 2
     int direction = 0;
-    int driveThrough = false;
-    for(int i = 0;i <= 3;i++){
-        if(mapcarPositions[1][i] != WALL && mapcarPositions[1][i] != NONE && batteryPositions[1][i] == NONE && driveThrough == false){
-            if(i == 0){
-
-            }
-            else{
-                PID(i*27-2,30,RIGHT,CENTER,NONE,NONE,true);
-            }
+    if(mapcarPositions[1][0] != WALL && batteryPositions[1][0] == NONE){
+        if (mapcarPositions[1][0] != NONE) {
             moveDoor(searchforcar(NONE, LEFT));
             drive(10, 10);
             moveDoor(searchforcar(NONE, LEFT) + 3);
             drive(9, 10);
             resetDoor();
-            PID(24, 25, CENTER, CENTER, NONE, NONE, true);
-            if(i == 0){
-                turn(LEFT);
-            }
-            else if(i == 1){
-                turn(LEFT);
-                PID(56,30,RIGHT,CENTER,NONE,NONE,true);
-            }
-            else if(i == 2){
-                direction = 1;
-                turn(LEFT);
-                PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
-            }
-            else if(i == 3){
-                direction = 1;
-                turn(RIGHT);
-            }
-            driveThrough = true;
-        }
-        if(mapcarPositions[1][i] == NONE && batteryPositions[1][i] == NONE && driveThrough == false){
-            if(i == 0){
-
-            }
-            else{
-                PID(i*27-2,30,RIGHT,CENTER,NONE,NONE,true);
-            }
-            drive(20, 20);
-            PID(24, 25, CENTER, CENTER, NONE, NONE, true);
-            if(i == 0){
-                turn(LEFT);
-            }
-            else if(i == 1){
-                turn(LEFT);
-                PID(56,30,RIGHT,CENTER,NONE,NONE,true);
-            }
-            else if(i == 2){
-                direction = 1;
-                turn(LEFT);
-                PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
-            }
-            else if(i == 3){
-                direction = 1;
-                turn(RIGHT);
-            }
-            driveThrough = true;
+            PID(24, 30, LEFT, CENTER, NONE, NONE, true);
+        } else {
+            PID(46, 30, LEFT, CENTER, NONE, NONE, true);
         }
     }
-    if(driveThrough == false){
-        direction = 1;
-        PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
-        PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
-        PID(44, 30, NONE, CENTER, NONE, NONE, true);
+    else {
+        if (mapcarPositions[1][0] == WALL) {
+            turn(RIGHT);
+        } else {
+            turn(LEFT);
+        }
+        if(mapcarPositions[1][1] != WALL && batteryPositions[1][1] == NONE){
+            PID(25,30,RIGHT,CENTER,NONE,NONE,true);
+            if (mapcarPositions[1][1] != NONE) {
+                moveDoor(searchforcar(NONE, LEFT));
+                drive(10, 10);
+                moveDoor(searchforcar(NONE, LEFT) + 3);
+                drive(9, 10);
+                resetDoor();
+                PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+            } else {
+                PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
+            }
+            PID(25, 30, LEFT, CENTER, NONE, NONE, true);
+            turn(LEFT);
+        }
+        else if(mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE){
+            direction = 1;
+            PID(58,30,RIGHT,CENTER,NONE,NONE,true);
+            drive(20, 20);
+            PID(24, 30, LEFT, CENTER, NONE, NONE, true);
+            PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+            turn(RIGHT);
+        } else if (mapcarPositions[1][3] != WALL && batteryPositions[1][3] == NONE) {
+            direction = 1;
+            PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
+            if (mapcarPositions[1][3] != NONE) {
+                moveDoor(searchforcar(NONE, LEFT));
+                drive(10, 10);
+                moveDoor(searchforcar(NONE, LEFT) + 3);
+                drive(9, 10);
+                resetDoor();
+                PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+            } else {
+                PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
+            }
+        } else {
+            direction = 1;
+            PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
+            PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
+            PID(44, 30, NONE, CENTER, NONE, NONE, true);
+        }
+    }
+    while (true) {
+        ev3_speaker_play_tone(1046, 500);
+        tslp_tsk(500);
+        ev3_speaker_play_tone(523, 500);
+        tslp_tsk(500);
     }
     if (direction == 1) {
         // row 2 from 11
@@ -446,6 +445,7 @@ void runParkingArea1() {
         }
     } else {
         // row 2 from 8
+        waitforButton();
         for (int i = 0; i <= 3; i++) {
             readcar(NONE, i+8);
             if(mapcarPositions[2][i] == WALL){
@@ -969,7 +969,6 @@ void runParkingArea3(){
         }
     }
 }
-
 /**
  * \brief Delivers two cars to yellow areas
 **/
