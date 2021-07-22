@@ -31,7 +31,7 @@ int doorLocations[6] = {
  * \param bay Bay number [LEFT, CENTER, RIGHT]
 **/
 int bayCars[3] = {
-    GREEN, NONE, BLUE
+    NONE, NONE, NONE
 };
 /**
  * \brief stores the values of the cars on the road [RED, GREEN, BLUE]
@@ -98,9 +98,12 @@ int tasks[4] = {2,2,1,1,1};
 // main task
 void main_task(intptr_t unused) {
     init();
-    test();
-    //collectBatteries();
-    // runParkingArea1();
+    // test();
+    collectBatteries();
+    runParkingArea1();
+    deliverCarsToYellow();
+    detectWaitingCars();
+    collectWaitingCars(0);
     end();
 }
 
@@ -173,13 +176,13 @@ void init() {
 
     // reset doors and sensors
     ev3_lcd_draw_string("Resetting motors...", 0, 54);
-    ev3_motor_set_power(a_motor, 10);
+    ev3_motor_set_power(a_motor, 20);
     ev3_motor_set_power(d_motor, 100);
     tslp_tsk(1500);
     ev3_motor_set_power(a_motor, 0);
     ev3_motor_stop(d_motor, false);
     tslp_tsk(500);
-    ev3_motor_rotate(d_motor, -810, 20, true);
+    ev3_motor_rotate(d_motor, -810, 100, true);
     ev3_motor_reset_counts(d_motor);
     ev3_motor_reset_counts(a_motor);
 
@@ -200,28 +203,28 @@ void init() {
  * \brief Drives out of base and collects batteries
 **/
 void collectBatteries() {
-    drive(18.2,10,5);
+    wallFollow(18.1,15);
     tslp_tsk(100);
     moveDoor(RIGHTFULL);
-    drive(4,10,5);
+    wallFollow(4,10);
     tslp_tsk(100);
     moveDoor(CENTER);
-    drive(2.9,10,5);
+    wallFollow(2.9,10);
     tslp_tsk(100);
     moveDoor(RIGHTFULL);
-    drive(4,10,5);
+    wallFollow(4,10);
     tslp_tsk(100);
     moveDoor(CENTER);
-    drive(2.9,10,5);
+    wallFollow(2.9,10);
     tslp_tsk(100);
     moveDoor(RIGHT);
-    drive(4,10,5);
+    wallFollow(4,10);
     tslp_tsk(100);
     moveDoor(CENTER);
-    drive(2.9,10,5);
+    wallFollow(2.9,10);
     tslp_tsk(100);
     moveDoor(RIGHT);
-    drive(4.2,10,2);
+    wallFollow(4.2,15);
     tslp_tsk(100);
     moveDoor(CENTER);
     tslp_tsk(100);
@@ -232,22 +235,22 @@ void collectBatteries() {
     ev3_motor_reset_counts(right_motor);
     ev3_motor_rotate(right_motor, 180, 20, true);
     tslp_tsk(100);
-    drive(14, 15, 0);
+    drive(14, 20);
     motorSteer(10, 0);
     while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {tslp_tsk(5);}
     while (ev3_color_sensor_get_reflect(color_sensor3) > 25) {tslp_tsk(5);}
     motorSteer(0, 0);
     tslp_tsk(100);
-    drive(12, 10, 0);
+    drive(13, 15);
     tslp_tsk(100);
-    motorSteer(10, 100);
+    motorSteer(20, 100);
     tslp_tsk(200);
-    motorSteer(5, 100);
-    while (ev3_color_sensor_get_reflect(color_sensor3) < 40) {tslp_tsk(5);}
-    while (ev3_color_sensor_get_reflect(color_sensor3) > 20) {tslp_tsk(5);}
-    while (ev3_color_sensor_get_reflect(color_sensor3) < 20) {tslp_tsk(5);}
+    motorSteer(10, 100);
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 30) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) >= 15) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 15) {tslp_tsk(5);}
     motorSteer(0,0);
-    PID(30, 30, NONE, CENTER, NONE, NONE, true);
+    PID(35, 30, NONE, CENTER, NONE, NONE, true);
 }
 /**
  * \brief Does first run through of the parking area
@@ -262,21 +265,18 @@ void runParkingArea1() {
         else if(mapcarPositions[0][i] == NONE){
             if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[0][i] != RED){
                 turn(RIGHT);
-                doParkingSpot(i);
+                doParkingSpot(i, false);
                 turn(LEFT);
             }
             else if(searchforcar(mapPositions[0][i],LEFT) != NONE){
                 turn(RIGHT);
-                doParkingSpot(i);
+                doParkingSpot(i, false);
                 turn(LEFT);
             }
         }
-        else if(mapcarPositions[0][i] == mapPositions[0][i]){
-            
-        }
         else if(searchforcar(NONE,LEFT) != NONE){
             turn(RIGHT);
-            doParkingSpot(i);
+            doParkingSpot(i, false);
             turn(LEFT);
         }
         if(mapcarPositions[1][i] == WALL){
@@ -285,21 +285,18 @@ void runParkingArea1() {
         else if(mapcarPositions[1][i] == NONE){
             if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[1][i] != RED){
                 turn(LEFT);
-                doParkingSpot(i + 4);
+                doParkingSpot(i + 4, false);
                 turn(RIGHT);
             }
             else if(searchforcar(mapPositions[1][i],LEFT) != NONE){
                 turn(LEFT);
-                doParkingSpot(i + 4);
+                doParkingSpot(i + 4, false);
                 turn(RIGHT);
             }
         }
-        else if(mapcarPositions[1][i] == mapPositions[1][i]){
-            
-        }
         else if(searchforcar(NONE,LEFT) != NONE){
             turn(LEFT);
-            doParkingSpot(i + 4);
+            doParkingSpot(i + 4, false);
             turn(RIGHT);
         }
         if(i == 0){
@@ -315,131 +312,510 @@ void runParkingArea1() {
     }
     // decision for row 2
     // NOTE: also check if the robot has a green and blue car
-    if (searchforcar(BATTERY, LEFT) != NONE && searchforcar(BATTERYx2, LEFT) != NONE) {
-
-    }
-    // get to row 2
-    int direction = 0;
-    if(mapcarPositions[1][0] == BLUE && batteryPositions[1][0] == NONE){
-        moveDoor(searchforcar(NONE, LEFT));
-        drive(10, 10, 0);
-        moveDoor(searchforcar(NONE, LEFT) + 3);
-        drive(9, 10, 0);
-        resetDoor();
-        PID(24, 25, LEFT, CENTER, NONE, NONE, true);
-    }
-    else {
+    if ((searchforcar(BATTERY, LEFT) != NONE && searchforcar(BATTERYx2, LEFT) != NONE) || searchforcar(BLUE, LEFT) == NONE  || searchforcar(GREEN, LEFT) == NONE) {
+        // get to row 2
+        int direction = 0;
+        if(mapcarPositions[1][0] != WALL && batteryPositions[1][0] == NONE){
+            if (mapcarPositions[1][0] != NONE) {
+                moveDoor(searchforcar(NONE, LEFT));
+                drive(10, 10);
+                moveDoor(searchforcar(NONE, LEFT) + 3);
+                drive(9, 10);
+                resetDoor();
+                PID(24, 30, LEFT, CENTER, NONE, NONE, true);
+            } else {
+                PID(46, 30, LEFT, CENTER, NONE, NONE, true);
+            }
+        }
+        else {
+            if (mapcarPositions[1][0] == WALL) {
+                turn(RIGHT);
+            } else {
+                turn(LEFT);
+            }
+            if(mapcarPositions[1][1] != WALL && batteryPositions[1][1] == NONE){
+                PID(25,30,RIGHT,CENTER,NONE,NONE,true);
+                if (mapcarPositions[1][1] != NONE) {
+                    moveDoor(searchforcar(NONE, LEFT));
+                    drive(10, 10);
+                    moveDoor(searchforcar(NONE, LEFT) + 3);
+                    drive(9, 10);
+                    resetDoor();
+                    PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+                } else {
+                    PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
+                }
+                PID(25, 30, LEFT, CENTER, NONE, NONE, true);
+                turn(LEFT);
+            }
+            else if(mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE){
+                direction = 1;
+                PID(58,30,RIGHT,CENTER,NONE,NONE,true);
+                drive(20, 20);
+                PID(24, 30, LEFT, CENTER, NONE, NONE, true);
+                PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+                turn(RIGHT);
+            } else if (mapcarPositions[1][3] != WALL && batteryPositions[1][3] == NONE) {
+                direction = 1;
+                PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
+                if (mapcarPositions[1][3] != NONE) {
+                    moveDoor(searchforcar(NONE, LEFT));
+                    drive(10, 10);
+                    moveDoor(searchforcar(NONE, LEFT) + 3);
+                    drive(9, 10);
+                    resetDoor();
+                    PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+                } else {
+                    PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
+                }
+            } else {
+                direction = 1;
+                PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
+                PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
+                PID(44, 30, NONE, CENTER, NONE, NONE, true);
+            }
+        }
+        if (direction == 1) {
+            // row 2 from 11
+            for (int i = 3; i >= 0; i--) {
+                readcar(i+8, NONE);
+                if(mapcarPositions[2][i] == WALL){
+                    
+                }
+                else if(mapcarPositions[2][i] == NONE){
+                    if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
+                        turn(LEFT);
+                        doParkingSpot(i + 8, false);
+                        turn(RIGHT);
+                    }
+                    else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
+                        turn(LEFT);
+                        doParkingSpot(i + 8, false);
+                        turn(RIGHT);
+                    }
+                }
+                else if(searchforcar(NONE,LEFT) != NONE){
+                    turn(LEFT);
+                    doParkingSpot(i + 8, false);
+                    turn(RIGHT);
+                }
+                if(i == 0){
+                    turn(LEFT);
+                    turn(LEFT);
+                    PID(134, 35,LEFT, LEFT, NONE, NONE, false);
+                }
+                else{
+                    PID(25,25,NONE,CENTER,NONE,NONE,true);
+                }
+            }
+        } else {
+            // row 2 from 8
+            for (int i = 0; i <= 3; i++) {
+                readcar(NONE, i+8);
+                if(mapcarPositions[2][i] == WALL){
+                    
+                }
+                else if(mapcarPositions[2][i] == NONE){
+                    if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
+                        turn(RIGHT);
+                        doParkingSpot(i + 8, false);
+                        turn(LEFT);
+                    }
+                    else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
+                        turn(RIGHT);
+                        doParkingSpot(i + 8, false);
+                        turn(LEFT);
+                    }
+                }
+                else if(searchforcar(NONE,LEFT) != NONE){
+                    turn(RIGHT);
+                    doParkingSpot(i + 8, false);
+                    turn(LEFT);
+                }
+                if(i == 3){
+                    PID(42, 30, LEFT, LEFT, NONE, NONE, false);
+                }
+                else{
+                    PID(25,25,NONE,CENTER,NONE,NONE,true);
+                }
+            }
+        }
+        PID(44, 30, RIGHT, CENTER, NONE, NONE, false);
+    } else {
         if (mapcarPositions[1][0] == WALL) {
             turn(RIGHT);
         } else {
             turn(LEFT);
         }
-        if(mapcarPositions[1][1] == GREEN && batteryPositions[1][1] == NONE){
-            PID(25,30,RIGHT,CENTER,NONE,NONE,true);
-            moveDoor(searchforcar(NONE, LEFT));
-            drive(10, 10, 0);
-            moveDoor(searchforcar(NONE, LEFT) + 3);
-            drive(9, 10, 0);
-            resetDoor();
-            PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
-            PID(25, 30, LEFT, CENTER, NONE, NONE, true);
+        PID(134, 35, NONE, CENTER, NONE, NONE, true);
+    }
+}
+/**
+ * \brief Does second run through of the parking area
+**/
+void runParkingArea2() {
+    // rows 0 and 1
+    for(int i = 3;i >= 0;i--){
+        if(mapcarPositions[0][i] == WALL){
+            
+        }
+        else if(mapcarPositions[0][i] == NONE){
+            if(searchforcar(mapPositions[0][i],LEFT) != NONE && batteryPositions[0][i] == BATTERY){
+                turn(RIGHT);
+                doParkingSpot(i, true);
+                turn(LEFT);
+            }
+        }
+        else if(mapcarPositions[0][i] == mapPositions[0][i]){
+            
+        }
+        else if(searchforcar(NONE,LEFT) != NONE){
+            turn(RIGHT);
+            doParkingSpot(i, true);
             turn(LEFT);
         }
-        else if(mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE){
-            direction = 1;
-            PID(58,30,RIGHT,CENTER,NONE,NONE,true);
-            drive(20, 20, 0);
-            PID(24, 30, LEFT, CENTER, NONE, NONE, true);
-            PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+        if(mapcarPositions[1][i] == WALL){
+            
+        }
+        else if(mapcarPositions[1][i] == NONE){
+            if(searchforcar(mapPositions[1][i],LEFT) != NONE){
+                turn(LEFT);
+                doParkingSpot(i + 4, true);
+                turn(RIGHT);
+            }
+        }
+        else if(mapcarPositions[1][i] == mapPositions[1][i]){
+            
+        }
+        else if(searchforcar(NONE,LEFT) != NONE){
+            turn(LEFT);
+            doParkingSpot(i + 4, true);
             turn(RIGHT);
-        } else if (mapcarPositions[1][3] == GREEN && batteryPositions[1][3] == NONE) {
-            direction = 1;
-            PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
-            moveDoor(searchforcar(NONE, LEFT));
-            drive(10, 10, 0);
-            moveDoor(searchforcar(NONE, LEFT) + 3);
-            drive(9, 10, 0);
-            resetDoor();
-            PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+        }
+        if(i == 0){
+            if (mapcarPositions[1][0] == WALL) {
+                turn(RIGHT);
+            } else {
+                turn(LEFT);
+            }
+        }
+        else{
+            PID(25,25,NONE,CENTER,NONE, NONE,true);
+        }
+    }
+    // decision for row 2
+    // NOTE: also check if the robot has a green and blue car
+    if (searchforcar(RED, LEFT) == NONE && searchforcar(GREEN, LEFT) == NONE && searchforcar(BLUE, LEFT) == NONE) {
+        // get to row 2
+        int direction = 0;
+        if(mapcarPositions[1][0] == NONE && batteryPositions[1][0] == NONE){
+            PID(46, 30, LEFT, CENTER, NONE, NONE, true);
+        }
+        else {
+            if (mapcarPositions[1][0] == WALL) {
+                turn(RIGHT);
+            } else {
+                turn(LEFT);
+            }
+            if(mapcarPositions[1][1] == NONE && batteryPositions[1][1] == NONE){
+                PID(25,30,RIGHT,CENTER,NONE,NONE,true);
+                PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
+                PID(25, 30, LEFT, CENTER, NONE, NONE, true);
+                turn(LEFT);
+            }
+            else if(mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE){
+                direction = 1;
+                PID(58,30,RIGHT,CENTER,NONE,NONE,true);
+                drive(20, 20);
+                PID(24, 30, LEFT, CENTER, NONE, NONE, true);
+                PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+                turn(RIGHT);
+            } else if (mapcarPositions[1][3] == NONE && batteryPositions[1][3] == NONE) {
+                direction = 1;
+                PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
+                PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
+            } else {
+                direction = 1;
+                PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
+                PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
+                PID(44, 30, NONE, CENTER, NONE, NONE, true);
+            }
+        }
+        if (direction == 1) {
+            // row 2 from 11
+            for (int i = 3; i >= 0; i--) {
+                if(mapcarPositions[2][i] == WALL){
+                    
+                }
+                else if(mapcarPositions[2][i] == NONE){
+                    if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
+                        turn(LEFT);
+                        doParkingSpot(i + 8, true);
+                        turn(RIGHT);
+                    }
+                    else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
+                        turn(LEFT);
+                        doParkingSpot(i + 8, true);
+                        turn(RIGHT);
+                    }
+                }
+                else if(mapcarPositions[2][i] == mapPositions[2][i]){
+                    
+                }
+                else if(searchforcar(NONE,LEFT) != NONE){
+                    turn(LEFT);
+                    doParkingSpot(i + 8, true);
+                    turn(RIGHT);
+                }
+                if(i == 0){
+                    turn(LEFT);
+                    turn(LEFT);
+                    PID(134, 35,LEFT, LEFT, NONE, NONE, false);
+                }
+                else{
+                    PID(25,25,NONE,CENTER,NONE,NONE,true);
+                }
+            }
         } else {
-            direction = 1;
-            PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
-            PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
-            PID(44, 30, NONE, CENTER, NONE, NONE, true);
-        }
-    }
-    if (direction == 1) {
-        // row 2 from 11
-        for (int i = 3; i >= 0; i--) {
-            readcar(i+8, NONE);
-            if(mapcarPositions[2][i] == WALL){
-                
-            }
-            else if(mapcarPositions[2][i] == NONE){
-                if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
-                    turn(LEFT);
-                    doParkingSpot(i + 8);
-                    turn(RIGHT);
+            // row 2 from 8
+            for (int i = 0; i <= 3; i++) {
+                if(mapcarPositions[2][i] == WALL){
+                    
                 }
-                else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
-                    turn(LEFT);
-                    doParkingSpot(i + 8);
-                    turn(RIGHT);
+                else if(mapcarPositions[2][i] == NONE){
+                    if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
+                        turn(RIGHT);
+                        doParkingSpot(i + 8, true);
+                        turn(LEFT);
+                    }
+                    else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
+                        turn(RIGHT);
+                        doParkingSpot(i + 8, true);
+                        turn(LEFT);
+                    }
                 }
-            }
-            else if(mapcarPositions[2][i] == mapPositions[2][i]){
-                
-            }
-            else if(searchforcar(NONE,LEFT) != NONE){
-                turn(LEFT);
-                doParkingSpot(i + 8);
-                turn(RIGHT);
-            }
-            if(i == 0){
-                turn(LEFT);
-                turn(LEFT);
-                PID(134, 35,LEFT, LEFT, NONE, NONE, false);
-            }
-            else{
-                PID(25,25,NONE,CENTER,NONE,NONE,true);
+                else if(mapcarPositions[2][i] == mapPositions[2][i]){
+                    
+                }
+                else if(searchforcar(NONE,LEFT) != NONE){
+                    turn(RIGHT);
+                    doParkingSpot(i + 8, true);
+                    turn(LEFT);
+                }
+                if(i == 3){
+                    PID(42, 30, LEFT, LEFT, NONE, NONE, false);
+                }
+                else{
+                    PID(25,25,NONE,CENTER,NONE,NONE,true);
+                }
             }
         }
+        PID(44, 30, RIGHT, CENTER, NONE, NONE, false);
     } else {
-        // row 2 from 8
-        for (int i = 0; i <= 3; i++) {
-            readcar(NONE, i+8);
-            if(mapcarPositions[2][i] == WALL){
-                
-            }
-            else if(mapcarPositions[2][i] == NONE){
-                if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
-                    turn(RIGHT);
-                    doParkingSpot(i + 8);
-                    turn(LEFT);
-                }
-                else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
-                    turn(RIGHT);
-                    doParkingSpot(i + 8);
-                    turn(LEFT);
-                }
-            }
-            else if(mapcarPositions[2][i] == mapPositions[2][i]){
-                
-            }
-            else if(searchforcar(NONE,LEFT) != NONE){
+        if (mapcarPositions[1][0] == WALL) {
+            turn(RIGHT);
+        } else {
+            turn(LEFT);
+        }
+        PID(134, 35, NONE, CENTER, NONE, NONE, true);
+    }
+}
+/**
+ * \brief Does third run through of the parking area
+**/
+void runParkingArea3() {
+    // rows 0 and 1
+    for(int i = 3;i >= 0;i--){
+        if(mapcarPositions[0][i] == WALL){
+            
+        }
+        else if(mapcarPositions[0][i] == NONE){
+            if(searchforcar(mapPositions[0][i],LEFT) != NONE && batteryPositions[0][i] == BATTERY){
                 turn(RIGHT);
-                doParkingSpot(i + 8);
+                doParkingSpot(i, true);
                 turn(LEFT);
             }
-            if(i == 3){
-                PID(42, 30, LEFT, LEFT, NONE, NONE, false);
-            }
-            else{
-                PID(25,25,NONE,CENTER,NONE,NONE,true);
+        }
+        else if(mapcarPositions[0][i] == mapPositions[0][i]){
+            
+        }
+        else if(searchforcar(NONE,LEFT) != NONE){
+            turn(RIGHT);
+            doParkingSpot(i, true);
+            turn(LEFT);
+        }
+        if(mapcarPositions[1][i] == WALL){
+            
+        }
+        else if(mapcarPositions[1][i] == NONE){
+            if(searchforcar(mapPositions[1][i],LEFT) != NONE){
+                turn(LEFT);
+                doParkingSpot(i + 4, true);
+                turn(RIGHT);
             }
         }
+        else if(mapcarPositions[1][i] == mapPositions[1][i]){
+            
+        }
+        else if(searchforcar(NONE,LEFT) != NONE){
+            turn(LEFT);
+            doParkingSpot(i + 4, true);
+            turn(RIGHT);
+        }
+        if(i == 0){
+            if (mapcarPositions[1][0] == WALL) {
+                turn(RIGHT);
+            } else {
+                turn(LEFT);
+            }
+        }
+        else{
+            PID(25,25,NONE,CENTER,NONE, NONE,true);
+        }
     }
-    PID(44, 30, RIGHT, CENTER, NONE, NONE, false);
+    // decision for row 2
+    // NOTE: also check if the robot has a green and blue car
+    if (searchforcar(RED, LEFT) == NONE && searchforcar(GREEN, LEFT) == NONE && searchforcar(BLUE, LEFT) == NONE) {
+        // get to row 2
+        int direction = 0;
+        if(mapcarPositions[1][0] != WALL && batteryPositions[1][0] == NONE){
+            if (mapcarPositions[1][0] != NONE) {
+                moveDoor(searchforcar(NONE, LEFT));
+                drive(10, 10);
+                moveDoor(searchforcar(NONE, LEFT) + 3);
+                drive(9, 10);
+                resetDoor();
+                PID(24, 30, LEFT, CENTER, NONE, NONE, true);
+            } else {
+                PID(46, 30, LEFT, CENTER, NONE, NONE, true);
+            }
+        }
+        else {
+            if (mapcarPositions[1][0] == WALL) {
+                turn(RIGHT);
+            } else {
+                turn(LEFT);
+            }
+            if(mapcarPositions[1][1] != WALL && batteryPositions[1][1] == NONE){
+                PID(25,30,RIGHT,CENTER,NONE,NONE,true);
+                if (mapcarPositions[1][1] != NONE) {
+                    moveDoor(searchforcar(NONE, LEFT));
+                    drive(10, 10);
+                    moveDoor(searchforcar(NONE, LEFT) + 3);
+                    drive(9, 10);
+                    resetDoor();
+                    PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+                } else {
+                    PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
+                }
+                PID(25, 30, LEFT, CENTER, NONE, NONE, true);
+                turn(LEFT);
+            }
+            else if(mapcarPositions[1][2] == NONE && batteryPositions[1][2] == NONE){
+                direction = 1;
+                PID(58,30,RIGHT,CENTER,NONE,NONE,true);
+                drive(20, 20);
+                PID(24, 30, LEFT, CENTER, NONE, NONE, true);
+                PID(25, 30, RIGHT, CENTER,NONE, NONE, true);
+                turn(RIGHT);
+            } else if (mapcarPositions[1][3] != WALL && batteryPositions[1][3] == NONE) {
+                direction = 1;
+                PID(88, 35, RIGHT, CENTER, NONE, NONE, true);
+                if (mapcarPositions[1][3] != NONE) {
+                    moveDoor(searchforcar(NONE, LEFT));
+                    drive(10, 10);
+                    moveDoor(searchforcar(NONE, LEFT) + 3);
+                    drive(9, 10);
+                    resetDoor();
+                    PID(24, 30, RIGHT, CENTER, NONE, NONE, true);
+                } else {
+                    PID(46, 30, RIGHT, CENTER, NONE, NONE, true);
+                }
+            } else {
+                direction = 1;
+                PID(134, 35, RIGHT, RIGHT, NONE, NONE, true);
+                PID(46, 30, RIGHT,RIGHT, NONE, NONE, false);
+                PID(44, 30, NONE, CENTER, NONE, NONE, true);
+            }
+        }
+        if (direction == 1) {
+            // row 2 from 11
+            for (int i = 3; i >= 0; i--) {
+                if(mapcarPositions[2][i] == WALL){
+                    
+                }
+                else if(mapcarPositions[2][i] == NONE){
+                    if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
+                        turn(LEFT);
+                        doParkingSpot(i + 8, true);
+                        turn(RIGHT);
+                    }
+                    else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
+                        turn(LEFT);
+                        doParkingSpot(i + 8, true);
+                        turn(RIGHT);
+                    }
+                }
+                else if(mapcarPositions[2][i] == mapPositions[2][i]){
+                    
+                }
+                else if(searchforcar(NONE,LEFT) != NONE){
+                    turn(LEFT);
+                    doParkingSpot(i + 8, true);
+                    turn(RIGHT);
+                }
+                if(i == 0){
+                    turn(LEFT);
+                    turn(LEFT);
+                    PID(134, 35,LEFT, LEFT, NONE, NONE, false);
+                }
+                else{
+                    PID(25,25,NONE,CENTER,NONE,NONE,true);
+                }
+            }
+        } else {
+            // row 2 from 8
+            for (int i = 0; i <= 3; i++) {
+                if(mapcarPositions[2][i] == WALL){
+                    
+                }
+                else if(mapcarPositions[2][i] == NONE){
+                    if((searchforcar(BATTERY,LEFT) != NONE || searchforcar(BATTERYx2,LEFT) != NONE) && mapPositions[2][i] != RED){
+                        turn(RIGHT);
+                        doParkingSpot(i + 8, true);
+                        turn(LEFT);
+                    }
+                    else if(searchforcar(mapPositions[2][i],LEFT) != NONE){
+                        turn(RIGHT);
+                        doParkingSpot(i + 8, true);
+                        turn(LEFT);
+                    }
+                }
+                else if(mapcarPositions[2][i] == mapPositions[2][i]){
+                    
+                }
+                else if(searchforcar(NONE,LEFT) != NONE){
+                    turn(RIGHT);
+                    doParkingSpot(i + 8, true);
+                    turn(LEFT);
+                }
+                if(i == 3){
+                    PID(42, 30, LEFT, LEFT, NONE, NONE, false);
+                }
+                else{
+                    PID(25,25,NONE,CENTER,NONE,NONE,true);
+                }
+            }
+        }
+        PID(44, 30, RIGHT, CENTER, NONE, NONE, false);
+    } else {
+        if (mapcarPositions[1][0] == WALL) {
+            turn(RIGHT);
+        } else {
+            turn(LEFT);
+        }
+        PID(134, 35, NONE, CENTER, NONE, NONE, true);
+    }
 }
 void runParkingArea1() {
     // rows 0 and 1
@@ -721,53 +1097,58 @@ void deliverCarsToYellow() {
     ev3_motor_rotate(right_motor,230,20,true);
     if(searchforcar(BLUE,LEFT) > searchforcar(GREEN,LEFT)){
         moveDoor(searchforcar(GREEN,LEFT) + 3);
-        drive(13, 15, 0);
-        drive(14, -15, 0);
+        drive(12, 15);
+        drive(14, -15);
         resetDoor();
-        drive(6, 15, 0);
-        drive(5, -15, 0);
+        drive(7, 15);
+        drive(5, -15);
         bayCars[searchforcar(GREEN,LEFT)] = NONE;
     }
     else{
         moveDoor(searchforcar(BLUE,LEFT) + 3);
-        drive(13, 15, 0);
-        drive(14, -15, 0);
+        drive(12, 15);
+        drive(14, -15);
         resetDoor();
-        drive(6, 15, 0);
-        drive(5, -15, 0);
+        drive(7, 15);
+        drive(5, -15);
         bayCars[searchforcar(BLUE,LEFT)] = NONE;
     }
-    turn(RIGHT);
-    PID(27,20,NONE,NONE,-1,1,false);
+    ev3_motor_rotate(left_motor,230,-20,false);
+    ev3_motor_rotate(right_motor,230,-20,true);
+    drive(6, 15);
+    motorSteer(10, -100);
+    tslp_tsk(250);
+    motorSteer(10, 100);
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 30) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) >= 15) {tslp_tsk(5);}
+    while (ev3_color_sensor_get_reflect(color_sensor3) < 15) {tslp_tsk(5);}
+    motorSteer(0, 0);
+    PID(21,20,NONE,NONE,-1,1,false);
     ev3_motor_rotate(left_motor,230,20,false);
     ev3_motor_rotate(right_motor,230,20,true);
     if(searchforcar(BLUE,LEFT) < searchforcar(GREEN,LEFT)){
         moveDoor(searchforcar(GREEN,LEFT) + 3);
-        drive(13, 15, 0);
-        drive(14, -15, 0);
+        drive(12, 15);
+        drive(14, -15);
         resetDoor();
-        drive(6, 15, 0);
-        drive(5, -15, 0);
+        drive(7, 15);
+        drive(5, -15);
         bayCars[searchforcar(GREEN,LEFT)] = NONE;
     }
     else{
         moveDoor(searchforcar(BLUE,LEFT) + 3);
-        drive(13, 15, 0);
-        drive(14, -15, 0);
+        drive(12, 15);
+        drive(14, -15);
         resetDoor();
-        drive(6, 15, 0);
-        drive(5, -15, 0);
+        drive(7, 15);
+        drive(5, -15);
         bayCars[searchforcar(BLUE,LEFT)] = NONE;
     }
-    ev3_motor_rotate(left_motor,-230,-20,false);
-    ev3_motor_rotate(right_motor,-230,-20,true);
-    drive(6, -15, 0);
+    ev3_motor_rotate(left_motor,230,20,false);
+    ev3_motor_rotate(right_motor,230,20,true);
+    drive(6, -15);
     motorSteer(10, -100);
-    while (ev3_color_sensor_get_reflect(color_sensor2) < 30) {tslp_tsk(5);}
-    while (ev3_color_sensor_get_reflect(color_sensor2) >= 15) {tslp_tsk(5);}
-    while (ev3_color_sensor_get_reflect(color_sensor2) < 15) {tslp_tsk(5);}
-    motorSteer(0, 0);
-    tslp_tsk(1000);
+    tslp_tsk(250);
     motorSteer(10, 100);
     while (ev3_color_sensor_get_reflect(color_sensor3) < 30) {tslp_tsk(5);}
     while (ev3_color_sensor_get_reflect(color_sensor3) >= 15) {tslp_tsk(5);}
@@ -778,7 +1159,6 @@ void deliverCarsToYellow() {
  * \brief Detects and writes down values of all 6 cars on the road
 **/
 void detectWaitingCars(){
-    char msg[100];
     int red = 2;
     int green = 2;
     int blue = 2;
@@ -854,7 +1234,7 @@ void detectWaitingCars(){
     // ev3_lcd_draw_string(msg, 0, 15*4);
     // sprintf(msg, "5: %d", roadcarPositions[5]);
     // ev3_lcd_draw_string(msg, 0, 15*5);
-    PID(16, 25, NONE, LEFT, NONE, NONE, false);
+    PID(16, 30, NONE, LEFT, NONE, NONE, false);
 }
 /**
  * \brief Collects 3 cars
@@ -866,64 +1246,126 @@ void collectWaitingCars(int set){
     switch (set)
     {
     case 0:
-        drive(17, 20, 0);
-        ev3_motor_rotate(left_motor,220,20,false);
-        ev3_motor_rotate(right_motor,220,20,true);
-        drive(3, 15, 0);
+        drive(18, 30);
+        ev3_motor_rotate(left_motor,220,20,flase);
+        ev3_motor_rotate(right_motor,220,20,ture);
+        drive(3, 20);
         motorSteer(10, 0);
         while (ev3_color_sensor_get_reflect(color_sensor2) > 10 || ev3_color_sensor_get_reflect(color_sensor3) > 10) {tslp_tsk(5);}
         motorSteer(0, 0);
-        drive(12.5, 10, 0);
+        drive(13.5, 15);
         turn(LEFT);
-        // drive(8, -20, 0);
-        // PID(20, 20, NONE, CENTER, NONE, NONE, false);
+        PID(3, 20, NONE, NONE, NONE, NONE, false);
         motorSteer(10, 0);
         while (ev3_color_sensor_get_reflect(color_sensor2) > 10 || ev3_color_sensor_get_reflect(color_sensor3) > 10) {tslp_tsk(5);}
         motorSteer(0, 0);
-        // drive(1, 10, 0);
-        // drive(1, -10, 0);
         moveDoor(LEFT);
-        drive(30,10,0);
+        drive(31,10);
         moveDoor(LEFTFULL);
         raiseDoor();
-        drive(10,10,0);
+        drive(10,10);
         moveDoor(RIGHT);
         lowerDoor();
         moveDoor(RIGHTFULL);
         raiseDoor();
-        drive(7,10,0);
+        drive(5,10);
         resetDoor();
+        ev3_motor_set_power(a_motor, 20);
+        tslp_tsk(1000);
+        ev3_motor_set_power(a_motor, 0);
+        drive(10, -10);
+        raiseDoor();
+        drive(3, 10);
         lowerDoor();
-        drive(2, -10, 0);
         bayCars[LEFT] = roadcarPositions[1];
         bayCars[CENTER] = roadcarPositions[0];
         bayCars[RIGHT] = roadcarPositions[2];
+        ev3_motor_rotate(left_motor,440,20,flase);
+        ev3_motor_rotate(right_motor,440,20,ture);
+        drive(5,20);
+        motorSteer(10, 0);
+        while (ev3_color_sensor_get_reflect(color_sensor2) > 10 || ev3_color_sensor_get_reflect(color_sensor3) > 10) {tslp_tsk(5);}
+        motorSteer(0, 0);
+        drive(13.5, 10);
+        turn(LEFT);
+        PID(25, 30, NONE, LEFT, NONE, NONE, false);
         break;
     case 1:
+        PID(25, 30, NONE, LEFT, NONE, NONE, false);
+        // ev3_motor_reset_counts(left_motor);
+        // ev3_motor_reset_counts(right_motor);
+        // ev3_motor_rotate(d_motor, 740-ev3_motor_get_counts(d_motor), 100, true);
+        // motorSteer(20, 100);
+        // while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 <160) {tslp_tsk(5);}
+        // motorSteer(10, 100);
+        // while (ev3_color_sensor_get_reflect(color_sensor2) < 40) {tslp_tsk(5);}
+        // // while (ev3_color_sensor_get_reflect(color_sensor2) > 35) {tslp_tsk(5);}
+        // ev3_motor_stop(left_motor, true);
+        // ev3_motor_stop(right_motor, true);
+        // ev3_motor_rotate(left_motor,220,-20,flase);
+        // ev3_motor_rotate(right_motor,220,-20,ture);
+        ev3_motor_rotate(d_motor, 440-ev3_motor_get_counts(d_motor), 100, true);
+        ev3_motor_reset_counts(left_motor);
+        ev3_motor_reset_counts(right_motor);
+        tslp_tsk(100);
+        motorSteer(20, 100);
+        while((abs(ev3_motor_get_counts(left_motor)) + abs(ev3_motor_get_counts(right_motor)))/2 < 200) {tslp_tsk(5);}
+        motorSteer(10, 100);
+        while (ev3_color_sensor_get_reflect(color_sensor3) < 45) {tslp_tsk(5);}
+        while (ev3_color_sensor_get_reflect(color_sensor3) >= 40) {tslp_tsk(5);}
+        motorSteer(0, 0);
+        // waitforButton();
+        // ev3_motor_set_power(left_motor,30);
+        // ev3_motor_set_power(right_motor,-30);
+        // tslp_tsk(1500);
+        // ev3_motor_set_power(left_motor,0);
+        // ev3_motor_set_power(right_motor,0);
+        // PID(24,10,NONE,CENTER,NONE,NONE,true);
+        moveDoor(LEFT);
+        drive(50.5,10);
+        waitforButton();
+        moveDoor(LEFTFULL);
+        raiseDoor();
+        drive(10,10);
         moveDoor(RIGHT);
-        drive(40, 30, 0);
-        drive(6.5,10,0);
-        ev3_motor_rotate(d_motor, 500, 50, true);
-        raiseDoor();
-        drive(10.5,10,0);
-        ev3_motor_rotate(d_motor, 440, 50, true);
         lowerDoor();
-        ev3_motor_rotate(d_motor, -640, 50, true);
+        moveDoor(RIGHTFULL);
         raiseDoor();
-        ev3_motor_rotate(left_motor, -440, 10, true);
+        drive(5,10);
         resetDoor();
+        ev3_motor_set_power(a_motor, 20);
+        tslp_tsk(1000);
+        ev3_motor_set_power(a_motor, 0);
+        drive(10, -10);
+        raiseDoor();
+        drive(3, 10);
         lowerDoor();
+        bayCars[LEFT] = roadcarPositions[4];
+        bayCars[CENTER] = roadcarPositions[3];
+        bayCars[RIGHT] = roadcarPositions[5];
+        ev3_motor_rotate(left_motor,440,20,flase);
+        ev3_motor_rotate(right_motor,440,20,ture);
+        PID(50,30,NONE,CENTER,NONE,NONE,ture);
+        turn(LEFT);
+        PID(25, 30, NONE, LEFT, NONE, NONE, false);
+        // moveDoor(RIGHT);
+        // drive(40, 30, 0);
+        // drive(6.5,10,0);
+        // ev3_motor_rotate(d_motor, 500, 50, true);
+        // raiseDoor();
+        // drive(10.5,10,0);
+        // ev3_motor_rotate(d_motor, 440, 50, true);
+        // lowerDoor();
+        // ev3_motor_rotate(d_motor, -640, 50, true);
+        // raiseDoor();
+        // ev3_motor_rotate(left_motor, -440, 10, true);
+        // resetDoor();
+        // lowerDoor();
         break;
     default:
         exit(127);
         break;
     }
-}
-/**
- * \brief Does second run through of the parking area
-**/
-void runParkingArea2() {
-    end();
 }
 /**
  * \brief End function
@@ -980,8 +1422,8 @@ void closeDoors(int side) {
  * \exception Does not reset the doors
 **/
 void raiseDoor() {
-    ev3_motor_set_power(a_motor, -30);
-    tslp_tsk(750);
+    ev3_motor_set_power(a_motor, -40);
+    tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
 }
 /**
@@ -1009,8 +1451,8 @@ void raiseSensors() {
  * \exception Will open all bays and cannot back up or make turns without running "raiseSensors()"
 **/
 void lowerSensors() {
-    ev3_motor_set_power(a_motor, -30);
-    tslp_tsk(750);
+    ev3_motor_set_power(a_motor, -40);
+    tslp_tsk(1000);
     ev3_motor_set_power(a_motor, 0);
 }
 
@@ -1021,7 +1463,7 @@ void lowerSensors() {
  * \param parkingspotleft The id of the parkingspot [0-11] (NONE for nothing)
  * \param parkingspotright The id of the parkingspot [0-11] (NONE for nothing)
 **/
-void readcar( int parkingspotleft, int parkingspotright) {
+void readcar(int parkingspotleft, int parkingspotright) {
     lowerSensors();
     if (parkingspotleft != NONE) {
         // char msg[100];
@@ -1120,8 +1562,39 @@ void readcar( int parkingspotleft, int parkingspotright) {
     raiseSensors();
 }
 /**
+ * \brief Does a parkingspot
+ * \param parkingspot The current parking spot where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions [0-11]
+ * \param deliverGreenBlue Whether to deliver green or blue cars
+ * \exception Function name is bad
+**/
+void doParkingSpot(int parkingspot, int deliverGreenBlue) {
+    if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
+        if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] != RED){
+            deliverBattery(parkingspot);
+        }
+        if (mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED || deliverGreenBlue == true) {
+            deliverCar(parkingspot,mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4]);
+        }
+    }
+    else if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == WALL){
+
+    }
+    else{
+        collectCar(parkingspot);
+        if(mapcarPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == NONE){
+            if(mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] != RED){
+                deliverBattery(parkingspot);
+            }
+            if (mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4] == RED || deliverGreenBlue == true) {
+                deliverCar(parkingspot,mapPositions[(int)floor(parkingspot / 4)][parkingspot % 4]);
+            }
+        }
+    }
+    resetDoor();
+}
+/**
  * \brief Returns whether or not we have a car of __ type in our bay 
- * \param cartype Type of thingy to look for [RED, GREEN, BLUE, REDB, GREENB, BLUEB, BATTERY, BATTERYx2]
+ * \param cartype Type of object to look for [RED, GREEN, BLUE, BATTERY, BATTERYx2]
 **/
 int searchforcar(int cartype, int direction) {
     if(direction == LEFT){
@@ -1250,23 +1723,23 @@ void deliverCar(int parkingspot, int car) {
 **/
 void deliver(int bay, int location, int battery) {
     moveDoor(location);
-    drive(18, 15, 0);
+    drive(18, 15);
     if (battery && bayCars[bay] == BATTERYx2) {
-        drive(6.5, -10, 0);
-        drive(2, 10, 0);
+        drive(6.5, -10);
+        drive(2, 10);
         if(bay == RIGHT){
             closeDoors(RIGHT);
         }
         else{
             closeDoors(LEFT);
         }
-        drive(16.75, -15, 0);
-        drive(1.75, 10, 0);
+        drive(16.75, -15);
+        drive(1.75, 10);
         moveDoor(location);
-        drive(2, 10, 0);
+        drive(2, 10);
     } else {
-        drive(19, -15, 0);
-        drive(1, 10, 0);
+        drive(19, -15);
+        drive(1, 10);
     }
     closeDoors(LEFT);
 }
@@ -1277,12 +1750,12 @@ void deliver(int bay, int location, int battery) {
 **/
 void collect(int bay) {
     moveDoor(bay);
-    drive(10, 10, 0);
+    drive(10.5, 10);
     moveDoor(bay + 3);
-    drive(9, 10, 0);
+    drive(9, 10);
     resetDoor();
-    drive(20, -15, 0);
-    drive(1, 10, 0);
+    drive(20, -15);
+    drive(1, 10);
 }
 
 // drive functions
@@ -1310,58 +1783,64 @@ void motorSteer(int power, int curve) {
 /**
  * \brief Drives robot at selected power and curve for a distance
  * \param distance The absolute distance in centimeters calculated as average between two motors
- * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
- * \param curve Curve ratio of motors as a percent, where negative means left, and 0 means straight [-100-100]
+ * \param power Power of the motors as a percent, where negative means backwards, and 0 is not accepted [-100-100 !0]
 **/
-void drive(float distance, int power, int curve) {
-    float ratioleft, ratioright;
-    if(curve == 0){
-        ratioleft = 1;
-        ratioright = 1;
-    }
-    else if(curve < 0){
-        ratioleft = -50/curve;
-        ratioright = 1;
-    }
-    else{
-        ratioleft = 1;
-        ratioright = 1+curve/20;
-    }
+void drive(float distance, int power) {
+    // ev3_motor_reset_counts(left_motor);
+    // ev3_motor_reset_counts(right_motor);
     int backwards = 1;
     if (power < 0) {
         backwards = -1;
     }
-    // ev3_motor_reset_counts(left_motor);
-    // ev3_motor_reset_counts(right_motor);
     int leftstartcounts = ev3_motor_get_counts(left_motor);
     int rightstartcounts = ev3_motor_get_counts(right_motor);
-    float wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts)*ratioleft / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts)*ratioright / 2)) * ((3.1415926535 * 8.1) / 360);
+    float wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts) / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts) / 2)) * ((3.1415926535 * 8.1) / 360);
     float error = 0, lasterror = 0, integral = 0;
     while (abs(wheelDistance) < distance) {
-        wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts)*ratioleft / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts)*ratioright / 2)) * ((3.1415926535 * 8.1) / 360);
-        error = ((ev3_motor_get_counts(left_motor)-leftstartcounts)*ratioleft+(ev3_motor_get_counts(right_motor)-rightstartcounts)*ratioright);
+        wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts) / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts) / 2)) * ((3.1415926535 * 8.1) / 360);
+        error = ((ev3_motor_get_counts(left_motor)-leftstartcounts)+(ev3_motor_get_counts(right_motor)-rightstartcounts));
         integral = error + integral * 0.5;
-        float curve = (1*error + 0.0*integral + 10*(error-lasterror)) * backwards;
-        motorSteer(power,curve);
-        // motorSteer(power,0);
+        float curve2 = (2*error + 0.0*integral + 10*(error-lasterror)) * backwards;
+        motorSteer(power,curve2);
         lasterror = error;
         tslp_tsk(2);
     }
     motorSteer(0, 0);
-    ev3_motor_reset_counts(left_motor);
-    ev3_motor_reset_counts(right_motor);
-    tslp_tsk(200);
+    tslp_tsk(100);
+}
+/**
+ * \brief follows right wall
+ * \param distance The absolute distance in centimeters calculated as average between two motors
+ * \param power Power of the motors as a percent where 0 is not accepted [1-100]
+**/
+void wallFollow(float distance, int power) {
+    // ev3_motor_reset_counts(left_motor);
+    // ev3_motor_reset_counts(right_motor);
+    int backwards = 1;
+    if (power < 0) {
+        backwards = -1;
+    }
+    int leftstartcounts = ev3_motor_get_counts(left_motor);
+    int rightstartcounts = ev3_motor_get_counts(right_motor);
+    float wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts) / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts) / 2)) * ((3.1415926535 * 8.1) / 360);
+    motorSteer(power, 5);
+    while (abs(wheelDistance) < distance) {
+        wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts) / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts) / 2)) * ((3.1415926535 * 8.1) / 360);
+        tslp_tsk(5);
+    }
+    motorSteer(0, 0);
+    tslp_tsk(100);
 }
 /**
  * \brief Drives robot following a line at a selected power for a distance, turning at the end if needed, and reading cars
  * \param distance The absolute distance in centimeters calculated as average between two motors
- * \param power Power of the motors as a percent, where negative means backwards, and 0 means nothing [-100-100]
+ * \param power Power of the motors as a percent, where negative means backwards, and 0 is not accepted [-100-100 !0]
  * \param turn_dir Turn selection where NONE means no turn [LEFT, NONE, RIGHT]
  * \param line_detect Sensors used to detect line where CENTER means both sensors and NONE is no line detection [NONE, LEFT, CENTER, RIGHT]
  * \param readCarLeft The parking spot that the robot will detect where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions. NONE means no readcar [0-11, NONE]
  * \param readCarRight The parking spot that the robot will detect where 0 is [0][0], 3 is [0][3], and 4 is [1][0] in mapPositions. NONE means no readcar [0-11, NONE]
  * \param pidA To run another PID after detecting line [true, false]
- * \exception \b turn and \b readCar do not apply when \b line_detect is NONE
+ * \exception turn_dir, line_detect, readCarLeft, readCarRight, and pidA do not apply when line_detect is NONE
 **/
 void PID(float distance, int power, int turn_dir, int line_detect, int readCarLeft, int readCarRight, int pidA) {
     ev3_motor_reset_counts(left_motor);
@@ -1415,7 +1894,7 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
         if (pidA) {
             ev3_motor_reset_counts(left_motor);
             ev3_motor_reset_counts(right_motor);
-            tslp_tsk(200);
+            tslp_tsk(100);
             error = 0, lasterror = 0, wheelDistance = 0;
             while (wheelDistance < 13.5) {
                 wheelDistance = (abs(ev3_motor_get_counts(left_motor) / 2) + abs(ev3_motor_get_counts(right_motor) / 2)) * ((3.1415926535 * 8.1) / 360);
@@ -1428,7 +1907,7 @@ void PID(float distance, int power, int turn_dir, int line_detect, int readCarLe
             }
             motorSteer(0, 0);
         } else {
-            drive(13.5, 15, 0);
+            drive(13.5, 20);
         }
         // detect cars
         int doturn = true;
@@ -1585,11 +2064,14 @@ void waitforButton() {
  * \brief Test program
 **/
 void test() {
-    //collectBatteries();
+    // collectBatteries();
     // runParkingArea1();
     // deliverCarsToYellow();
     // detectWaitingCars();
-    collectWaitingCars(0);
+    // collectWaitingCars(0);
+    // runParkingArea2();
+    // collectWaitingCars(1);
+    // runParkingArea3();
 
     // moveDoor(LEFT);
     // waitforButton();
@@ -1616,9 +2098,17 @@ void test() {
     //     waitforButton();
     // }
 
-    // drive(10, 10, 0);
+    // drive(50, 20, 0);
     // waitforButton();
-    // drive(10, 50, 0);
+    // drive(50, 20, 5);
+    // waitforButton();
+    // drive(50, 20, 25);
+    // waitforButton();
+    // drive(50, 20, 50);
+    // waitforButton();
+    // drive(50, 20, 75);
+    // waitforButton();
+    // drive(50, 20, 100);
 
     // while (true) {
     //     turn(RIGHT);

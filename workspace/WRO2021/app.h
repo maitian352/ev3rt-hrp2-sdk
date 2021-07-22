@@ -30,10 +30,11 @@
 void init();
 void collectBatteries();
 void runParkingArea1();
+void runParkingArea2();
+void runParkingArea3();
 void deliverCarsToYellow();
 void detectWaitingCars();
 void collectWaitingCars(int set);
-void runParkingArea2();
 void end();
 
 void moveDoor(int door);
@@ -44,6 +45,7 @@ void raiseSensors();
 void lowerSensors();
 
 void readcar(int parkingspotleft, int parkingspotright);
+void doParkingSpot(int parkingspot, int deliverGreenBlue);
 int searchforcar(int cartype, int direction);
 void doParkingSpot(int parkingspot, int doBattery);
 void deliverBattery(int parkingspot);
@@ -53,7 +55,8 @@ void deliver(int bay, int location, int battery);
 void collect(int bay);
 
 void motorSteer(int power, int curve);
-void drive(float distance, int power, int curve);
+void drive(float distance, int power);
+void wallFollow(float distance, int power);
 void PID(float distance, int power, int turn_dir, int turn_sensor, int readCarLeft, int readCarright, int pidA);
 void turn(int direction);
 
