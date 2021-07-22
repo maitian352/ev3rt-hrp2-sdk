@@ -1517,10 +1517,6 @@ void drive(float distance, int power) {
 void wallFollow(float distance, int power) {
     // ev3_motor_reset_counts(left_motor);
     // ev3_motor_reset_counts(right_motor);
-    int backwards = 1;
-    if (power < 0) {
-        backwards = -1;
-    }
     int leftstartcounts = ev3_motor_get_counts(left_motor);
     int rightstartcounts = ev3_motor_get_counts(right_motor);
     float wheelDistance = (abs((ev3_motor_get_counts(left_motor)-leftstartcounts) / 2) + abs((ev3_motor_get_counts(right_motor)-rightstartcounts) / 2)) * ((3.1415926535 * 8.1) / 360);
